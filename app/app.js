@@ -1,9 +1,12 @@
 const PYODIDE_VERSION = "0.27.7";
 const pyodideModuleUrl = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
+const STORAGE_KEY = "homeschool-coders-progress-v1";
 
 const trackTitle = document.querySelector("#track-title");
+const trackProgress = document.querySelector("#track-progress");
 const lessonList = document.querySelector("#lesson-list");
 const lessonTitle = document.querySelector("#lesson-title");
+const lessonStatus = document.querySelector("#lesson-status");
 const lessonDescription = document.querySelector("#lesson-description");
 const lessonConcept = document.querySelector("#lesson-concept");
 const lessonMission = document.querySelector("#lesson-mission");
@@ -25,10 +28,12 @@ const fallbackLessonCatalog = {
 };
 
 let lessonCatalog = fallbackLessonCatalog;
+let progressState = cloneDefaultProgressState();
 let activeTrackId = "kids";
 let activeLessonId = "";
 let pyodide;
 let pyodideReadyPromise;
+let saveDraftTimeoutId;
 
 const turtleState = {
   x: canvas.width / 2,
@@ -55,6 +60,106 @@ function resetMetrics() {
   runMetrics.functionCalls = {};
 }
 
+function cloneDefaultProgressState() {
+  return {
+    activeTrackId: "kids",
+    activeLessonIdByTrack: {},
+    codeDrafts: {},
+    completedLessons: {},
+  };
+}
+
+function loadProgressState() {
+  try {
+    const savedProgress = window.localStorage.getItem(STORAGE_KEY);
+
+    if (!savedProgress) {
+      progressState = cloneDefaultProgressState();
+      return;
+    }
+
+    const parsedProgress = JSON.parse(savedProgress);
+    progressState = {
+      activeTrackId: parsedProgress.activeTrackId || "kids",
+      activeLessonIdByTrack: parsedProgress.activeLessonIdByTrack || {},
+      codeDrafts: parsedProgress.codeDrafts || {},
+      completedLessons: parsedProgress.completedLessons || {},
+    };
+  } catch (error) {
+    progressState = cloneDefaultProgressState();
+    appendLogLine(`Progress could not be restored: ${error.message}`);
+  }
+}
+
+function persistProgressState() {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(progressState));
+  } catch (error) {
+    appendLogLine(`Progress could not be saved: ${error.message}`);
+  }
+}
+
+function ensureTrackContainers(trackId) {
+  progressState.codeDrafts[trackId] = progressState.codeDrafts[trackId] || {};
+  progressState.completedLessons[trackId] = progressState.completedLessons[trackId] || {};
+}
+
+function getTrack(trackId) {
+  return lessonCatalog.tracks.find((track) => track.id === trackId);
+}
+
+function getLesson(trackId, lessonId) {
+  const track = getTrack(trackId);
+  return track?.lessons.find((lesson) => lesson.id === lessonId);
+}
+
+function getActiveLesson() {
+  return getLesson(activeTrackId, activeLessonId);
+}
+
+function getSavedDraft(trackId, lessonId) {
+  return progressState.codeDrafts[trackId]?.[lessonId];
+}
+
+function isLessonComplete(trackId, lessonId) {
+  return Boolean(progressState.completedLessons[trackId]?.[lessonId]);
+}
+
+function getCompletedCount(trackId) {
+  const track = getTrack(trackId);
+
+  if (!track) {
+    return 0;
+  }
+
+  return track.lessons.filter((lesson) => isLessonComplete(trackId, lesson.id)).length;
+}
+
+function saveCurrentDraft() {
+  if (!activeTrackId || !activeLessonId) {
+    return;
+  }
+
+  ensureTrackContainers(activeTrackId);
+  progressState.codeDrafts[activeTrackId][activeLessonId] = codeEditor.value;
+  progressState.activeTrackId = activeTrackId;
+  progressState.activeLessonIdByTrack[activeTrackId] = activeLessonId;
+  persistProgressState();
+}
+
+function scheduleDraftSave() {
+  window.clearTimeout(saveDraftTimeoutId);
+  saveDraftTimeoutId = window.setTimeout(() => {
+    saveCurrentDraft();
+  }, 180);
+}
+
+function markLessonComplete(trackId, lessonId) {
+  ensureTrackContainers(trackId);
+  progressState.completedLessons[trackId][lessonId] = true;
+  persistProgressState();
+}
+
 async function loadLessonCatalog() {
   try {
     const response = await fetch("../public/lessons.json");
@@ -71,23 +176,6 @@ async function loadLessonCatalog() {
   }
 }
 
-function getTrack(trackId) {
-  return lessonCatalog.tracks.find((track) => track.id === trackId);
-}
-
-function getActiveTrack() {
-  return getTrack(activeTrackId);
-}
-
-function getLesson(trackId, lessonId) {
-  const track = getTrack(trackId);
-  return track?.lessons.find((lesson) => lesson.id === lessonId);
-}
-
-function getActiveLesson() {
-  return getLesson(activeTrackId, activeLessonId);
-}
-
 function renderTrack(trackId) {
   const track = getTrack(trackId);
 
@@ -95,32 +183,43 @@ function renderTrack(trackId) {
     return;
   }
 
+  ensureTrackContainers(trackId);
   activeTrackId = trackId;
-  activeLessonId = track.lessons[0]?.id || "";
+  progressState.activeTrackId = trackId;
+  activeLessonId = progressState.activeLessonIdByTrack[trackId] || track.lessons[0]?.id || "";
+  progressState.activeLessonIdByTrack[trackId] = activeLessonId;
   trackTitle.textContent = track.title;
+  trackProgress.textContent = `${getCompletedCount(trackId)} of ${track.lessons.length} missions complete`;
   checkpointCopy.textContent = track.checkpointPrompt;
   renderLessonList(track);
   renderLessonDetails();
+  persistProgressState();
 }
 
 function renderLessonList(track) {
   lessonList.innerHTML = "";
 
   track.lessons.forEach((lesson) => {
+    const isActive = lesson.id === activeLessonId;
+    const isComplete = isLessonComplete(track.id, lesson.id);
     const item = document.createElement("button");
+
     item.type = "button";
-    item.className = `lesson-card ${lesson.id === activeLessonId ? "active" : ""}`;
+    item.className = `lesson-card ${isActive ? "active" : ""} ${isComplete ? "completed" : ""}`.trim();
     item.innerHTML = `
       <strong>${lesson.title}</strong>
       <span>${lesson.description}</span>
     `;
     item.addEventListener("click", () => {
+      saveCurrentDraft();
       activeLessonId = lesson.id;
+      progressState.activeLessonIdByTrack[track.id] = lesson.id;
       renderLessonList(track);
       renderLessonDetails();
       checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
       setStatus(`Loaded lesson: ${lesson.title}`);
       setLog(`Lesson loaded: ${lesson.title}`);
+      persistProgressState();
     });
     lessonList.append(item);
   });
@@ -133,12 +232,15 @@ function renderLessonDetails() {
     return;
   }
 
+  const savedDraft = getSavedDraft(activeTrackId, lesson.id);
+
   lessonTitle.textContent = lesson.title;
+  lessonStatus.textContent = isLessonComplete(activeTrackId, lesson.id) ? "Completed" : "In progress";
   lessonDescription.textContent = lesson.description;
   lessonConcept.textContent = `Concept: ${lesson.concept}`;
   lessonMission.textContent = `Mission: ${lesson.mission}`;
   lessonHint.textContent = `Hint: ${lesson.hint}`;
-  codeEditor.value = lesson.starterCode;
+  codeEditor.value = savedDraft || lesson.starterCode;
 }
 
 function setStatus(message) {
@@ -313,15 +415,13 @@ function preprocessCode(source) {
 
 function buildCodeFacts(source) {
   const normalized = source.replace(/\r\n/g, "\n");
-  const facts = {
+  return {
     usesRepeat: /(^|\n)\s*repeat\(/.test(normalized),
     functionDefinitions: [...normalized.matchAll(/^\s*def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/gm)].map(
       (match) => match[1],
     ),
     commands: new Set([...normalized.matchAll(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g)].map((match) => match[1])),
   };
-
-  return facts;
 }
 
 function evaluateCheckpoint(lesson, source) {
@@ -377,6 +477,10 @@ function evaluateCheckpoint(lesson, source) {
   }
 
   checkpointResult.textContent = lesson.successMessage;
+  markLessonComplete(activeTrackId, lesson.id);
+  trackProgress.textContent = `${getCompletedCount(activeTrackId)} of ${getTrack(activeTrackId).lessons.length} missions complete`;
+  lessonStatus.textContent = "Completed";
+  renderLessonList(getTrack(activeTrackId));
   return true;
 }
 
@@ -521,6 +625,7 @@ async function runPythonCode() {
       throw new Error("Write a few commands first, then press Run Python.");
     }
 
+    saveCurrentDraft();
     resetCanvasState();
     resetMetrics();
     prepareCanvas();
@@ -556,16 +661,26 @@ run_user_code(source_code)
 }
 
 function resetWorkspace() {
-  renderTrack(activeTrackId);
+  const lesson = getActiveLesson();
+
+  if (!lesson) {
+    return;
+  }
+
+  ensureTrackContainers(activeTrackId);
+  codeEditor.value = lesson.starterCode;
+  progressState.codeDrafts[activeTrackId][activeLessonId] = lesson.starterCode;
+  persistProgressState();
   resetCanvasState();
   resetMetrics();
   drawWelcomeScene();
   checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
-  setLog("Canvas reset. Starter code restored for this track.");
+  setLog("Canvas reset. Starter code restored for this lesson.");
   setStatus("Workspace reset.");
 }
 
 loadKidsTrackButton.addEventListener("click", () => {
+  saveCurrentDraft();
   renderTrack("kids");
   checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
   setStatus("Kids track loaded.");
@@ -573,6 +688,7 @@ loadKidsTrackButton.addEventListener("click", () => {
 });
 
 loadExplorerTrackButton.addEventListener("click", () => {
+  saveCurrentDraft();
   renderTrack("explorer");
   checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
   setStatus("Explorer track loaded.");
@@ -587,14 +703,21 @@ resetDemoButton.addEventListener("click", () => {
   resetWorkspace();
 });
 
+codeEditor.addEventListener("input", () => {
+  lessonStatus.textContent = isLessonComplete(activeTrackId, activeLessonId) ? "Completed" : "In progress";
+  scheduleDraftSave();
+});
+
 async function boot() {
+  loadProgressState();
   await loadLessonCatalog();
 
   if (!lessonCatalog.tracks.length) {
     return;
   }
 
-  renderTrack("kids");
+  const preferredTrack = getTrack(progressState.activeTrackId) ? progressState.activeTrackId : "kids";
+  renderTrack(preferredTrack);
   resetCanvasState();
   resetMetrics();
   drawWelcomeScene();
