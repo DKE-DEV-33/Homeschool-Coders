@@ -18,6 +18,10 @@
             "title": "Trailblazer Badge",
             "flavor": "You made your very first turtle trail."
           },
+          "preview": {
+            "kind": "line-message",
+            "palette": ["skyblue", "slateblue"]
+          },
           "hint": "Start with move(90), then try write(\"hello\", 24).",
           "concept": "Commands run from top to bottom in order.",
           "starterCode": "pen_color(\"skyblue\")\nmove(120)\nwrite(\"Hello, turtle!\", 22)",
@@ -39,6 +43,10 @@
           "reward": {
             "title": "Corner Captain Badge",
             "flavor": "You taught the turtle how to make clean corners."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["tomato"]
           },
           "hint": "A square can be made with repeat(4): move(90) turn(90).",
           "concept": "Turning the turtle changes the direction of the next line.",
@@ -62,6 +70,10 @@
           "reward": {
             "title": "Pattern Party Badge",
             "flavor": "You mixed loops and color like a coding artist."
+          },
+          "preview": {
+            "kind": "double-flower",
+            "palette": ["goldenrod", "teal"]
           },
           "hint": "Try drawing a small shape, turning a little, and changing colors before you repeat again.",
           "concept": "Loops help us create patterns with less code.",
@@ -94,6 +106,10 @@
             "title": "Layout Scout Badge",
             "flavor": "You controlled both shape and placement."
           },
+          "preview": {
+            "kind": "two-shapes",
+            "palette": ["coral", "steelblue"]
+          },
           "hint": "A line plus a looped shape is enough to pass this one.",
           "concept": "Geometric output is a direct result of sequence, heading, and distance.",
           "starterCode": "pen_color(\"coral\")\nline_width(5)\nrepeat(3):\n    move(80)\n    turn(120)\n\npen_up()\ngo_to(360, 220)\npen_down()\npen_color(\"steelblue\")\nrepeat(4):\n    move(70)\n    turn(90)",
@@ -115,6 +131,10 @@
           "reward": {
             "title": "Builder Badge",
             "flavor": "You turned repeated code into a reusable tool."
+          },
+          "preview": {
+            "kind": "petal-wheel",
+            "palette": ["orchid"]
           },
           "hint": "Try defining a shape helper such as def petal(): or def square(): then call it in a loop.",
           "concept": "Functions let us name and reuse a pattern of instructions.",

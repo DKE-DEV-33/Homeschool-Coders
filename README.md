@@ -52,6 +52,7 @@ Note: the current Python runtime uses Pyodide loaded from the official CDN on fi
 - Local progress saving for selected lessons, code drafts, and completed checkpoints.
 - Guided mission flow with lesson unlocking and one-click next-mission navigation.
 - Reward badges and visual-goal cues to make each mission feel clearer and more playful.
+- Per-lesson target previews so learners can compare their drawing goal with a simple example.
 - A first-pass lesson map and child-friendly product direction.
 - Architecture notes for adding a Python runner and lesson engine next.
 

@@ -373,6 +373,19 @@ canvas {
     #fff;
 }
 
+.target-preview-card {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 250, 242, 0.92);
+  border: 1px solid rgba(33, 78, 95, 0.12);
+}
+
+#target-preview-canvas {
+  height: 180px;
+  margin-top: 8px;
+}
+
 .checkpoint-card {
   margin-top: 16px;
   padding: 16px;

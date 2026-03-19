@@ -25,12 +25,15 @@ const codeEditor = document.querySelector("#code-editor");
 const editorStatus = document.querySelector("#editor-status");
 const runtimeLog = document.querySelector("#runtime-log");
 const badgeShelf = document.querySelector("#badge-shelf");
+const targetPreviewCanvas = document.querySelector("#target-preview-canvas");
+const targetPreviewCopy = document.querySelector("#target-preview-copy");
 const runDemoButton = document.querySelector("#run-demo");
 const resetDemoButton = document.querySelector("#reset-demo");
 const loadKidsTrackButton = document.querySelector("#load-kids-track");
 const loadExplorerTrackButton = document.querySelector("#load-explorer-track");
 const canvas = document.querySelector("#drawing-surface");
 const context = canvas.getContext("2d");
+const targetPreviewContext = targetPreviewCanvas.getContext("2d");
 
 const fallbackLessonCatalog = {
   tracks: [],
@@ -257,6 +260,76 @@ function renderBadgeShelf(trackId) {
   });
 }
 
+function clearTargetPreview() {
+  targetPreviewContext.clearRect(0, 0, targetPreviewCanvas.width, targetPreviewCanvas.height);
+  targetPreviewContext.fillStyle = "#fffdf8";
+  targetPreviewContext.fillRect(0, 0, targetPreviewCanvas.width, targetPreviewCanvas.height);
+}
+
+function drawTargetPreview(lesson) {
+  const preview = lesson.preview || {};
+  const palette = preview.palette || ["#214e5f"];
+
+  clearTargetPreview();
+  targetPreviewContext.lineCap = "round";
+  targetPreviewContext.lineJoin = "round";
+  targetPreviewContext.lineWidth = 5;
+
+  switch (preview.kind) {
+    case "line-message":
+      targetPreviewContext.strokeStyle = palette[0];
+      targetPreviewContext.beginPath();
+      targetPreviewContext.moveTo(80, 120);
+      targetPreviewContext.lineTo(260, 70);
+      targetPreviewContext.stroke();
+      targetPreviewContext.fillStyle = palette[1] || palette[0];
+      targetPreviewContext.font = '700 18px "Avenir Next", sans-serif';
+      targetPreviewContext.fillText("hello", 295, 78);
+      break;
+    case "square":
+      targetPreviewContext.strokeStyle = palette[0];
+      targetPreviewContext.strokeRect(160, 44, 120, 120);
+      break;
+    case "double-flower":
+      drawFlower(targetPreviewContext, 190, 102, 34, palette[0], 6);
+      drawFlower(targetPreviewContext, 290, 102, 34, palette[1] || palette[0], 6);
+      break;
+    case "two-shapes":
+      targetPreviewContext.strokeStyle = palette[0];
+      targetPreviewContext.beginPath();
+      targetPreviewContext.moveTo(120, 132);
+      targetPreviewContext.lineTo(170, 52);
+      targetPreviewContext.lineTo(220, 132);
+      targetPreviewContext.closePath();
+      targetPreviewContext.stroke();
+      targetPreviewContext.strokeStyle = palette[1] || palette[0];
+      targetPreviewContext.strokeRect(300, 54, 95, 95);
+      break;
+    case "petal-wheel":
+      drawFlower(targetPreviewContext, 255, 98, 40, palette[0], 8);
+      break;
+    default:
+      targetPreviewContext.fillStyle = "#314550";
+      targetPreviewContext.font = '600 16px "Atkinson Hyperlegible", sans-serif';
+      targetPreviewContext.fillText("Run the lesson to make your own version.", 92, 104);
+      break;
+  }
+}
+
+function drawFlower(drawingContext, centerX, centerY, radius, color, petalCount) {
+  drawingContext.strokeStyle = color;
+
+  for (let index = 0; index < petalCount; index += 1) {
+    const angle = (Math.PI * 2 * index) / petalCount;
+    const petalX = centerX + Math.cos(angle) * radius;
+    const petalY = centerY + Math.sin(angle) * radius;
+
+    drawingContext.beginPath();
+    drawingContext.arc(petalX, petalY, radius, 0, Math.PI * 2);
+    drawingContext.stroke();
+  }
+}
+
 async function loadLessonCatalog() {
   try {
     const response = await fetch("../public/lessons.json");
@@ -354,6 +427,7 @@ function renderLessonDetails() {
   lessonConcept.textContent = `Concept: ${lesson.concept}`;
   lessonMission.textContent = `Mission: ${lesson.mission}`;
   lessonVisualGoal.textContent = `Visual goal: ${lesson.visualGoal || "Create the target drawing for this mission."}`;
+  targetPreviewCopy.textContent = lesson.visualGoal || "Create the target drawing for this mission.";
   rewardTitle.textContent = lesson.reward?.title || "Creative Coder Badge";
   rewardCopy.textContent = lesson.reward?.flavor || "Finish this mission to earn a new reward.";
   targetSteps.innerHTML = "";
@@ -363,6 +437,7 @@ function renderLessonDetails() {
     chip.textContent = step;
     targetSteps.append(chip);
   });
+  drawTargetPreview(lesson);
   lessonHint.textContent = completed
     ? nextLesson
       ? `Hint: You can replay this mission or jump into "${nextLesson.title}" next.`
