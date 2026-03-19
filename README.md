@@ -50,6 +50,7 @@ Note: the current Python runtime uses Pyodide loaded from the official CDN on fi
 - A working in-browser Python runtime connected to a canvas drawing API.
 - A lesson catalog with mission text, hints, and simple checkpoint rules.
 - Local progress saving for selected lessons, code drafts, and completed checkpoints.
+- Guided mission flow with lesson unlocking and one-click next-mission navigation.
 - A first-pass lesson map and child-friendly product direction.
 - Architecture notes for adding a Python runner and lesson engine next.
 

@@ -13,6 +13,10 @@ const lessonMission = document.querySelector("#lesson-mission");
 const lessonHint = document.querySelector("#lesson-hint");
 const checkpointCopy = document.querySelector("#checkpoint-copy");
 const checkpointResult = document.querySelector("#checkpoint-result");
+const celebrationCard = document.querySelector("#celebration-card");
+const celebrationTitle = document.querySelector("#celebration-title");
+const celebrationCopy = document.querySelector("#celebration-copy");
+const nextLessonButton = document.querySelector("#next-lesson-button");
 const codeEditor = document.querySelector("#code-editor");
 const editorStatus = document.querySelector("#editor-status");
 const runtimeLog = document.querySelector("#runtime-log");
@@ -113,6 +117,22 @@ function getLesson(trackId, lessonId) {
   return track?.lessons.find((lesson) => lesson.id === lessonId);
 }
 
+function getLessonIndex(trackId, lessonId) {
+  const track = getTrack(trackId);
+  return track?.lessons.findIndex((lesson) => lesson.id === lessonId) ?? -1;
+}
+
+function getNextLesson(trackId, lessonId) {
+  const track = getTrack(trackId);
+  const currentIndex = getLessonIndex(trackId, lessonId);
+
+  if (!track || currentIndex < 0) {
+    return null;
+  }
+
+  return track.lessons[currentIndex + 1] || null;
+}
+
 function getActiveLesson() {
   return getLesson(activeTrackId, activeLessonId);
 }
@@ -123,6 +143,22 @@ function getSavedDraft(trackId, lessonId) {
 
 function isLessonComplete(trackId, lessonId) {
   return Boolean(progressState.completedLessons[trackId]?.[lessonId]);
+}
+
+function isLessonUnlocked(trackId, lessonId) {
+  const track = getTrack(trackId);
+  const lessonIndex = getLessonIndex(trackId, lessonId);
+
+  if (!track || lessonIndex < 0) {
+    return false;
+  }
+
+  if (lessonIndex === 0) {
+    return true;
+  }
+
+  const previousLesson = track.lessons[lessonIndex - 1];
+  return isLessonComplete(trackId, previousLesson.id);
 }
 
 function getCompletedCount(trackId) {
@@ -160,6 +196,33 @@ function markLessonComplete(trackId, lessonId) {
   persistProgressState();
 }
 
+function getTrackProgressLabel(trackId) {
+  const track = getTrack(trackId);
+  return `${getCompletedCount(trackId)} of ${track?.lessons.length || 0} missions complete`;
+}
+
+function hideCelebration() {
+  celebrationCard.classList.add("hidden");
+  celebrationCopy.textContent = "";
+  nextLessonButton.textContent = "Next Mission";
+}
+
+function showCelebration(currentLesson, nextLesson) {
+  celebrationCard.classList.remove("hidden");
+
+  if (nextLesson) {
+    celebrationTitle.textContent = "Mission complete";
+    celebrationCopy.textContent = `You unlocked "${nextLesson.title}". Keep the momentum going with the next drawing challenge.`;
+    nextLessonButton.textContent = `Open ${nextLesson.title}`;
+    nextLessonButton.disabled = false;
+  } else {
+    celebrationTitle.textContent = "Track complete";
+    celebrationCopy.textContent = "You finished every mission in this track. You can replay them, remix them, or switch tracks for a new challenge.";
+    nextLessonButton.textContent = "All Missions Complete";
+    nextLessonButton.disabled = true;
+  }
+}
+
 async function loadLessonCatalog() {
   try {
     const response = await fetch("../public/lessons.json");
@@ -186,13 +249,17 @@ function renderTrack(trackId) {
   ensureTrackContainers(trackId);
   activeTrackId = trackId;
   progressState.activeTrackId = trackId;
-  activeLessonId = progressState.activeLessonIdByTrack[trackId] || track.lessons[0]?.id || "";
+
+  const preferredLessonId = progressState.activeLessonIdByTrack[trackId] || track.lessons[0]?.id || "";
+  activeLessonId = isLessonUnlocked(trackId, preferredLessonId) ? preferredLessonId : track.lessons[0]?.id || "";
   progressState.activeLessonIdByTrack[trackId] = activeLessonId;
+
   trackTitle.textContent = track.title;
-  trackProgress.textContent = `${getCompletedCount(trackId)} of ${track.lessons.length} missions complete`;
+  trackProgress.textContent = getTrackProgressLabel(trackId);
   checkpointCopy.textContent = track.checkpointPrompt;
   renderLessonList(track);
   renderLessonDetails();
+  hideCelebration();
   persistProgressState();
 }
 
@@ -202,20 +269,29 @@ function renderLessonList(track) {
   track.lessons.forEach((lesson) => {
     const isActive = lesson.id === activeLessonId;
     const isComplete = isLessonComplete(track.id, lesson.id);
+    const isUnlocked = isLessonUnlocked(track.id, lesson.id);
     const item = document.createElement("button");
 
     item.type = "button";
-    item.className = `lesson-card ${isActive ? "active" : ""} ${isComplete ? "completed" : ""}`.trim();
+    item.className = `lesson-card ${isActive ? "active" : ""} ${isComplete ? "completed" : ""} ${isUnlocked ? "" : "locked"}`.trim();
     item.innerHTML = `
       <strong>${lesson.title}</strong>
-      <span>${lesson.description}</span>
+      <span>${isUnlocked ? lesson.description : "Finish the mission before this one to unlock it."}</span>
     `;
+
     item.addEventListener("click", () => {
+      if (!isUnlocked) {
+        setStatus("That mission is still locked.");
+        checkpointResult.textContent = "Finish the mission before it to unlock this one.";
+        return;
+      }
+
       saveCurrentDraft();
       activeLessonId = lesson.id;
       progressState.activeLessonIdByTrack[track.id] = lesson.id;
       renderLessonList(track);
       renderLessonDetails();
+      hideCelebration();
       checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
       setStatus(`Loaded lesson: ${lesson.title}`);
       setLog(`Lesson loaded: ${lesson.title}`);
@@ -233,13 +309,19 @@ function renderLessonDetails() {
   }
 
   const savedDraft = getSavedDraft(activeTrackId, lesson.id);
+  const completed = isLessonComplete(activeTrackId, lesson.id);
+  const nextLesson = getNextLesson(activeTrackId, lesson.id);
 
   lessonTitle.textContent = lesson.title;
-  lessonStatus.textContent = isLessonComplete(activeTrackId, lesson.id) ? "Completed" : "In progress";
+  lessonStatus.textContent = completed ? "Completed" : "In progress";
   lessonDescription.textContent = lesson.description;
   lessonConcept.textContent = `Concept: ${lesson.concept}`;
   lessonMission.textContent = `Mission: ${lesson.mission}`;
-  lessonHint.textContent = `Hint: ${lesson.hint}`;
+  lessonHint.textContent = completed
+    ? nextLesson
+      ? `Hint: You can replay this mission or jump into "${nextLesson.title}" next.`
+      : "Hint: You finished the whole track. Try remixing your art or switch tracks."
+    : `Hint: ${lesson.hint}`;
   codeEditor.value = savedDraft || lesson.starterCode;
 }
 
@@ -472,15 +554,18 @@ function evaluateCheckpoint(lesson, source) {
   }
 
   if (failures.length > 0) {
+    hideCelebration();
     checkpointResult.textContent = `Checkpoint not yet passed. Next try: ${failures.join(", ")}.`;
     return false;
   }
 
   checkpointResult.textContent = lesson.successMessage;
   markLessonComplete(activeTrackId, lesson.id);
-  trackProgress.textContent = `${getCompletedCount(activeTrackId)} of ${getTrack(activeTrackId).lessons.length} missions complete`;
+  trackProgress.textContent = getTrackProgressLabel(activeTrackId);
   lessonStatus.textContent = "Completed";
   renderLessonList(getTrack(activeTrackId));
+  renderLessonDetails();
+  showCelebration(lesson, getNextLesson(activeTrackId, lesson.id));
   return true;
 }
 
@@ -629,6 +714,7 @@ async function runPythonCode() {
     resetCanvasState();
     resetMetrics();
     prepareCanvas();
+    hideCelebration();
     setLog("Running Python code...");
     setStatus("Running lesson code...");
 
@@ -652,12 +738,42 @@ run_user_code(source_code)
         : "The code ran, and the checkpoint has a clue for your next try.",
     );
   } catch (error) {
+    hideCelebration();
     setStatus("The code needs a small fix before it can run.");
     checkpointResult.textContent = "The mission checkpoint is waiting for a successful run.";
     appendLogLine(error?.message || String(error));
   } finally {
     runDemoButton.disabled = false;
   }
+}
+
+function openLesson(lessonId) {
+  const lesson = getLesson(activeTrackId, lessonId);
+
+  if (!lesson || !isLessonUnlocked(activeTrackId, lessonId)) {
+    return;
+  }
+
+  saveCurrentDraft();
+  activeLessonId = lessonId;
+  progressState.activeLessonIdByTrack[activeTrackId] = lessonId;
+  renderLessonList(getTrack(activeTrackId));
+  renderLessonDetails();
+  hideCelebration();
+  checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
+  setStatus(`Loaded lesson: ${lesson.title}`);
+  setLog(`Lesson loaded: ${lesson.title}`);
+  persistProgressState();
+}
+
+function openNextLesson() {
+  const nextLesson = getNextLesson(activeTrackId, activeLessonId);
+
+  if (!nextLesson || !isLessonUnlocked(activeTrackId, nextLesson.id)) {
+    return;
+  }
+
+  openLesson(nextLesson.id);
 }
 
 function resetWorkspace() {
@@ -674,6 +790,7 @@ function resetWorkspace() {
   resetCanvasState();
   resetMetrics();
   drawWelcomeScene();
+  hideCelebration();
   checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
   setLog("Canvas reset. Starter code restored for this lesson.");
   setStatus("Workspace reset.");
@@ -701,6 +818,10 @@ runDemoButton.addEventListener("click", () => {
 
 resetDemoButton.addEventListener("click", () => {
   resetWorkspace();
+});
+
+nextLessonButton.addEventListener("click", () => {
+  openNextLesson();
 });
 
 codeEditor.addEventListener("input", () => {

@@ -195,6 +195,23 @@ button:hover {
   text-align: left;
 }
 
+.lesson-card.locked {
+  opacity: 0.6;
+  background: linear-gradient(180deg, #fffaf2, #f2eee6);
+}
+
+.lesson-card.locked strong::after {
+  content: "Locked";
+  display: inline-block;
+  margin-left: 10px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(93, 95, 105, 0.1);
+  color: #5d5f69;
+  font-size: 0.74rem;
+  vertical-align: middle;
+}
+
 .lesson-card strong,
 .lesson-card span {
   display: block;
@@ -328,6 +345,24 @@ canvas {
   padding-top: 12px;
   border-top: 1px solid rgba(33, 78, 95, 0.14);
   font-weight: 700;
+}
+
+.celebration-card {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, #fff6d6, #fffdf0);
+  border: 1px solid rgba(222, 91, 49, 0.16);
+}
+
+.celebration-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+
+.hidden {
+  display: none;
 }
 
 .hero-card ul {
