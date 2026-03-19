@@ -10,10 +10,10 @@
         {
           "id": "meet-the-turtle",
           "title": "Meet the Turtle",
-          "description": "Tell the turtle where to go and watch a line appear on the canvas.",
-          "mission": "Make at least one line and add a message to your picture.",
-          "visualGoal": "A single bright path with a short message at the end.",
-          "targetSteps": ["Move the turtle forward", "Add a word bubble or label"],
+          "description": "Tell the turtle where to go and watch your first line appear.",
+          "mission": "Make one bright path and add a short message.",
+          "visualGoal": "A single line with a happy word at the end.",
+          "targetSteps": ["Move the turtle forward", "Add a short message"],
           "reward": {
             "title": "Trailblazer Badge",
             "flavor": "You made your very first turtle trail."
@@ -22,9 +22,9 @@
             "kind": "line-message",
             "palette": ["skyblue", "slateblue"]
           },
-          "hint": "Start with move(90), then try write(\"hello\", 24).",
+          "hint": "Start with move(120), then try write(\"Hi!\", 22).",
           "concept": "Commands run from top to bottom in order.",
-          "starterCode": "pen_color(\"skyblue\")\nmove(120)\nwrite(\"Hello, turtle!\", 22)",
+          "starterCode": "pen_color(\"skyblue\")\nmove(120)\nwrite(\"Hi!\", 22)",
           "check": {
             "type": "drawing",
             "minSegments": 1,
@@ -34,12 +34,64 @@
           "successMessage": "Nice work. You made the turtle move and added your own message."
         },
         {
-          "id": "corners-and-squares",
-          "title": "Corners and Squares",
-          "description": "Use turns to make corners and close a square.",
+          "id": "long-and-short-lines",
+          "title": "Long and Short Lines",
+          "description": "Change the number inside move(...) to make lines of different lengths.",
+          "mission": "Draw at least three lines, and make one of them longer than the others.",
+          "visualGoal": "A group of lines with clearly different lengths.",
+          "targetSteps": ["Draw more than one line", "Try a small number and a bigger number"],
+          "reward": {
+            "title": "Length Explorer Badge",
+            "flavor": "You discovered that numbers change how far the turtle moves."
+          },
+          "preview": {
+            "kind": "line-lengths",
+            "palette": ["#5d87ff"]
+          },
+          "hint": "Try move(40), move(90), and move(140) with little turns in between.",
+          "concept": "Numbers inside commands change what the turtle does.",
+          "starterCode": "pen_color(\"royalblue\")\nmove(40)\nturn(120)\nmove(90)\nturn(120)\nmove(140)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 3,
+            "minTurns": 2,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Great job. You used different numbers to make different line lengths."
+        },
+        {
+          "id": "turn-left-turn-right",
+          "title": "Turn Left, Turn Right",
+          "description": "Use turns to make corners, bends, and zigzags.",
+          "mission": "Make a zigzag path with lots of corners.",
+          "visualGoal": "A back-and-forth zigzag path.",
+          "targetSteps": ["Move a little", "Turn and move again", "Repeat the bend a few times"],
+          "reward": {
+            "title": "Turn Tamer Badge",
+            "flavor": "You learned how direction changes the next line."
+          },
+          "preview": {
+            "kind": "zigzag",
+            "palette": ["#ff8a5b"]
+          },
+          "hint": "Try move(60), turn(60), move(60), turn(-120), then keep going.",
+          "concept": "Turning changes the direction of the next line.",
+          "starterCode": "pen_color(\"coral\")\nline_width(5)\nmove(60)\nturn(60)\nmove(60)\nturn(-120)\nmove(60)\nturn(60)\nmove(60)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 4,
+            "minTurns": 3,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Zigzag success. You used turns to guide the turtle in new directions."
+        },
+        {
+          "id": "draw-a-square",
+          "title": "Draw a Square",
+          "description": "Put move and turn together to make a box shape.",
           "mission": "Draw a square with four equal sides.",
-          "visualGoal": "A neat box shape with four matching sides.",
-          "targetSteps": ["Repeat the same move four times", "Turn a quarter-turn after each side"],
+          "visualGoal": "A neat square with four matching sides.",
+          "targetSteps": ["Move the same amount each time", "Turn a quarter-turn after every side"],
           "reward": {
             "title": "Corner Captain Badge",
             "flavor": "You taught the turtle how to make clean corners."
@@ -49,7 +101,7 @@
             "palette": ["tomato"]
           },
           "hint": "A square can be made with repeat(4): move(90) turn(90).",
-          "concept": "Turning the turtle changes the direction of the next line.",
+          "concept": "A shape is made by combining distance and turning.",
           "starterCode": "pen_color(\"tomato\")\nline_width(6)\nrepeat(4):\n    move(90)\n    turn(90)",
           "check": {
             "type": "drawing",
@@ -58,33 +110,112 @@
             "requiresRepeat": true,
             "requiredCommands": ["move", "turn"]
           },
-          "successMessage": "Square complete. You used a loop to repeat the same two commands."
+          "successMessage": "Square complete. You used the same move and turn to close the shape."
         },
         {
           "id": "repeat-magic",
           "title": "Repeat Magic",
-          "description": "Use loops and colors to turn one shape into a pattern.",
-          "mission": "Make a colorful pattern with more than one color.",
-          "visualGoal": "A pattern that repeats and changes color at least once.",
-          "targetSteps": ["Draw one repeating shape", "Change color and draw again"],
+          "description": "Use repeat(...) so the turtle does the same job again and again.",
+          "mission": "Draw a repeated shape without copying the same line of code over and over.",
+          "visualGoal": "A shape made with a loop instead of lots of repeated lines.",
+          "targetSteps": ["Use repeat(...)", "Put move and turn inside the loop"],
           "reward": {
-            "title": "Pattern Party Badge",
-            "flavor": "You mixed loops and color like a coding artist."
+            "title": "Loop Starter Badge",
+            "flavor": "You used a loop to make the turtle do magic repeats."
           },
           "preview": {
-            "kind": "double-flower",
-            "palette": ["goldenrod", "teal"]
+            "kind": "repeat-pattern",
+            "palette": ["goldenrod"]
           },
-          "hint": "Try drawing a small shape, turning a little, and changing colors before you repeat again.",
-          "concept": "Loops help us create patterns with less code.",
-          "starterCode": "line_width(4)\npen_color(\"goldenrod\")\nrepeat(6):\n    move(70)\n    turn(60)\n\nturn(20)\npen_color(\"teal\")\nrepeat(6):\n    move(70)\n    turn(60)",
+          "hint": "Try repeat(6): move(60) turn(60).",
+          "concept": "Loops repeat instructions so you write less code.",
+          "starterCode": "pen_color(\"goldenrod\")\nline_width(4)\nrepeat(6):\n    move(60)\n    turn(60)",
           "check": {
             "type": "drawing",
-            "minSegments": 8,
-            "requiresRepeat": true,
-            "minColorChanges": 2
+            "minSegments": 6,
+            "minTurns": 6,
+            "requiresRepeat": true
           },
-          "successMessage": "Pattern unlocked. You mixed loops and colors to build something bigger."
+          "successMessage": "Loop magic unlocked. One loop made a whole shape."
+        },
+        {
+          "id": "triangles-and-hexagons",
+          "title": "Triangles and Hexagons",
+          "description": "Change the repeat count and turn amount to make different shapes.",
+          "mission": "Draw a triangle and then a hexagon.",
+          "visualGoal": "Two different loop-made shapes on the page.",
+          "targetSteps": ["Make a triangle with 3 sides", "Make a hexagon with 6 sides"],
+          "reward": {
+            "title": "Shape Switcher Badge",
+            "flavor": "You discovered that loops can build different polygons."
+          },
+          "preview": {
+            "kind": "polygons",
+            "palette": ["#ff7b72", "#4b8bff"]
+          },
+          "hint": "Try a triangle first, then lift the pen, move, and try a hexagon.",
+          "concept": "Changing a loop changes the shape it creates.",
+          "starterCode": "pen_color(\"salmon\")\nrepeat(3):\n    move(80)\n    turn(120)\n\npen_up()\ngo_to(340, 220)\npen_down()\npen_color(\"cornflowerblue\")\nrepeat(6):\n    move(55)\n    turn(60)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 9,
+            "minTurns": 9,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You made two different polygons by changing the loop."
+        },
+        {
+          "id": "pattern-spinner",
+          "title": "Pattern Spinner",
+          "description": "Spin a shape a little each time to make a bigger pattern.",
+          "mission": "Make a pattern by drawing a shape, turning, and drawing it again.",
+          "visualGoal": "A spinning shape pattern that grows around the center.",
+          "targetSteps": ["Draw one shape with a loop", "Turn a little", "Repeat the whole shape again"],
+          "reward": {
+            "title": "Pattern Spinner Badge",
+            "flavor": "You turned one shape into a whole pattern."
+          },
+          "preview": {
+            "kind": "spinner",
+            "palette": ["#de5b31"]
+          },
+          "hint": "Try a loop inside another repeat, then turn between each shape.",
+          "concept": "Repeating a repeated shape creates bigger patterns.",
+          "starterCode": "pen_color(\"coral\")\nline_width(3)\nrepeat(8):\n    repeat(4):\n        move(50)\n        turn(90)\n    turn(45)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 16,
+            "minTurns": 12,
+            "requiresRepeat": true
+          },
+          "successMessage": "Pattern spinner complete. You repeated a whole shape to make art."
+        },
+        {
+          "id": "color-changes",
+          "title": "Color Changes",
+          "description": "Change the pen color to make your pattern brighter and more interesting.",
+          "mission": "Make a repeating drawing with at least three colors.",
+          "visualGoal": "A colorful pattern with obvious color changes.",
+          "targetSteps": ["Draw a repeating shape", "Change color", "Draw again in new colors"],
+          "reward": {
+            "title": "Color Spark Badge",
+            "flavor": "You added color changes like a coding artist."
+          },
+          "preview": {
+            "kind": "color-bands",
+            "palette": ["tomato", "goldenrod", "teal"]
+          },
+          "hint": "Try drawing the same little shape again in a new color.",
+          "concept": "Commands can change the turtle state, including color.",
+          "starterCode": "line_width(4)\npen_color(\"tomato\")\nrepeat(4):\n    move(60)\n    turn(90)\n\npen_up()\ngo_to(260, 180)\npen_down()\npen_color(\"goldenrod\")\nrepeat(4):\n    move(60)\n    turn(90)\n\npen_up()\ngo_to(360, 180)\npen_down()\npen_color(\"teal\")\nrepeat(4):\n    move(60)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 12,
+            "requiresRepeat": true,
+            "minColorChanges": 3
+          },
+          "successMessage": "Color success. You used multiple colors to make your drawing pop."
         }
       ]
     },
@@ -96,56 +227,214 @@
       "checkpointPrompt": "Build the drawing, then explain how the code structure made it easier to change.",
       "lessons": [
         {
-          "id": "drawing-with-intent",
-          "title": "Drawing with Intent",
-          "description": "Connect movement commands to geometric results.",
-          "mission": "Draw at least two distinct shapes on the canvas.",
-          "visualGoal": "Two separate shapes placed on different parts of the canvas.",
-          "targetSteps": ["Draw one closed shape", "Lift the pen and place the next shape elsewhere"],
+          "id": "sequence-and-side-effects",
+          "title": "Sequence and Side Effects",
+          "description": "See how ordered commands produce visible output on the canvas.",
+          "mission": "Draw a line and label it with text.",
+          "visualGoal": "A simple drawn path with a text label attached to it.",
+          "targetSteps": ["Run one movement command", "Add one text annotation"],
           "reward": {
-            "title": "Layout Scout Badge",
-            "flavor": "You controlled both shape and placement."
+            "title": "Sequence Scout Badge",
+            "flavor": "You connected ordered code to visible output."
           },
           "preview": {
-            "kind": "two-shapes",
-            "palette": ["coral", "steelblue"]
+            "kind": "line-message",
+            "palette": ["slateblue", "royalblue"]
           },
-          "hint": "A line plus a looped shape is enough to pass this one.",
-          "concept": "Geometric output is a direct result of sequence, heading, and distance.",
-          "starterCode": "pen_color(\"coral\")\nline_width(5)\nrepeat(3):\n    move(80)\n    turn(120)\n\npen_up()\ngo_to(360, 220)\npen_down()\npen_color(\"steelblue\")\nrepeat(4):\n    move(70)\n    turn(90)",
+          "hint": "A single move plus write(...) is enough to prove the idea.",
+          "concept": "Statements run in order and can create side effects on the canvas.",
+          "starterCode": "pen_color(\"slateblue\")\nmove(120)\nwrite(\"Sequence\", 18)",
           "check": {
             "type": "drawing",
-            "minSegments": 7,
-            "minTurns": 6,
-            "requiredCommands": ["go_to", "pen_up", "pen_down"]
+            "minSegments": 1,
+            "requiresWrite": true,
+            "requiredCommands": ["move", "write"]
           },
-          "successMessage": "You built multiple shapes and controlled where drawing started."
+          "successMessage": "You demonstrated ordered execution with visible side effects."
         },
         {
-          "id": "functions-as-tools",
-          "title": "Functions as Tools",
-          "description": "Package drawing behavior into reusable helpers.",
-          "mission": "Create a helper function and use it more than once.",
-          "visualGoal": "A repeated motif made from the same helper function.",
-          "targetSteps": ["Define one helper", "Call it more than once to build a larger image"],
+          "id": "parameters-as-inputs",
+          "title": "Parameters as Inputs",
+          "description": "Use different numbers to change movement results.",
+          "mission": "Draw multiple lines with clearly different lengths.",
+          "visualGoal": "Several lines whose lengths are visually distinct.",
+          "targetSteps": ["Use more than one move value", "Separate lines with turns"],
           "reward": {
-            "title": "Builder Badge",
-            "flavor": "You turned repeated code into a reusable tool."
+            "title": "Input Reader Badge",
+            "flavor": "You used numeric inputs to change output."
           },
           "preview": {
-            "kind": "petal-wheel",
-            "palette": ["orchid"]
+            "kind": "line-lengths",
+            "palette": ["#536dfe"]
           },
-          "hint": "Try defining a shape helper such as def petal(): or def square(): then call it in a loop.",
-          "concept": "Functions let us name and reuse a pattern of instructions.",
-          "starterCode": "pen_color(\"orchid\")\nline_width(3)\n\ndef petal():\n    repeat(6):\n        move(50)\n        turn(60)\n\nrepeat(6):\n    petal()\n    turn(60)",
+          "hint": "Use different move distances so the output changes in a visible way.",
+          "concept": "Arguments are inputs that shape runtime behavior.",
+          "starterCode": "pen_color(\"royalblue\")\nmove(50)\nturn(120)\nmove(90)\nturn(120)\nmove(140)",
           "check": {
-            "type": "code",
-            "requiresFunctionDefinition": true,
-            "minFunctionCalls": 2,
+            "type": "drawing",
+            "minSegments": 3,
+            "minTurns": 2,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "You used parameters to control how far the turtle moved."
+        },
+        {
+          "id": "heading-and-direction",
+          "title": "Heading and Direction",
+          "description": "Explore how turning changes the next path segment.",
+          "mission": "Make a bent or zigzag path with several directional changes.",
+          "visualGoal": "A multi-corner path instead of a straight line.",
+          "targetSteps": ["Move", "Turn", "Move again in a new direction"],
+          "reward": {
+            "title": "Heading Guide Badge",
+            "flavor": "You controlled orientation, not just distance."
+          },
+          "preview": {
+            "kind": "zigzag",
+            "palette": ["#ff7f50"]
+          },
+          "hint": "A sequence of move and turn commands will make the direction changes obvious.",
+          "concept": "Heading determines the direction of the next movement.",
+          "starterCode": "pen_color(\"coral\")\nline_width(5)\nmove(60)\nturn(60)\nmove(60)\nturn(-120)\nmove(60)\nturn(60)\nmove(60)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 4,
+            "minTurns": 3,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "You created a directional path by changing heading between segments."
+        },
+        {
+          "id": "square-from-sequence",
+          "title": "Square from Sequence",
+          "description": "Combine movement and turning into a predictable closed figure.",
+          "mission": "Draw a square using repeated geometry.",
+          "visualGoal": "A closed four-sided figure with matching sides.",
+          "targetSteps": ["Use the same move value each time", "Turn 90 degrees between sides"],
+          "reward": {
+            "title": "Geometry Builder Badge",
+            "flavor": "You linked simple instructions to a complete shape."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["#de5b31"]
+          },
+          "hint": "Try a loop rather than writing the same pair of commands four times.",
+          "concept": "Simple sequences can create predictable geometric outcomes.",
+          "starterCode": "pen_color(\"tomato\")\nline_width(5)\nrepeat(4):\n    move(90)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 4,
+            "minTurns": 4,
+            "requiresRepeat": true,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "You created a square through controlled repetition and turning."
+        },
+        {
+          "id": "loops-for-structure",
+          "title": "Loops for Structure",
+          "description": "Use a loop to organize repeated work into a smaller block of code.",
+          "mission": "Build a repeated shape with repeat(...) instead of duplicated lines.",
+          "visualGoal": "A loop-based shape with clean repeated sides.",
+          "targetSteps": ["Use repeat(...)", "Place the repeated instructions inside the loop"],
+          "reward": {
+            "title": "Loop Logic Badge",
+            "flavor": "You used repetition as structure, not just convenience."
+          },
+          "preview": {
+            "kind": "repeat-pattern",
+            "palette": ["#d09a10"]
+          },
+          "hint": "A regular polygon is a simple way to test a loop.",
+          "concept": "Loops reduce duplication while preserving consistent behavior.",
+          "starterCode": "pen_color(\"goldenrod\")\nrepeat(6):\n    move(60)\n    turn(60)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 6,
+            "minTurns": 6,
             "requiresRepeat": true
           },
-          "successMessage": "Function success. Your drawing uses a reusable helper instead of repeated copy-paste."
+          "successMessage": "You used a loop to organize repeated instructions clearly."
+        },
+        {
+          "id": "polygon-comparisons",
+          "title": "Polygon Comparisons",
+          "description": "Change loop counts and turn angles to compare different regular shapes.",
+          "mission": "Draw two different polygons in different positions.",
+          "visualGoal": "Distinct loop-made shapes placed apart from one another.",
+          "targetSteps": ["Draw one polygon", "Move to a new location", "Draw a second polygon"],
+          "reward": {
+            "title": "Polygon Analyst Badge",
+            "flavor": "You compared how loop settings affect shape geometry."
+          },
+          "preview": {
+            "kind": "polygons",
+            "palette": ["#ff7b72", "#4b8bff"]
+          },
+          "hint": "A triangle and a hexagon make a strong contrast.",
+          "concept": "Loop count and turning angle control polygon structure.",
+          "starterCode": "pen_color(\"salmon\")\nrepeat(3):\n    move(80)\n    turn(120)\n\npen_up()\ngo_to(340, 220)\npen_down()\npen_color(\"cornflowerblue\")\nrepeat(6):\n    move(55)\n    turn(60)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 9,
+            "minTurns": 9,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You compared two different polygons by changing loop structure."
+        },
+        {
+          "id": "pattern-composition",
+          "title": "Pattern Composition",
+          "description": "Repeat a whole repeated shape to make a larger radial pattern.",
+          "mission": "Create a spun pattern by drawing a shape, turning, and drawing it again.",
+          "visualGoal": "A repeated motif arranged around the center.",
+          "targetSteps": ["Use one loop for the inner shape", "Use another repeat for the overall pattern"],
+          "reward": {
+            "title": "Pattern Architect Badge",
+            "flavor": "You built structure at more than one level."
+          },
+          "preview": {
+            "kind": "spinner",
+            "palette": ["#de5b31"]
+          },
+          "hint": "A square repeated around a center point is a clear first pattern.",
+          "concept": "Layered repetition creates larger visual structures.",
+          "starterCode": "pen_color(\"coral\")\nline_width(3)\nrepeat(8):\n    repeat(4):\n        move(50)\n        turn(90)\n    turn(45)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 16,
+            "minTurns": 12,
+            "requiresRepeat": true
+          },
+          "successMessage": "You composed a larger pattern by repeating an already repeated shape."
+        },
+        {
+          "id": "color-as-state",
+          "title": "Color as State",
+          "description": "Treat pen color as state that changes how later drawing commands behave.",
+          "mission": "Draw a repeated pattern using at least three color changes.",
+          "visualGoal": "A structured drawing with clear shifts in color state.",
+          "targetSteps": ["Draw one shape", "Change pen color", "Draw again with new state"],
+          "reward": {
+            "title": "State Painter Badge",
+            "flavor": "You changed drawing state to change the whole result."
+          },
+          "preview": {
+            "kind": "color-bands",
+            "palette": ["tomato", "goldenrod", "teal"]
+          },
+          "hint": "Reuse the same structure with different pen colors to make the changes obvious.",
+          "concept": "State-changing commands affect what later instructions produce.",
+          "starterCode": "line_width(4)\npen_color(\"tomato\")\nrepeat(4):\n    move(60)\n    turn(90)\n\npen_up()\ngo_to(260, 180)\npen_down()\npen_color(\"goldenrod\")\nrepeat(4):\n    move(60)\n    turn(90)\n\npen_up()\ngo_to(360, 180)\npen_down()\npen_color(\"teal\")\nrepeat(4):\n    move(60)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 12,
+            "requiresRepeat": true,
+            "minColorChanges": 3
+          },
+          "successMessage": "You changed color state intentionally and reused structure across the drawing."
         }
       ]
     }

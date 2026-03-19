@@ -56,6 +56,7 @@ Note: the current Python runtime uses Pyodide loaded from the official CDN on fi
 - Separate local learner profiles with a compact dashboard for current track, badges, and last result.
 - Recent activity history for each learner so progress is easy to review at a glance.
 - A parent overview panel that compares all learner profiles in one place.
+- The first curriculum chunk for both tracks, covering Units 1 and 2 of Python drawing foundations.
 - A first-pass lesson map and child-friendly product direction.
 - Architecture notes for adding a Python runner and lesson engine next.
 

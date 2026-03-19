@@ -456,13 +456,83 @@ function drawTargetPreview(lesson) {
       targetPreviewContext.font = '700 18px "Avenir Next", sans-serif';
       targetPreviewContext.fillText("hello", 295, 78);
       break;
+    case "line-lengths":
+      targetPreviewContext.strokeStyle = palette[0];
+      targetPreviewContext.beginPath();
+      targetPreviewContext.moveTo(90, 130);
+      targetPreviewContext.lineTo(150, 130);
+      targetPreviewContext.moveTo(90, 100);
+      targetPreviewContext.lineTo(220, 100);
+      targetPreviewContext.moveTo(90, 70);
+      targetPreviewContext.lineTo(320, 70);
+      targetPreviewContext.stroke();
+      break;
+    case "zigzag":
+      targetPreviewContext.strokeStyle = palette[0];
+      targetPreviewContext.beginPath();
+      targetPreviewContext.moveTo(80, 130);
+      targetPreviewContext.lineTo(145, 75);
+      targetPreviewContext.lineTo(210, 130);
+      targetPreviewContext.lineTo(275, 75);
+      targetPreviewContext.lineTo(340, 130);
+      targetPreviewContext.stroke();
+      break;
     case "square":
       targetPreviewContext.strokeStyle = palette[0];
       targetPreviewContext.strokeRect(160, 44, 120, 120);
       break;
+    case "repeat-pattern":
+      targetPreviewContext.strokeStyle = palette[0];
+      targetPreviewContext.strokeRect(145, 60, 70, 70);
+      targetPreviewContext.strokeRect(230, 60, 70, 70);
+      targetPreviewContext.strokeRect(187, 25, 70, 70);
+      break;
     case "double-flower":
       drawFlower(targetPreviewContext, 190, 102, 34, palette[0], 6);
       drawFlower(targetPreviewContext, 290, 102, 34, palette[1] || palette[0], 6);
+      break;
+    case "polygons":
+      targetPreviewContext.strokeStyle = palette[0];
+      targetPreviewContext.beginPath();
+      targetPreviewContext.moveTo(125, 138);
+      targetPreviewContext.lineTo(175, 52);
+      targetPreviewContext.lineTo(225, 138);
+      targetPreviewContext.closePath();
+      targetPreviewContext.stroke();
+      targetPreviewContext.strokeStyle = palette[1] || palette[0];
+      targetPreviewContext.beginPath();
+      for (let side = 0; side < 6; side += 1) {
+        const angle = (Math.PI / 3) * side;
+        const x = 340 + Math.cos(angle) * 48;
+        const y = 98 + Math.sin(angle) * 48;
+        if (side === 0) {
+          targetPreviewContext.moveTo(x, y);
+        } else {
+          targetPreviewContext.lineTo(x, y);
+        }
+      }
+      targetPreviewContext.closePath();
+      targetPreviewContext.stroke();
+      break;
+    case "spinner":
+      targetPreviewContext.strokeStyle = palette[0];
+      for (let step = 0; step < 8; step += 1) {
+        targetPreviewContext.save();
+        targetPreviewContext.translate(250, 98);
+        targetPreviewContext.rotate((Math.PI / 4) * step);
+        targetPreviewContext.strokeRect(-24, -24, 48, 48);
+        targetPreviewContext.restore();
+      }
+      break;
+    case "color-bands":
+      targetPreviewContext.lineWidth = 10;
+      palette.forEach((color, index) => {
+        targetPreviewContext.strokeStyle = color;
+        targetPreviewContext.beginPath();
+        targetPreviewContext.moveTo(110 + index * 85, 135);
+        targetPreviewContext.lineTo(110 + index * 85, 55);
+        targetPreviewContext.stroke();
+      });
       break;
     case "two-shapes":
       targetPreviewContext.strokeStyle = palette[0];
