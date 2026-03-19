@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homeschool Coders Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./learn.css" />
+    <script type="module" src="./learn.js"></script>
+  </head>
+  <body>
+    <div class="studio-shell">
+      <header class="studio-topbar">
+        <div class="topbar-left">
+          <a class="ghost-link" href="./index.html">Back Home</a>
+          <div>
+            <p class="eyebrow">Learning Studio</p>
+            <h1 id="workspace-title">Python Canvas Missions</h1>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <label class="profile-picker">
+            <span>Learner</span>
+            <select id="workspace-profile-select"></select>
+          </label>
+          <div class="track-switcher" role="tablist" aria-label="Track chooser">
+            <button id="track-kids" class="track-button" type="button">Kids Track</button>
+            <button id="track-explorer" class="track-button" type="button">Explorer Track</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="lesson-hero">
+        <div class="lesson-meta">
+          <p class="eyebrow">Current Lesson</p>
+          <h2 id="lesson-title">Loading lesson...</h2>
+          <p id="lesson-description" class="lesson-description"></p>
+        </div>
+        <div class="lesson-cards">
+          <article class="info-card mission-card">
+            <p class="info-label">Instructions</p>
+            <p id="lesson-mission" class="info-copy"></p>
+            <div id="lesson-steps" class="chip-row"></div>
+          </article>
+          <article class="info-card checkpoint-card">
+            <p class="info-label">Checkpoint</p>
+            <p id="checkpoint-copy" class="info-copy"></p>
+            <p id="lesson-hint" class="hint-copy"></p>
+          </article>
+        </div>
+      </section>
+
+      <main class="studio-grid sidebar-open">
+        <aside id="studio-sidebar" class="studio-sidebar">
+          <div class="sidebar-head">
+            <div>
+              <p class="eyebrow">Lesson Path</p>
+              <h3 id="track-title">Track</h3>
+              <p id="track-progress" class="sidebar-copy"></p>
+            </div>
+            <button id="toggle-sidebar" class="icon-button" type="button" aria-expanded="true">Collapse</button>
+          </div>
+
+          <div class="sidebar-tabs" role="tablist" aria-label="Sidebar sections">
+            <button id="tab-missions" class="sidebar-tab active" type="button">Explorer</button>
+            <button id="tab-badges" class="sidebar-tab" type="button">Badge Shelf</button>
+          </div>
+
+          <div id="panel-missions" class="sidebar-panel active">
+            <div id="lesson-list" class="lesson-list"></div>
+          </div>
+
+          <div id="panel-badges" class="sidebar-panel">
+            <p class="sidebar-copy">Every completed lesson lights up a new badge.</p>
+            <div id="badge-shelf" class="badge-shelf"></div>
+          </div>
+        </aside>
+
+        <section class="studio-column code-column">
+          <div class="panel-head compact">
+            <div>
+              <p class="eyebrow">Integrated Studio</p>
+              <h3>Write and run Python</h3>
+            </div>
+            <div class="action-row">
+              <button id="run-python" class="primary-button" type="button">Run Python</button>
+              <button id="reset-workspace" class="ghost-button" type="button">Reset</button>
+            </div>
+          </div>
+          <textarea id="code-editor" spellcheck="false" aria-label="Python editor"></textarea>
+          <div class="status-row">
+            <p id="editor-status">Loading workspace...</p>
+            <p id="lesson-status" class="status-pill">In progress</p>
+          </div>
+          <section class="runtime-panel">
+            <div class="panel-head compact runtime-head">
+              <div>
+                <p class="eyebrow">Runtime Log</p>
+                <h3>Feedback</h3>
+              </div>
+            </div>
+            <pre id="runtime-log">Runtime log will appear here.</pre>
+            <p id="checkpoint-result" class="checkpoint-result">Run your code to see whether the mission checkpoint passes.</p>
+          </section>
+        </section>
+
+        <section class="studio-column visual-column">
+          <article class="output-panel">
+            <div class="panel-head compact">
+              <div>
+                <p class="eyebrow">Visual Output</p>
+                <h3>Your canvas</h3>
+              </div>
+            </div>
+            <canvas id="drawing-surface" width="900" height="560"></canvas>
+          </article>
+
+          <article class="preview-panel">
+            <div class="panel-head compact">
+              <div>
+                <p class="eyebrow">Target Preview</p>
+                <h3>Lesson example</h3>
+              </div>
+            </div>
+            <canvas id="target-preview-canvas" width="420" height="180"></canvas>
+            <p id="target-preview-copy" class="preview-copy"></p>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <div id="celebration-modal" class="celebration-modal" aria-hidden="true">
+      <div class="celebration-backdrop"></div>
+      <div class="celebration-card">
+        <div id="confetti-layer" class="confetti-layer" aria-hidden="true"></div>
+        <p class="eyebrow">Lesson Complete</p>
+        <h2 id="celebration-title">You did it!</h2>
+        <div class="star-row" aria-label="Three stars earned">
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+        </div>
+        <p id="celebration-copy" class="celebration-copy"></p>
+        <div class="celebration-actions">
+          <button id="close-celebration" class="ghost-button" type="button">Stay Here</button>
+          <button id="next-lesson-button" class="primary-button" type="button">Next Lesson</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

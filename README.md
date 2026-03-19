@@ -46,23 +46,23 @@ Note: the current Python runtime uses Pyodide loaded from the official CDN on fi
 
 ## What is included now
 
-- A visual shell for the learning environment.
+- A two-page browser experience with a calmer home screen and a dedicated lesson studio.
 - A working in-browser Python runtime connected to a canvas drawing API.
-- A lesson catalog with mission text, hints, and simple checkpoint rules.
-- Local progress saving for selected lessons, code drafts, and completed checkpoints.
-- Guided mission flow with lesson unlocking and one-click next-mission navigation.
-- Reward badges and visual-goal cues to make each mission feel clearer and more playful.
-- Per-lesson target previews so learners can compare their drawing goal with a simple example.
-- Separate local learner profiles with a compact dashboard for current track, badges, and last result.
-- Recent activity history for each learner so progress is easy to review at a glance.
-- A parent overview panel that compares all learner profiles in one place.
+- Dynamic local learner profiles with names, ages, separate drafts, and separate progress.
+- A home page with profile creation plus a parent overview of every learner.
+- A lesson catalog with mission text, top-of-screen instructions, hints, and checkpoint rules.
+- Local progress saving for lessons, code drafts, badges, and completed checkpoints.
+- Guided mission flow with lesson unlocking and one-click next-lesson navigation.
+- A collapsible lesson-path sidebar with `Explorer` and `Badge Shelf` tabs.
+- Reward badges, target previews, and full-screen workspace focus for the code-and-canvas experience.
+- A celebration modal with three stars, confetti, and next-lesson flow when checkpoints pass.
 - The first full beginner path for both tracks, covering Units 1 through 3 of Python drawing foundations.
 - A first-pass lesson map and child-friendly product direction.
-- Architecture notes for adding a Python runner and lesson engine next.
+- Architecture notes for continuing into later curriculum units and richer teaching tools.
 
 ## Planned next milestones
 
-1. Add a browser-based Python runtime with a restricted drawing API.
-2. Build the lesson engine, checkpoint logic, and progress persistence.
-3. Implement the first guided missions for shapes, loops, and functions.
-4. Add adult-friendly `Explorer` lessons that explain the same concepts with more depth.
+1. Add richer curriculum content for Units 4 and 5, especially functions and decisions.
+2. Expand profile management with edit and archive controls.
+3. Add stronger teacher-facing progress review, timestamps, and lesson summaries.
+4. Vendor the browser Python runtime locally for a more fully offline setup.

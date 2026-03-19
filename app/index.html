@@ -4,151 +4,76 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Homeschool Coders</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./home.css" />
+    <script type="module" src="./app.js"></script>
   </head>
   <body>
-    <div class="page-shell">
-      <header class="hero">
+    <div class="home-shell">
+      <header class="hero-card">
         <div class="hero-copy">
-          <p class="eyebrow">Local-first coding playground</p>
-          <h1>Learn Python by drawing, experimenting, and building tiny wins.</h1>
+          <p class="eyebrow">Homeschool-friendly Python playground</p>
+          <h1>Build confidence, one tiny mission at a time.</h1>
           <p class="hero-text">
-            One workspace for guided lessons, code editing, turtle-style canvas
-            art, checkpoints, and progress tracking designed for both adult
-            learners and kids ages 6 to 9.
+            Pick a learner profile, jump into guided Python drawing missions, and keep progress local.
+            The home screen stays calm for setup. The lesson studio gets the whole spotlight.
           </p>
-          <div class="learner-bar">
-            <label class="editor-label" for="learner-select">Learner</label>
-            <select id="learner-select" class="learner-select"></select>
-          </div>
-          <div class="hero-actions">
-            <button id="load-kids-track" class="primary-button">
-              Preview Kids Track
-            </button>
-            <button id="load-explorer-track" class="secondary-button">
-              Preview Explorer Track
-            </button>
+          <div class="hero-pills">
+            <span>Python first</span>
+            <span>Ages 6-9 ready</span>
+            <span>Canvas drawing</span>
+            <span>Local progress</span>
           </div>
         </div>
-        <div class="hero-card">
-          <p class="card-label">Learner Dashboard</p>
-          <p id="dashboard-learner" class="reward-title">Learner</p>
-          <p id="dashboard-track" class="detail-copy"></p>
-          <p id="dashboard-mission" class="detail-copy"></p>
-          <p id="dashboard-badges" class="detail-copy"></p>
-          <p id="dashboard-last-result" class="detail-copy"></p>
-          <div class="history-card">
-            <p class="card-label badge-top">Recent Activity</p>
-            <div id="dashboard-history" class="history-list"></div>
+
+        <section class="create-card" aria-labelledby="create-profile-title">
+          <div>
+            <p class="section-label">Create Profile</p>
+            <h2 id="create-profile-title">Add a learner when you need one.</h2>
           </div>
-        </div>
+          <form id="profile-form" class="profile-form">
+            <label>
+              <span>Name</span>
+              <input id="profile-name" name="name" type="text" maxlength="32" placeholder="Ava" required />
+            </label>
+            <label>
+              <span>Age</span>
+              <input id="profile-age" name="age" type="number" min="4" max="99" placeholder="8" required />
+            </label>
+            <button type="submit" class="primary-button">Create Profile</button>
+          </form>
+          <p id="create-feedback" class="feedback-text">Profiles stay on this device and keep separate progress.</p>
+        </section>
       </header>
 
-      <section class="panel overview-panel">
-        <div class="panel-heading">
-          <p class="panel-kicker">Parent Overview</p>
-          <h2>All Learners</h2>
-        </div>
-        <div id="overview-grid" class="overview-grid"></div>
-      </section>
-
-      <main class="workspace-grid">
-        <section class="panel lesson-panel">
-          <div class="panel-heading">
-            <p class="panel-kicker">Lesson path</p>
-            <h2 id="track-title">Little Learners</h2>
-            <p id="track-progress" class="detail-copy">0 of 0 missions complete</p>
-          </div>
-          <div id="lesson-list" class="lesson-list"></div>
-          <div class="lesson-detail-card">
-            <p class="card-label">Mission</p>
-            <h3 id="lesson-title">Meet the Turtle</h3>
-            <p id="lesson-status" class="lesson-status">In progress</p>
-            <p id="lesson-description" class="detail-copy"></p>
-            <p id="lesson-concept" class="detail-copy"></p>
-            <p id="lesson-mission" class="detail-copy detail-strong"></p>
-            <p id="lesson-visual-goal" class="detail-copy"></p>
+      <main class="home-grid">
+        <section class="panel" aria-labelledby="profiles-title">
+          <div class="panel-head">
             <div>
-              <p class="card-label badge-top">Try This</p>
-              <div id="target-steps" class="target-steps"></div>
+              <p class="section-label">Profiles</p>
+              <h2 id="profiles-title">Choose who is learning today</h2>
             </div>
-            <div class="reward-card">
-              <p class="card-label badge-top">Reward</p>
-              <p id="reward-title" class="reward-title"></p>
-              <p id="reward-copy" class="detail-copy"></p>
-            </div>
-            <p id="lesson-hint" class="detail-copy"></p>
+            <p id="profile-count" class="meta-copy"></p>
           </div>
+          <div id="profiles-grid" class="profiles-grid"></div>
         </section>
 
-        <section class="panel editor-panel">
-          <div class="panel-heading">
-            <p class="panel-kicker">Integrated studio</p>
-            <h2>Starter code</h2>
-          </div>
-          <label class="editor-label" for="code-editor">Code playground</label>
-          <textarea id="code-editor" spellcheck="false">
-pen_color("skyblue")
-repeat(4):
-    move(90)
-    turn(90)
-          </textarea>
-          <div class="hint-card">
-            <p class="card-label">Available commands</p>
-            <p>
-              Try `move(90)`, `turn(90)`, `pen_color("tomato")`,
-              `line_width(6)`, `pen_up()`, `pen_down()`, `go_to(260, 180)`, and
-              `write("hello", 24)`.
-            </p>
-          </div>
-          <div class="hint-card">
-            <p class="card-label">Badge Shelf</p>
-            <div id="badge-shelf" class="badge-shelf"></div>
-          </div>
-          <div class="editor-actions">
-            <button id="run-demo" class="primary-button">Run Python</button>
-            <button id="reset-demo" class="secondary-button">Reset</button>
-          </div>
-          <p id="editor-status" class="status-text">
-            Loading the browser runtime for the first time may take a moment.
-          </p>
-          <pre id="runtime-log" class="runtime-log">Runtime log will appear here.</pre>
-        </section>
-
-        <section class="panel output-panel">
-          <div class="panel-heading">
-            <p class="panel-kicker">Visual output</p>
-            <h2>Canvas preview</h2>
-          </div>
-          <canvas id="drawing-surface" width="520" height="360"></canvas>
-          <div class="target-preview-card">
-            <p class="card-label">Target Preview</p>
-            <canvas id="target-preview-canvas" width="520" height="200"></canvas>
-            <p id="target-preview-copy" class="detail-copy">
-              A tiny example of the mission goal will appear here.
-            </p>
-          </div>
-          <div class="checkpoint-card">
-            <p class="card-label">Checkpoint idea</p>
-            <p id="checkpoint-copy">
-              Draw a square with four equal sides, then explain what the loop is
-              doing.
-            </p>
-            <p id="checkpoint-result" class="checkpoint-result">
-              Run your code to see whether the mission checkpoint passes.
-            </p>
-            <div id="celebration-card" class="celebration-card hidden">
-              <p id="celebration-title" class="celebration-title">Mission complete</p>
-              <p id="celebration-copy" class="detail-copy"></p>
-              <button id="next-lesson-button" class="primary-button">
-                Next Mission
-              </button>
+        <section class="panel" aria-labelledby="overview-title">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Parent Overview</p>
+              <h2 id="overview-title">Quick progress snapshot</h2>
             </div>
+            <p class="meta-copy">All learner progress stays local in the browser.</p>
           </div>
+          <div id="overview-grid" class="overview-grid"></div>
         </section>
       </main>
     </div>
-
-    <script src="./app.js" type="module"></script>
   </body>
 </html>
