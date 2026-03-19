@@ -10,7 +10,11 @@ const lessonStatus = document.querySelector("#lesson-status");
 const lessonDescription = document.querySelector("#lesson-description");
 const lessonConcept = document.querySelector("#lesson-concept");
 const lessonMission = document.querySelector("#lesson-mission");
+const lessonVisualGoal = document.querySelector("#lesson-visual-goal");
 const lessonHint = document.querySelector("#lesson-hint");
+const targetSteps = document.querySelector("#target-steps");
+const rewardTitle = document.querySelector("#reward-title");
+const rewardCopy = document.querySelector("#reward-copy");
 const checkpointCopy = document.querySelector("#checkpoint-copy");
 const checkpointResult = document.querySelector("#checkpoint-result");
 const celebrationCard = document.querySelector("#celebration-card");
@@ -20,6 +24,7 @@ const nextLessonButton = document.querySelector("#next-lesson-button");
 const codeEditor = document.querySelector("#code-editor");
 const editorStatus = document.querySelector("#editor-status");
 const runtimeLog = document.querySelector("#runtime-log");
+const badgeShelf = document.querySelector("#badge-shelf");
 const runDemoButton = document.querySelector("#run-demo");
 const resetDemoButton = document.querySelector("#reset-demo");
 const loadKidsTrackButton = document.querySelector("#load-kids-track");
@@ -70,6 +75,7 @@ function cloneDefaultProgressState() {
     activeLessonIdByTrack: {},
     codeDrafts: {},
     completedLessons: {},
+    earnedBadges: {},
   };
 }
 
@@ -88,6 +94,7 @@ function loadProgressState() {
       activeLessonIdByTrack: parsedProgress.activeLessonIdByTrack || {},
       codeDrafts: parsedProgress.codeDrafts || {},
       completedLessons: parsedProgress.completedLessons || {},
+      earnedBadges: parsedProgress.earnedBadges || {},
     };
   } catch (error) {
     progressState = cloneDefaultProgressState();
@@ -106,6 +113,7 @@ function persistProgressState() {
 function ensureTrackContainers(trackId) {
   progressState.codeDrafts[trackId] = progressState.codeDrafts[trackId] || {};
   progressState.completedLessons[trackId] = progressState.completedLessons[trackId] || {};
+  progressState.earnedBadges[trackId] = progressState.earnedBadges[trackId] || {};
 }
 
 function getTrack(trackId) {
@@ -196,6 +204,12 @@ function markLessonComplete(trackId, lessonId) {
   persistProgressState();
 }
 
+function markBadgeEarned(trackId, lessonId) {
+  ensureTrackContainers(trackId);
+  progressState.earnedBadges[trackId][lessonId] = true;
+  persistProgressState();
+}
+
 function getTrackProgressLabel(trackId) {
   const track = getTrack(trackId);
   return `${getCompletedCount(trackId)} of ${track?.lessons.length || 0} missions complete`;
@@ -212,15 +226,35 @@ function showCelebration(currentLesson, nextLesson) {
 
   if (nextLesson) {
     celebrationTitle.textContent = "Mission complete";
-    celebrationCopy.textContent = `You unlocked "${nextLesson.title}". Keep the momentum going with the next drawing challenge.`;
+    celebrationCopy.textContent = `${currentLesson.reward?.title || "Badge earned"}. You unlocked "${nextLesson.title}". Keep the momentum going with the next drawing challenge.`;
     nextLessonButton.textContent = `Open ${nextLesson.title}`;
     nextLessonButton.disabled = false;
   } else {
     celebrationTitle.textContent = "Track complete";
-    celebrationCopy.textContent = "You finished every mission in this track. You can replay them, remix them, or switch tracks for a new challenge.";
+    celebrationCopy.textContent = `${currentLesson.reward?.title || "Badge earned"}. You finished every mission in this track. You can replay them, remix them, or switch tracks for a new challenge.`;
     nextLessonButton.textContent = "All Missions Complete";
     nextLessonButton.disabled = true;
   }
+}
+
+function renderBadgeShelf(trackId) {
+  const track = getTrack(trackId);
+
+  badgeShelf.innerHTML = "";
+
+  if (!track) {
+    return;
+  }
+
+  track.lessons.forEach((lesson) => {
+    const badge = document.createElement("div");
+    const rewardName = lesson.reward?.title || `${lesson.title} Badge`;
+    const earned = Boolean(progressState.earnedBadges[trackId]?.[lesson.id]);
+
+    badge.className = `badge-chip ${earned ? "" : "locked-badge"}`.trim();
+    badge.textContent = earned ? rewardName : `Locked: ${rewardName}`;
+    badgeShelf.append(badge);
+  });
 }
 
 async function loadLessonCatalog() {
@@ -257,6 +291,7 @@ function renderTrack(trackId) {
   trackTitle.textContent = track.title;
   trackProgress.textContent = getTrackProgressLabel(trackId);
   checkpointCopy.textContent = track.checkpointPrompt;
+  renderBadgeShelf(trackId);
   renderLessonList(track);
   renderLessonDetails();
   hideCelebration();
@@ -311,12 +346,23 @@ function renderLessonDetails() {
   const savedDraft = getSavedDraft(activeTrackId, lesson.id);
   const completed = isLessonComplete(activeTrackId, lesson.id);
   const nextLesson = getNextLesson(activeTrackId, lesson.id);
+  const steps = lesson.targetSteps || [];
 
   lessonTitle.textContent = lesson.title;
   lessonStatus.textContent = completed ? "Completed" : "In progress";
   lessonDescription.textContent = lesson.description;
   lessonConcept.textContent = `Concept: ${lesson.concept}`;
   lessonMission.textContent = `Mission: ${lesson.mission}`;
+  lessonVisualGoal.textContent = `Visual goal: ${lesson.visualGoal || "Create the target drawing for this mission."}`;
+  rewardTitle.textContent = lesson.reward?.title || "Creative Coder Badge";
+  rewardCopy.textContent = lesson.reward?.flavor || "Finish this mission to earn a new reward.";
+  targetSteps.innerHTML = "";
+  steps.forEach((step) => {
+    const chip = document.createElement("div");
+    chip.className = "target-chip";
+    chip.textContent = step;
+    targetSteps.append(chip);
+  });
   lessonHint.textContent = completed
     ? nextLesson
       ? `Hint: You can replay this mission or jump into "${nextLesson.title}" next.`
@@ -561,7 +607,9 @@ function evaluateCheckpoint(lesson, source) {
 
   checkpointResult.textContent = lesson.successMessage;
   markLessonComplete(activeTrackId, lesson.id);
+  markBadgeEarned(activeTrackId, lesson.id);
   trackProgress.textContent = getTrackProgressLabel(activeTrackId);
+  renderBadgeShelf(activeTrackId);
   lessonStatus.textContent = "Completed";
   renderLessonList(getTrack(activeTrackId));
   renderLessonDetails();

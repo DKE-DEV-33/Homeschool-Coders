@@ -12,6 +12,12 @@
           "title": "Meet the Turtle",
           "description": "Tell the turtle where to go and watch a line appear on the canvas.",
           "mission": "Make at least one line and add a message to your picture.",
+          "visualGoal": "A single bright path with a short message at the end.",
+          "targetSteps": ["Move the turtle forward", "Add a word bubble or label"],
+          "reward": {
+            "title": "Trailblazer Badge",
+            "flavor": "You made your very first turtle trail."
+          },
           "hint": "Start with move(90), then try write(\"hello\", 24).",
           "concept": "Commands run from top to bottom in order.",
           "starterCode": "pen_color(\"skyblue\")\nmove(120)\nwrite(\"Hello, turtle!\", 22)",
@@ -28,6 +34,12 @@
           "title": "Corners and Squares",
           "description": "Use turns to make corners and close a square.",
           "mission": "Draw a square with four equal sides.",
+          "visualGoal": "A neat box shape with four matching sides.",
+          "targetSteps": ["Repeat the same move four times", "Turn a quarter-turn after each side"],
+          "reward": {
+            "title": "Corner Captain Badge",
+            "flavor": "You taught the turtle how to make clean corners."
+          },
           "hint": "A square can be made with repeat(4): move(90) turn(90).",
           "concept": "Turning the turtle changes the direction of the next line.",
           "starterCode": "pen_color(\"tomato\")\nline_width(6)\nrepeat(4):\n    move(90)\n    turn(90)",
@@ -45,6 +57,12 @@
           "title": "Repeat Magic",
           "description": "Use loops and colors to turn one shape into a pattern.",
           "mission": "Make a colorful pattern with more than one color.",
+          "visualGoal": "A pattern that repeats and changes color at least once.",
+          "targetSteps": ["Draw one repeating shape", "Change color and draw again"],
+          "reward": {
+            "title": "Pattern Party Badge",
+            "flavor": "You mixed loops and color like a coding artist."
+          },
           "hint": "Try drawing a small shape, turning a little, and changing colors before you repeat again.",
           "concept": "Loops help us create patterns with less code.",
           "starterCode": "line_width(4)\npen_color(\"goldenrod\")\nrepeat(6):\n    move(70)\n    turn(60)\n\nturn(20)\npen_color(\"teal\")\nrepeat(6):\n    move(70)\n    turn(60)",
@@ -70,6 +88,12 @@
           "title": "Drawing with Intent",
           "description": "Connect movement commands to geometric results.",
           "mission": "Draw at least two distinct shapes on the canvas.",
+          "visualGoal": "Two separate shapes placed on different parts of the canvas.",
+          "targetSteps": ["Draw one closed shape", "Lift the pen and place the next shape elsewhere"],
+          "reward": {
+            "title": "Layout Scout Badge",
+            "flavor": "You controlled both shape and placement."
+          },
           "hint": "A line plus a looped shape is enough to pass this one.",
           "concept": "Geometric output is a direct result of sequence, heading, and distance.",
           "starterCode": "pen_color(\"coral\")\nline_width(5)\nrepeat(3):\n    move(80)\n    turn(120)\n\npen_up()\ngo_to(360, 220)\npen_down()\npen_color(\"steelblue\")\nrepeat(4):\n    move(70)\n    turn(90)",
@@ -86,6 +110,12 @@
           "title": "Functions as Tools",
           "description": "Package drawing behavior into reusable helpers.",
           "mission": "Create a helper function and use it more than once.",
+          "visualGoal": "A repeated motif made from the same helper function.",
+          "targetSteps": ["Define one helper", "Call it more than once to build a larger image"],
+          "reward": {
+            "title": "Builder Badge",
+            "flavor": "You turned repeated code into a reusable tool."
+          },
           "hint": "Try defining a shape helper such as def petal(): or def square(): then call it in a loop.",
           "concept": "Functions let us name and reuse a pattern of instructions.",
           "starterCode": "pen_color(\"orchid\")\nline_width(3)\n\ndef petal():\n    repeat(6):\n        move(50)\n        turn(60)\n\nrepeat(6):\n    petal()\n    turn(60)",

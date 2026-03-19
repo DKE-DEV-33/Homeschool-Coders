@@ -52,6 +52,16 @@
             <p id="lesson-description" class="detail-copy"></p>
             <p id="lesson-concept" class="detail-copy"></p>
             <p id="lesson-mission" class="detail-copy detail-strong"></p>
+            <p id="lesson-visual-goal" class="detail-copy"></p>
+            <div>
+              <p class="card-label badge-top">Try This</p>
+              <div id="target-steps" class="target-steps"></div>
+            </div>
+            <div class="reward-card">
+              <p class="card-label badge-top">Reward</p>
+              <p id="reward-title" class="reward-title"></p>
+              <p id="reward-copy" class="detail-copy"></p>
+            </div>
             <p id="lesson-hint" class="detail-copy"></p>
           </div>
         </section>
@@ -75,6 +85,10 @@ repeat(4):
               `line_width(6)`, `pen_up()`, `pen_down()`, `go_to(260, 180)`, and
               `write("hello", 24)`.
             </p>
+          </div>
+          <div class="hint-card">
+            <p class="card-label">Badge Shelf</p>
+            <div id="badge-shelf" class="badge-shelf"></div>
           </div>
           <div class="editor-actions">
             <button id="run-demo" class="primary-button">Run Python</button>

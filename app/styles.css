@@ -268,6 +268,44 @@ button:hover {
   font-weight: 700;
 }
 
+.badge-top {
+  margin-top: 16px;
+}
+
+.target-steps,
+.badge-shelf {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.target-chip,
+.badge-chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.target-chip {
+  background: rgba(220, 239, 243, 0.7);
+  color: var(--secondary);
+}
+
+.reward-card {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, #fff4d7, #fffaf0);
+  border: 1px solid rgba(222, 91, 49, 0.14);
+}
+
+.reward-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+
 .lesson-status {
   display: inline-block;
   margin-top: 12px;
@@ -308,6 +346,22 @@ textarea {
 
 .hint-card p {
   margin: 0;
+}
+
+.badge-shelf {
+  margin-top: 10px;
+}
+
+.badge-chip {
+  background: rgba(255, 244, 215, 0.95);
+  border: 1px solid rgba(222, 91, 49, 0.16);
+  color: #7a4b10;
+}
+
+.badge-chip.locked-badge {
+  background: rgba(242, 238, 230, 0.8);
+  border-color: rgba(93, 95, 105, 0.12);
+  color: #70737c;
 }
 
 canvas {
