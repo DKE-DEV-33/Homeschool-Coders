@@ -122,6 +122,7 @@ h2 {
 
 .hero-text,
 .status-text,
+.hint-card p,
 .checkpoint-card p,
 .hero-card li {
   color: var(--muted);
@@ -226,6 +227,18 @@ textarea {
   font: 500 0.98rem/1.6 "SFMono-Regular", "Consolas", monospace;
 }
 
+.hint-card {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: rgba(220, 239, 243, 0.56);
+  border: 1px solid rgba(33, 78, 95, 0.12);
+}
+
+.hint-card p {
+  margin: 0;
+}
+
 canvas {
   width: 100%;
   border-radius: var(--radius-md);
@@ -241,6 +254,19 @@ canvas {
   border-radius: var(--radius-md);
   background: #fff7ea;
   border: 1px dashed rgba(33, 78, 95, 0.22);
+}
+
+.runtime-log {
+  min-height: 120px;
+  margin: 16px 0 0;
+  padding: 16px;
+  overflow: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(19, 35, 43, 0.08);
+  background: #fffdf8;
+  color: #314550;
+  font: 500 0.92rem/1.55 "SFMono-Regular", "Consolas", monospace;
+  white-space: pre-wrap;
 }
 
 .hero-card ul {
@@ -294,4 +320,3 @@ canvas {
     transform: translateY(0);
   }
 }
-

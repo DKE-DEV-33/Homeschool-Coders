@@ -58,14 +58,22 @@ repeat(4):
     move(90)
     turn(90)
           </textarea>
+          <div class="hint-card">
+            <p class="card-label">Available commands</p>
+            <p>
+              Try `move(90)`, `turn(90)`, `pen_color("tomato")`,
+              `line_width(6)`, `pen_up()`, `pen_down()`, `go_to(260, 180)`, and
+              `write("hello", 24)`.
+            </p>
+          </div>
           <div class="editor-actions">
-            <button id="run-demo" class="primary-button">Run Demo</button>
+            <button id="run-demo" class="primary-button">Run Python</button>
             <button id="reset-demo" class="secondary-button">Reset</button>
           </div>
           <p id="editor-status" class="status-text">
-            This is a visual scaffold for the next step, where we add the Python
-            runtime and sandboxed drawing commands.
+            Loading the browser runtime for the first time may take a moment.
           </p>
+          <pre id="runtime-log" class="runtime-log">Runtime log will appear here.</pre>
         </section>
 
         <section class="panel output-panel">
@@ -88,4 +96,3 @@ repeat(4):
     <script src="./app.js" type="module"></script>
   </body>
 </html>
-
