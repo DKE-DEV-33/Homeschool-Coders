@@ -216,6 +216,115 @@
             "minColorChanges": 3
           },
           "successMessage": "Color success. You used multiple colors to make your drawing pop."
+        },
+        {
+          "id": "pen-up-pen-down",
+          "title": "Pen Up, Pen Down",
+          "description": "Learn how to move without drawing, then start drawing again.",
+          "mission": "Draw one shape, hop to a new place, and draw another shape.",
+          "visualGoal": "Two shapes with a gap between them and no line connecting the gap.",
+          "targetSteps": ["Draw one shape", "Lift the pen", "Move somewhere else", "Put the pen down and draw again"],
+          "reward": {
+            "title": "Hop Scout Badge",
+            "flavor": "You learned how to move the turtle without leaving a trail."
+          },
+          "preview": {
+            "kind": "pen-hop",
+            "palette": ["#4b8bff", "#ff8a5b"]
+          },
+          "hint": "Use pen_up(), go_to(...), and pen_down() between shapes.",
+          "concept": "The turtle can move without drawing when the pen is up.",
+          "starterCode": "pen_color(\"cornflowerblue\")\nrepeat(4):\n    move(50)\n    turn(90)\n\npen_up()\ngo_to(340, 210)\npen_down()\npen_color(\"coral\")\nrepeat(3):\n    move(60)\n    turn(120)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 7,
+            "minTurns": 7,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You used pen control to move without drawing between shapes."
+        },
+        {
+          "id": "move-to-a-new-spot",
+          "title": "Move to a New Spot",
+          "description": "Place your drawings in new places on the canvas.",
+          "mission": "Draw at least two shapes in different spots on the page.",
+          "visualGoal": "Shapes placed in clearly different parts of the canvas.",
+          "targetSteps": ["Draw one shape", "Move to a new spot", "Draw another shape there"],
+          "reward": {
+            "title": "Map Maker Badge",
+            "flavor": "You started placing art exactly where you wanted it."
+          },
+          "preview": {
+            "kind": "placed-shapes",
+            "palette": ["#ff7b72", "#4b8bff"]
+          },
+          "hint": "Try go_to(140, 120) for one shape and go_to(360, 220) for another.",
+          "concept": "Coordinates let you place drawing elements on purpose.",
+          "starterCode": "pen_up()\ngo_to(150, 120)\npen_down()\npen_color(\"salmon\")\nrepeat(3):\n    move(70)\n    turn(120)\n\npen_up()\ngo_to(360, 220)\npen_down()\npen_color(\"cornflowerblue\")\nrepeat(4):\n    move(55)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 7,
+            "minTurns": 7,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "Nice placement. You used the canvas like a map."
+        },
+        {
+          "id": "build-a-tiny-scene",
+          "title": "Build a Tiny Scene",
+          "description": "Put several shapes together to make one picture.",
+          "mission": "Make a tiny scene with at least three parts, like a house, sun, and ground.",
+          "visualGoal": "A simple scene with multiple shapes working together.",
+          "targetSteps": ["Draw one main shape", "Add two more details", "Place them so they feel like one picture"],
+          "reward": {
+            "title": "Scene Starter Badge",
+            "flavor": "You turned separate shapes into one little world."
+          },
+          "preview": {
+            "kind": "tiny-scene",
+            "palette": ["#de5b31", "#f2b43f", "#3d8f54"]
+          },
+          "hint": "Think of one big shape and then two smaller helpers around it.",
+          "concept": "Several small shapes can combine into one scene.",
+          "starterCode": "pen_up()\ngo_to(190, 210)\npen_down()\npen_color(\"tomato\")\nrepeat(4):\n    move(80)\n    turn(90)\n\npen_up()\ngo_to(190, 210)\npen_down()\npen_color(\"goldenrod\")\nrepeat(3):\n    move(80)\n    turn(120)\n\npen_up()\ngo_to(380, 90)\npen_down()\npen_color(\"gold\")\nrepeat(12):\n    move(20)\n    turn(30)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 19,
+            "minTurns": 19,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "Scene complete. You combined several shapes into one picture."
+        },
+        {
+          "id": "layer-shapes",
+          "title": "Layer Shapes",
+          "description": "Draw shapes in an order that makes the picture feel deeper and fuller.",
+          "mission": "Make a scene with overlapping or layered shapes in at least two colors.",
+          "visualGoal": "A scene where one shape sits in front of or behind another.",
+          "targetSteps": ["Draw a big shape first", "Add another shape over or near it", "Use more than one color"],
+          "reward": {
+            "title": "Layer Artist Badge",
+            "flavor": "You learned that drawing order changes the whole picture."
+          },
+          "preview": {
+            "kind": "layered-scene",
+            "palette": ["#77c1d2", "#de5b31", "#f2b43f"]
+          },
+          "hint": "Try a big background shape first and smaller shapes after it.",
+          "concept": "Drawing order changes what appears in front and behind.",
+          "starterCode": "pen_up()\ngo_to(160, 170)\npen_down()\npen_color(\"skyblue\")\nrepeat(4):\n    move(140)\n    turn(90)\n\npen_up()\ngo_to(210, 220)\npen_down()\npen_color(\"tomato\")\nrepeat(4):\n    move(70)\n    turn(90)\n\npen_up()\ngo_to(330, 110)\npen_down()\npen_color(\"goldenrod\")\nrepeat(12):\n    move(18)\n    turn(30)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 20,
+            "minTurns": 20,
+            "requiresRepeat": true,
+            "minColorChanges": 3,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "Layering success. You used order and color to make the scene richer."
         }
       ]
     },
@@ -435,6 +544,115 @@
             "minColorChanges": 3
           },
           "successMessage": "You changed color state intentionally and reused structure across the drawing."
+        },
+        {
+          "id": "path-vs-positioning",
+          "title": "Path vs Positioning",
+          "description": "Separate movement that draws from movement that only repositions the cursor.",
+          "mission": "Draw one shape, reposition without drawing, then draw a second shape.",
+          "visualGoal": "Two shapes separated by space with no accidental connector line.",
+          "targetSteps": ["Draw a first shape", "Lift the pen and reposition", "Draw a second shape elsewhere"],
+          "reward": {
+            "title": "Path Control Badge",
+            "flavor": "You separated drawing behavior from positioning behavior."
+          },
+          "preview": {
+            "kind": "pen-hop",
+            "palette": ["#4b8bff", "#ff8a5b"]
+          },
+          "hint": "Use pen_up(), go_to(...), and pen_down() to avoid connector lines.",
+          "concept": "Drawing state and position state are related but distinct.",
+          "starterCode": "pen_color(\"cornflowerblue\")\nrepeat(4):\n    move(50)\n    turn(90)\n\npen_up()\ngo_to(340, 210)\npen_down()\npen_color(\"coral\")\nrepeat(3):\n    move(60)\n    turn(120)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 7,
+            "minTurns": 7,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You managed path creation and positioning separately."
+        },
+        {
+          "id": "coordinates-and-placement",
+          "title": "Coordinates and Placement",
+          "description": "Use coordinates to place different forms intentionally around the canvas.",
+          "mission": "Draw multiple shapes in clearly different positions.",
+          "visualGoal": "Two or more shapes that are purposefully placed instead of clustered together.",
+          "targetSteps": ["Pick one placement", "Pick a second placement", "Draw a different shape in each"],
+          "reward": {
+            "title": "Placement Planner Badge",
+            "flavor": "You started composing with coordinates, not guesswork."
+          },
+          "preview": {
+            "kind": "placed-shapes",
+            "palette": ["#ff7b72", "#4b8bff"]
+          },
+          "hint": "Use absolute positions far enough apart that the layout becomes obvious.",
+          "concept": "Coordinates support deliberate spatial composition.",
+          "starterCode": "pen_up()\ngo_to(150, 120)\npen_down()\npen_color(\"salmon\")\nrepeat(3):\n    move(70)\n    turn(120)\n\npen_up()\ngo_to(360, 220)\npen_down()\npen_color(\"cornflowerblue\")\nrepeat(4):\n    move(55)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 7,
+            "minTurns": 7,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You used coordinates to control where each shape belonged."
+        },
+        {
+          "id": "scene-composition",
+          "title": "Scene Composition",
+          "description": "Combine placed shapes into a single readable scene.",
+          "mission": "Build a simple scene with several distinct visual parts.",
+          "visualGoal": "A composition that reads as one scene rather than separate test shapes.",
+          "targetSteps": ["Draw a main object", "Add supporting details", "Place them to read as one image"],
+          "reward": {
+            "title": "Composition Badge",
+            "flavor": "You turned separate shapes into a coherent scene."
+          },
+          "preview": {
+            "kind": "tiny-scene",
+            "palette": ["#de5b31", "#f2b43f", "#3d8f54"]
+          },
+          "hint": "A house-and-sun or tree-and-ground scene is a strong first composition.",
+          "concept": "Composition emerges from placement, scale, and grouping.",
+          "starterCode": "pen_up()\ngo_to(190, 210)\npen_down()\npen_color(\"tomato\")\nrepeat(4):\n    move(80)\n    turn(90)\n\npen_up()\ngo_to(190, 210)\npen_down()\npen_color(\"goldenrod\")\nrepeat(3):\n    move(80)\n    turn(120)\n\npen_up()\ngo_to(380, 90)\npen_down()\npen_color(\"gold\")\nrepeat(12):\n    move(20)\n    turn(30)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 19,
+            "minTurns": 19,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You composed multiple parts into a single scene."
+        },
+        {
+          "id": "drawing-order-and-layering",
+          "title": "Drawing Order and Layering",
+          "description": "Use ordering and color to make layered images feel more intentional.",
+          "mission": "Create a scene where one shape acts like a background and later shapes sit over it.",
+          "visualGoal": "A layered composition with visible foreground and background elements.",
+          "targetSteps": ["Draw a larger base shape first", "Add smaller details later", "Use color changes to strengthen the layering"],
+          "reward": {
+            "title": "Layer Logic Badge",
+            "flavor": "You used drawing order to control visual hierarchy."
+          },
+          "preview": {
+            "kind": "layered-scene",
+            "palette": ["#77c1d2", "#de5b31", "#f2b43f"]
+          },
+          "hint": "Draw the broadest background form first and place smaller details later.",
+          "concept": "Drawing order shapes what the viewer sees as foreground and background.",
+          "starterCode": "pen_up()\ngo_to(160, 170)\npen_down()\npen_color(\"skyblue\")\nrepeat(4):\n    move(140)\n    turn(90)\n\npen_up()\ngo_to(210, 220)\npen_down()\npen_color(\"tomato\")\nrepeat(4):\n    move(70)\n    turn(90)\n\npen_up()\ngo_to(330, 110)\npen_down()\npen_color(\"goldenrod\")\nrepeat(12):\n    move(18)\n    turn(30)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 20,
+            "minTurns": 20,
+            "requiresRepeat": true,
+            "minColorChanges": 3,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You used order and layering to make the composition clearer."
         }
       ]
     }

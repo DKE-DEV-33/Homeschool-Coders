@@ -534,6 +534,83 @@ function drawTargetPreview(lesson) {
         targetPreviewContext.stroke();
       });
       break;
+    case "pen-hop":
+      targetPreviewContext.strokeStyle = palette[0];
+      targetPreviewContext.strokeRect(95, 68, 70, 70);
+      targetPreviewContext.setLineDash([8, 8]);
+      targetPreviewContext.strokeStyle = "#8b96a4";
+      targetPreviewContext.beginPath();
+      targetPreviewContext.moveTo(170, 104);
+      targetPreviewContext.lineTo(260, 104);
+      targetPreviewContext.stroke();
+      targetPreviewContext.setLineDash([]);
+      targetPreviewContext.strokeStyle = palette[1] || palette[0];
+      targetPreviewContext.beginPath();
+      targetPreviewContext.moveTo(315, 138);
+      targetPreviewContext.lineTo(360, 68);
+      targetPreviewContext.lineTo(405, 138);
+      targetPreviewContext.closePath();
+      targetPreviewContext.stroke();
+      break;
+    case "placed-shapes":
+      targetPreviewContext.strokeStyle = palette[0];
+      targetPreviewContext.beginPath();
+      targetPreviewContext.moveTo(110, 132);
+      targetPreviewContext.lineTo(155, 56);
+      targetPreviewContext.lineTo(200, 132);
+      targetPreviewContext.closePath();
+      targetPreviewContext.stroke();
+      targetPreviewContext.strokeStyle = palette[1] || palette[0];
+      targetPreviewContext.strokeRect(310, 58, 78, 78);
+      break;
+    case "tiny-scene":
+      targetPreviewContext.strokeStyle = palette[0];
+      targetPreviewContext.strokeRect(170, 110, 85, 65);
+      targetPreviewContext.beginPath();
+      targetPreviewContext.moveTo(170, 110);
+      targetPreviewContext.lineTo(212, 70);
+      targetPreviewContext.lineTo(255, 110);
+      targetPreviewContext.stroke();
+      targetPreviewContext.strokeStyle = palette[1] || palette[0];
+      targetPreviewContext.beginPath();
+      for (let step = 0; step < 12; step += 1) {
+        const angle = (Math.PI / 6) * step;
+        const x = 380 + Math.cos(angle) * 24;
+        const y = 72 + Math.sin(angle) * 24;
+        if (step === 0) {
+          targetPreviewContext.moveTo(x, y);
+        } else {
+          targetPreviewContext.lineTo(x, y);
+        }
+      }
+      targetPreviewContext.closePath();
+      targetPreviewContext.stroke();
+      targetPreviewContext.strokeStyle = palette[2] || palette[0];
+      targetPreviewContext.beginPath();
+      targetPreviewContext.moveTo(70, 168);
+      targetPreviewContext.lineTo(450, 168);
+      targetPreviewContext.stroke();
+      break;
+    case "layered-scene":
+      targetPreviewContext.strokeStyle = palette[0];
+      targetPreviewContext.strokeRect(140, 72, 180, 100);
+      targetPreviewContext.strokeStyle = palette[1] || palette[0];
+      targetPreviewContext.strokeRect(200, 108, 80, 64);
+      targetPreviewContext.strokeStyle = palette[2] || palette[0];
+      targetPreviewContext.beginPath();
+      for (let step = 0; step < 12; step += 1) {
+        const angle = (Math.PI / 6) * step;
+        const x = 355 + Math.cos(angle) * 20;
+        const y = 82 + Math.sin(angle) * 20;
+        if (step === 0) {
+          targetPreviewContext.moveTo(x, y);
+        } else {
+          targetPreviewContext.lineTo(x, y);
+        }
+      }
+      targetPreviewContext.closePath();
+      targetPreviewContext.stroke();
+      break;
     case "two-shapes":
       targetPreviewContext.strokeStyle = palette[0];
       targetPreviewContext.beginPath();
