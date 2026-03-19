@@ -51,6 +51,7 @@ const editorStatus = document.querySelector("#editor-status");
 const lessonStatus = document.querySelector("#lesson-status");
 const runtimeLog = document.querySelector("#runtime-log");
 const checkpointResult = document.querySelector("#checkpoint-result");
+const functionReference = document.querySelector("#function-reference");
 const drawingSurface = document.querySelector("#drawing-surface");
 const drawingContext = drawingSurface.getContext("2d");
 const targetPreviewCanvas = document.querySelector("#target-preview-canvas");
@@ -71,6 +72,19 @@ let activeLessonId = "";
 let saveDraftTimeoutId;
 let pyodide;
 let pyodideReadyPromise;
+
+const COMMAND_REFERENCE = [
+  { signature: 'move(distance)', description: 'Draw forward by a number of pixels.' },
+  { signature: 'turn(degrees)', description: 'Turn the turtle before the next move.' },
+  { signature: 'pen_color("color")', description: 'Change the drawing color.' },
+  { signature: 'line_width(size)', description: 'Make lines thinner or thicker.' },
+  { signature: 'write("text", size)', description: 'Write a message on the canvas.' },
+  { signature: 'pen_up()', description: 'Move without drawing a line.' },
+  { signature: 'pen_down()', description: 'Start drawing again after lifting the pen.' },
+  { signature: 'go_to(x, y)', description: 'Jump to a new spot on the canvas.' },
+  { signature: 'repeat(4):', description: 'Repeat the indented code block multiple times.' },
+  { signature: 'def shape_name():', description: 'Create your own reusable command in later lessons.' },
+];
 
 const turtleState = {
   x: drawingSurface.width / 2,
@@ -374,6 +388,20 @@ function renderBadgeShelf() {
   });
 }
 
+function renderFunctionReference() {
+  functionReference.innerHTML = "";
+
+  COMMAND_REFERENCE.forEach((item) => {
+    const row = document.createElement("article");
+    row.className = "reference-item";
+    row.innerHTML = `
+      <code>${item.signature}</code>
+      <p>${item.description}</p>
+    `;
+    functionReference.append(row);
+  });
+}
+
 function renderLessonList() {
   const track = getActiveTrack();
   lessonList.innerHTML = "";
@@ -454,7 +482,12 @@ function renderEditor() {
   if (!lesson || !activeProfile) {
     return;
   }
-  codeEditor.value = getDraft(activeProfile, activeTrackId, lesson.id) || lesson.starterCode;
+
+  const savedDraft = getDraft(activeProfile, activeTrackId, lesson.id);
+  const shouldClearEditor = !savedDraft || savedDraft === lesson.starterCode;
+
+  codeEditor.value = shouldClearEditor ? "" : savedDraft;
+  codeEditor.placeholder = `Type your Python here for ${lesson.title}...`;
 }
 
 function renderAll() {
@@ -462,6 +495,7 @@ function renderAll() {
   renderTrackSwitcher();
   renderLessonList();
   renderBadgeShelf();
+  renderFunctionReference();
   renderLessonHeader();
   renderEditor();
 }
@@ -927,8 +961,8 @@ function resetWorkspace() {
   if (!lesson || !activeProfile) {
     return;
   }
-  codeEditor.value = lesson.starterCode;
-  saveDraft(activeProfile, activeTrackId, activeLessonId, lesson.starterCode);
+  codeEditor.value = "";
+  saveDraft(activeProfile, activeTrackId, activeLessonId, "");
   saveAppState(appState);
   resetCanvasState();
   resetMetrics();

@@ -380,6 +380,36 @@ h3 {
   background: rgba(25, 51, 61, 0.06);
 }
 
+.reference-panel {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(25, 51, 61, 0.1);
+}
+
+.function-reference {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.reference-item {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(25, 51, 61, 0.05);
+}
+
+.reference-item code {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.reference-item p {
+  color: var(--muted);
+}
+
 .visual-column {
   grid-template-rows: minmax(0, 1fr) auto;
 }
