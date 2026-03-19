@@ -40,6 +40,7 @@ const dashboardMission = document.querySelector("#dashboard-mission");
 const dashboardBadges = document.querySelector("#dashboard-badges");
 const dashboardLastResult = document.querySelector("#dashboard-last-result");
 const dashboardHistory = document.querySelector("#dashboard-history");
+const overviewGrid = document.querySelector("#overview-grid");
 const runDemoButton = document.querySelector("#run-demo");
 const resetDemoButton = document.querySelector("#reset-demo");
 const loadKidsTrackButton = document.querySelector("#load-kids-track");
@@ -350,6 +351,7 @@ function renderDashboard() {
   dashboardBadges.textContent = `Badges earned: ${getEarnedBadgeCount()}`;
   dashboardLastResult.textContent = `Last result: ${lastResult}`;
   renderDashboardHistory(learnerState.recentActivity || []);
+  renderParentOverview();
 }
 
 function renderDashboardHistory(activityItems) {
@@ -368,6 +370,29 @@ function renderDashboardHistory(activityItems) {
     row.className = "history-item";
     row.textContent = item.message;
     dashboardHistory.append(row);
+  });
+}
+
+function renderParentOverview() {
+  overviewGrid.innerHTML = "";
+
+  DEFAULT_LEARNERS.forEach((learner) => {
+    const learnerState = getLearnerState(learner.id);
+    const learnerTrackId = getTrack(learnerState.activeTrackId) ? learnerState.activeTrackId : "kids";
+    const learnerTrack = getTrack(learnerTrackId);
+    const learnerLessonId = learnerState.activeLessonIdByTrack[learnerTrackId] || learnerTrack?.lessons[0]?.id || "";
+    const learnerLesson = getLesson(learnerTrackId, learnerLessonId);
+    const card = document.createElement("div");
+
+    card.className = `overview-card ${learner.id === activeLearnerId ? "active-learner" : ""}`.trim();
+    card.innerHTML = `
+      <p class="card-label">${learner.name}</p>
+      <p class="reward-title">${learnerTrack?.title || "No track"}</p>
+      <p class="detail-copy">Current mission: ${learnerLesson?.title || "Not started yet"}</p>
+      <p class="detail-copy">Track progress: ${getCompletedCount(learnerTrackId, learner.id)} of ${learnerTrack?.lessons.length || 0}</p>
+      <p class="detail-copy">Badges earned: ${getEarnedBadgeCount(learner.id)}</p>
+    `;
+    overviewGrid.append(card);
   });
 }
 
