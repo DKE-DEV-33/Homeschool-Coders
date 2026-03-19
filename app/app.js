@@ -1,6 +1,12 @@
 const PYODIDE_VERSION = "0.27.7";
 const pyodideModuleUrl = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
-const STORAGE_KEY = "homeschool-coders-progress-v1";
+const STORAGE_KEY = "homeschool-coders-progress-v2";
+
+const DEFAULT_LEARNERS = [
+  { id: "parent", name: "Parent Explorer" },
+  { id: "kid-one", name: "Kid One" },
+  { id: "kid-two", name: "Kid Two" },
+];
 
 const trackTitle = document.querySelector("#track-title");
 const trackProgress = document.querySelector("#track-progress");
@@ -27,6 +33,12 @@ const runtimeLog = document.querySelector("#runtime-log");
 const badgeShelf = document.querySelector("#badge-shelf");
 const targetPreviewCanvas = document.querySelector("#target-preview-canvas");
 const targetPreviewCopy = document.querySelector("#target-preview-copy");
+const learnerSelect = document.querySelector("#learner-select");
+const dashboardLearner = document.querySelector("#dashboard-learner");
+const dashboardTrack = document.querySelector("#dashboard-track");
+const dashboardMission = document.querySelector("#dashboard-mission");
+const dashboardBadges = document.querySelector("#dashboard-badges");
+const dashboardLastResult = document.querySelector("#dashboard-last-result");
 const runDemoButton = document.querySelector("#run-demo");
 const resetDemoButton = document.querySelector("#reset-demo");
 const loadKidsTrackButton = document.querySelector("#load-kids-track");
@@ -40,7 +52,8 @@ const fallbackLessonCatalog = {
 };
 
 let lessonCatalog = fallbackLessonCatalog;
-let progressState = cloneDefaultProgressState();
+let appState = createDefaultAppState();
+let activeLearnerId = DEFAULT_LEARNERS[0].id;
 let activeTrackId = "kids";
 let activeLessonId = "";
 let pyodide;
@@ -72,51 +85,91 @@ function resetMetrics() {
   runMetrics.functionCalls = {};
 }
 
-function cloneDefaultProgressState() {
+function createDefaultLearnerProgress() {
   return {
     activeTrackId: "kids",
     activeLessonIdByTrack: {},
     codeDrafts: {},
     completedLessons: {},
     earnedBadges: {},
+    lastResultByLesson: {},
   };
 }
 
-function loadProgressState() {
-  try {
-    const savedProgress = window.localStorage.getItem(STORAGE_KEY);
+function createDefaultAppState() {
+  const learners = {};
 
-    if (!savedProgress) {
-      progressState = cloneDefaultProgressState();
+  DEFAULT_LEARNERS.forEach((learner) => {
+    learners[learner.id] = createDefaultLearnerProgress();
+  });
+
+  return {
+    activeLearnerId: DEFAULT_LEARNERS[0].id,
+    learners,
+  };
+}
+
+function getLearnerConfig(learnerId) {
+  return DEFAULT_LEARNERS.find((learner) => learner.id === learnerId);
+}
+
+function getActiveLearnerConfig() {
+  return getLearnerConfig(activeLearnerId);
+}
+
+function ensureLearnerState(learnerId) {
+  appState.learners[learnerId] = appState.learners[learnerId] || createDefaultLearnerProgress();
+  return appState.learners[learnerId];
+}
+
+function getLearnerState(learnerId = activeLearnerId) {
+  return ensureLearnerState(learnerId);
+}
+
+function loadAppState() {
+  try {
+    const savedState = window.localStorage.getItem(STORAGE_KEY);
+
+    if (!savedState) {
+      appState = createDefaultAppState();
       return;
     }
 
-    const parsedProgress = JSON.parse(savedProgress);
-    progressState = {
-      activeTrackId: parsedProgress.activeTrackId || "kids",
-      activeLessonIdByTrack: parsedProgress.activeLessonIdByTrack || {},
-      codeDrafts: parsedProgress.codeDrafts || {},
-      completedLessons: parsedProgress.completedLessons || {},
-      earnedBadges: parsedProgress.earnedBadges || {},
-    };
+    const parsedState = JSON.parse(savedState);
+    appState = createDefaultAppState();
+    appState.activeLearnerId = parsedState.activeLearnerId || DEFAULT_LEARNERS[0].id;
+
+    DEFAULT_LEARNERS.forEach((learner) => {
+      const savedLearner = parsedState.learners?.[learner.id] || {};
+      appState.learners[learner.id] = {
+        activeTrackId: savedLearner.activeTrackId || "kids",
+        activeLessonIdByTrack: savedLearner.activeLessonIdByTrack || {},
+        codeDrafts: savedLearner.codeDrafts || {},
+        completedLessons: savedLearner.completedLessons || {},
+        earnedBadges: savedLearner.earnedBadges || {},
+        lastResultByLesson: savedLearner.lastResultByLesson || {},
+      };
+    });
   } catch (error) {
-    progressState = cloneDefaultProgressState();
+    appState = createDefaultAppState();
     appendLogLine(`Progress could not be restored: ${error.message}`);
   }
 }
 
-function persistProgressState() {
+function persistAppState() {
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(progressState));
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
   } catch (error) {
     appendLogLine(`Progress could not be saved: ${error.message}`);
   }
 }
 
-function ensureTrackContainers(trackId) {
-  progressState.codeDrafts[trackId] = progressState.codeDrafts[trackId] || {};
-  progressState.completedLessons[trackId] = progressState.completedLessons[trackId] || {};
-  progressState.earnedBadges[trackId] = progressState.earnedBadges[trackId] || {};
+function ensureTrackContainers(trackId, learnerId = activeLearnerId) {
+  const learnerState = getLearnerState(learnerId);
+  learnerState.codeDrafts[trackId] = learnerState.codeDrafts[trackId] || {};
+  learnerState.completedLessons[trackId] = learnerState.completedLessons[trackId] || {};
+  learnerState.earnedBadges[trackId] = learnerState.earnedBadges[trackId] || {};
+  learnerState.lastResultByLesson[trackId] = learnerState.lastResultByLesson[trackId] || {};
 }
 
 function getTrack(trackId) {
@@ -148,15 +201,15 @@ function getActiveLesson() {
   return getLesson(activeTrackId, activeLessonId);
 }
 
-function getSavedDraft(trackId, lessonId) {
-  return progressState.codeDrafts[trackId]?.[lessonId];
+function getSavedDraft(trackId, lessonId, learnerId = activeLearnerId) {
+  return getLearnerState(learnerId).codeDrafts[trackId]?.[lessonId];
 }
 
-function isLessonComplete(trackId, lessonId) {
-  return Boolean(progressState.completedLessons[trackId]?.[lessonId]);
+function isLessonComplete(trackId, lessonId, learnerId = activeLearnerId) {
+  return Boolean(getLearnerState(learnerId).completedLessons[trackId]?.[lessonId]);
 }
 
-function isLessonUnlocked(trackId, lessonId) {
+function isLessonUnlocked(trackId, lessonId, learnerId = activeLearnerId) {
   const track = getTrack(trackId);
   const lessonIndex = getLessonIndex(trackId, lessonId);
 
@@ -169,17 +222,25 @@ function isLessonUnlocked(trackId, lessonId) {
   }
 
   const previousLesson = track.lessons[lessonIndex - 1];
-  return isLessonComplete(trackId, previousLesson.id);
+  return isLessonComplete(trackId, previousLesson.id, learnerId);
 }
 
-function getCompletedCount(trackId) {
+function getCompletedCount(trackId, learnerId = activeLearnerId) {
   const track = getTrack(trackId);
 
   if (!track) {
     return 0;
   }
 
-  return track.lessons.filter((lesson) => isLessonComplete(trackId, lesson.id)).length;
+  return track.lessons.filter((lesson) => isLessonComplete(trackId, lesson.id, learnerId)).length;
+}
+
+function getEarnedBadgeCount(learnerId = activeLearnerId) {
+  const learnerState = getLearnerState(learnerId);
+
+  return Object.values(learnerState.earnedBadges).reduce((total, trackBadges) => {
+    return total + Object.values(trackBadges).filter(Boolean).length;
+  }, 0);
 }
 
 function saveCurrentDraft() {
@@ -188,10 +249,13 @@ function saveCurrentDraft() {
   }
 
   ensureTrackContainers(activeTrackId);
-  progressState.codeDrafts[activeTrackId][activeLessonId] = codeEditor.value;
-  progressState.activeTrackId = activeTrackId;
-  progressState.activeLessonIdByTrack[activeTrackId] = activeLessonId;
-  persistProgressState();
+  const learnerState = getLearnerState();
+
+  learnerState.codeDrafts[activeTrackId][activeLessonId] = codeEditor.value;
+  learnerState.activeTrackId = activeTrackId;
+  learnerState.activeLessonIdByTrack[activeTrackId] = activeLessonId;
+  appState.activeLearnerId = activeLearnerId;
+  persistAppState();
 }
 
 function scheduleDraftSave() {
@@ -203,14 +267,20 @@ function scheduleDraftSave() {
 
 function markLessonComplete(trackId, lessonId) {
   ensureTrackContainers(trackId);
-  progressState.completedLessons[trackId][lessonId] = true;
-  persistProgressState();
+  getLearnerState().completedLessons[trackId][lessonId] = true;
+  persistAppState();
 }
 
 function markBadgeEarned(trackId, lessonId) {
   ensureTrackContainers(trackId);
-  progressState.earnedBadges[trackId][lessonId] = true;
-  persistProgressState();
+  getLearnerState().earnedBadges[trackId][lessonId] = true;
+  persistAppState();
+}
+
+function setLessonRunResult(trackId, lessonId, resultLabel) {
+  ensureTrackContainers(trackId);
+  getLearnerState().lastResultByLesson[trackId][lessonId] = resultLabel;
+  persistAppState();
 }
 
 function getTrackProgressLabel(trackId) {
@@ -240,6 +310,33 @@ function showCelebration(currentLesson, nextLesson) {
   }
 }
 
+function renderLearnerSelect() {
+  learnerSelect.innerHTML = "";
+
+  DEFAULT_LEARNERS.forEach((learner) => {
+    const option = document.createElement("option");
+    option.value = learner.id;
+    option.textContent = learner.name;
+    learnerSelect.append(option);
+  });
+
+  learnerSelect.value = activeLearnerId;
+}
+
+function renderDashboard() {
+  const learnerState = getLearnerState();
+  const learnerName = getActiveLearnerConfig()?.name || "Learner";
+  const currentTrack = getTrack(activeTrackId);
+  const currentLesson = getActiveLesson();
+  const lastResult = learnerState.lastResultByLesson[activeTrackId]?.[activeLessonId] || "No runs yet";
+
+  dashboardLearner.textContent = learnerName;
+  dashboardTrack.textContent = `Track: ${currentTrack?.title || "None selected"}`;
+  dashboardMission.textContent = `Mission: ${currentLesson?.title || "None selected"}`;
+  dashboardBadges.textContent = `Badges earned: ${getEarnedBadgeCount()}`;
+  dashboardLastResult.textContent = `Last result: ${lastResult}`;
+}
+
 function renderBadgeShelf(trackId) {
   const track = getTrack(trackId);
 
@@ -252,7 +349,7 @@ function renderBadgeShelf(trackId) {
   track.lessons.forEach((lesson) => {
     const badge = document.createElement("div");
     const rewardName = lesson.reward?.title || `${lesson.title} Badge`;
-    const earned = Boolean(progressState.earnedBadges[trackId]?.[lesson.id]);
+    const earned = Boolean(getLearnerState().earnedBadges[trackId]?.[lesson.id]);
 
     badge.className = `badge-chip ${earned ? "" : "locked-badge"}`.trim();
     badge.textContent = earned ? rewardName : `Locked: ${rewardName}`;
@@ -264,6 +361,20 @@ function clearTargetPreview() {
   targetPreviewContext.clearRect(0, 0, targetPreviewCanvas.width, targetPreviewCanvas.height);
   targetPreviewContext.fillStyle = "#fffdf8";
   targetPreviewContext.fillRect(0, 0, targetPreviewCanvas.width, targetPreviewCanvas.height);
+}
+
+function drawFlower(drawingContext, centerX, centerY, radius, color, petalCount) {
+  drawingContext.strokeStyle = color;
+
+  for (let index = 0; index < petalCount; index += 1) {
+    const angle = (Math.PI * 2 * index) / petalCount;
+    const petalX = centerX + Math.cos(angle) * radius;
+    const petalY = centerY + Math.sin(angle) * radius;
+
+    drawingContext.beginPath();
+    drawingContext.arc(petalX, petalY, radius, 0, Math.PI * 2);
+    drawingContext.stroke();
+  }
 }
 
 function drawTargetPreview(lesson) {
@@ -316,20 +427,6 @@ function drawTargetPreview(lesson) {
   }
 }
 
-function drawFlower(drawingContext, centerX, centerY, radius, color, petalCount) {
-  drawingContext.strokeStyle = color;
-
-  for (let index = 0; index < petalCount; index += 1) {
-    const angle = (Math.PI * 2 * index) / petalCount;
-    const petalX = centerX + Math.cos(angle) * radius;
-    const petalY = centerY + Math.sin(angle) * radius;
-
-    drawingContext.beginPath();
-    drawingContext.arc(petalX, petalY, radius, 0, Math.PI * 2);
-    drawingContext.stroke();
-  }
-}
-
 async function loadLessonCatalog() {
   try {
     const response = await fetch("../public/lessons.json");
@@ -355,11 +452,12 @@ function renderTrack(trackId) {
 
   ensureTrackContainers(trackId);
   activeTrackId = trackId;
-  progressState.activeTrackId = trackId;
+  getLearnerState().activeTrackId = trackId;
 
-  const preferredLessonId = progressState.activeLessonIdByTrack[trackId] || track.lessons[0]?.id || "";
+  const learnerState = getLearnerState();
+  const preferredLessonId = learnerState.activeLessonIdByTrack[trackId] || track.lessons[0]?.id || "";
   activeLessonId = isLessonUnlocked(trackId, preferredLessonId) ? preferredLessonId : track.lessons[0]?.id || "";
-  progressState.activeLessonIdByTrack[trackId] = activeLessonId;
+  learnerState.activeLessonIdByTrack[trackId] = activeLessonId;
 
   trackTitle.textContent = track.title;
   trackProgress.textContent = getTrackProgressLabel(trackId);
@@ -367,8 +465,9 @@ function renderTrack(trackId) {
   renderBadgeShelf(trackId);
   renderLessonList(track);
   renderLessonDetails();
+  renderDashboard();
   hideCelebration();
-  persistProgressState();
+  persistAppState();
 }
 
 function renderLessonList(track) {
@@ -394,17 +493,9 @@ function renderLessonList(track) {
         return;
       }
 
-      saveCurrentDraft();
-      activeLessonId = lesson.id;
-      progressState.activeLessonIdByTrack[track.id] = lesson.id;
-      renderLessonList(track);
-      renderLessonDetails();
-      hideCelebration();
-      checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
-      setStatus(`Loaded lesson: ${lesson.title}`);
-      setLog(`Lesson loaded: ${lesson.title}`);
-      persistProgressState();
+      openLesson(lesson.id);
     });
+
     lessonList.append(item);
   });
 }
@@ -431,12 +522,14 @@ function renderLessonDetails() {
   rewardTitle.textContent = lesson.reward?.title || "Creative Coder Badge";
   rewardCopy.textContent = lesson.reward?.flavor || "Finish this mission to earn a new reward.";
   targetSteps.innerHTML = "";
+
   steps.forEach((step) => {
     const chip = document.createElement("div");
     chip.className = "target-chip";
     chip.textContent = step;
     targetSteps.append(chip);
   });
+
   drawTargetPreview(lesson);
   lessonHint.textContent = completed
     ? nextLesson
@@ -677,17 +770,21 @@ function evaluateCheckpoint(lesson, source) {
   if (failures.length > 0) {
     hideCelebration();
     checkpointResult.textContent = `Checkpoint not yet passed. Next try: ${failures.join(", ")}.`;
+    setLessonRunResult(activeTrackId, lesson.id, "Needs another try");
+    renderDashboard();
     return false;
   }
 
   checkpointResult.textContent = lesson.successMessage;
   markLessonComplete(activeTrackId, lesson.id);
   markBadgeEarned(activeTrackId, lesson.id);
+  setLessonRunResult(activeTrackId, lesson.id, "Checkpoint passed");
   trackProgress.textContent = getTrackProgressLabel(activeTrackId);
   renderBadgeShelf(activeTrackId);
   lessonStatus.textContent = "Completed";
   renderLessonList(getTrack(activeTrackId));
   renderLessonDetails();
+  renderDashboard();
   showCelebration(lesson, getNextLesson(activeTrackId, lesson.id));
   return true;
 }
@@ -864,6 +961,8 @@ run_user_code(source_code)
     hideCelebration();
     setStatus("The code needs a small fix before it can run.");
     checkpointResult.textContent = "The mission checkpoint is waiting for a successful run.";
+    setLessonRunResult(activeTrackId, activeLessonId, "Code needs a fix");
+    renderDashboard();
     appendLogLine(error?.message || String(error));
   } finally {
     runDemoButton.disabled = false;
@@ -879,14 +978,15 @@ function openLesson(lessonId) {
 
   saveCurrentDraft();
   activeLessonId = lessonId;
-  progressState.activeLessonIdByTrack[activeTrackId] = lessonId;
+  getLearnerState().activeLessonIdByTrack[activeTrackId] = lessonId;
   renderLessonList(getTrack(activeTrackId));
   renderLessonDetails();
+  renderDashboard();
   hideCelebration();
   checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
   setStatus(`Loaded lesson: ${lesson.title}`);
   setLog(`Lesson loaded: ${lesson.title}`);
-  persistProgressState();
+  persistAppState();
 }
 
 function openNextLesson() {
@@ -899,6 +999,20 @@ function openNextLesson() {
   openLesson(nextLesson.id);
 }
 
+function switchLearner(learnerId) {
+  saveCurrentDraft();
+  activeLearnerId = learnerId;
+  appState.activeLearnerId = learnerId;
+  const learnerState = getLearnerState();
+  const preferredTrack = getTrack(learnerState.activeTrackId) ? learnerState.activeTrackId : "kids";
+
+  renderLearnerSelect();
+  renderTrack(preferredTrack);
+  checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
+  setStatus(`Switched to ${getActiveLearnerConfig()?.name || "learner"}.`);
+  setLog(`Learner profile loaded: ${getActiveLearnerConfig()?.name || "learner"}.`);
+}
+
 function resetWorkspace() {
   const lesson = getActiveLesson();
 
@@ -908,8 +1022,8 @@ function resetWorkspace() {
 
   ensureTrackContainers(activeTrackId);
   codeEditor.value = lesson.starterCode;
-  progressState.codeDrafts[activeTrackId][activeLessonId] = lesson.starterCode;
-  persistProgressState();
+  getLearnerState().codeDrafts[activeTrackId][activeLessonId] = lesson.starterCode;
+  persistAppState();
   resetCanvasState();
   resetMetrics();
   drawWelcomeScene();
@@ -947,26 +1061,33 @@ nextLessonButton.addEventListener("click", () => {
   openNextLesson();
 });
 
+learnerSelect.addEventListener("change", () => {
+  switchLearner(learnerSelect.value);
+});
+
 codeEditor.addEventListener("input", () => {
   lessonStatus.textContent = isLessonComplete(activeTrackId, activeLessonId) ? "Completed" : "In progress";
   scheduleDraftSave();
 });
 
 async function boot() {
-  loadProgressState();
+  loadAppState();
   await loadLessonCatalog();
 
   if (!lessonCatalog.tracks.length) {
     return;
   }
 
-  const preferredTrack = getTrack(progressState.activeTrackId) ? progressState.activeTrackId : "kids";
+  activeLearnerId = getLearnerConfig(appState.activeLearnerId) ? appState.activeLearnerId : DEFAULT_LEARNERS[0].id;
+  renderLearnerSelect();
+  const learnerState = getLearnerState();
+  const preferredTrack = getTrack(learnerState.activeTrackId) ? learnerState.activeTrackId : "kids";
   renderTrack(preferredTrack);
   resetCanvasState();
   resetMetrics();
   drawWelcomeScene();
   checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
-  setStatus("Pick a track, then run the starter Python code.");
+  setStatus("Pick a learner, then run the starter Python code.");
 }
 
 boot();

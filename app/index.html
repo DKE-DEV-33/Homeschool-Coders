@@ -17,6 +17,10 @@
             art, checkpoints, and progress tracking designed for both adult
             learners and kids ages 6 to 9.
           </p>
+          <div class="learner-bar">
+            <label class="editor-label" for="learner-select">Learner</label>
+            <select id="learner-select" class="learner-select"></select>
+          </div>
           <div class="hero-actions">
             <button id="load-kids-track" class="primary-button">
               Preview Kids Track
@@ -27,13 +31,12 @@
           </div>
         </div>
         <div class="hero-card">
-          <p class="card-label">v1 focus</p>
-          <ul>
-            <li>Python first</li>
-            <li>Canvas drawing output</li>
-            <li>Short missions and checkpoints</li>
-            <li>Local browser delivery</li>
-          </ul>
+          <p class="card-label">Learner Dashboard</p>
+          <p id="dashboard-learner" class="reward-title">Learner</p>
+          <p id="dashboard-track" class="detail-copy"></p>
+          <p id="dashboard-mission" class="detail-copy"></p>
+          <p id="dashboard-badges" class="detail-copy"></p>
+          <p id="dashboard-last-result" class="detail-copy"></p>
         </div>
       </header>
 

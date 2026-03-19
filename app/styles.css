@@ -142,6 +142,24 @@ h3 {
   margin-top: 24px;
 }
 
+.learner-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.learner-select {
+  min-width: 220px;
+  padding: 10px 14px;
+  border: 1px solid rgba(33, 78, 95, 0.18);
+  border-radius: 999px;
+  background: #fffdf8;
+  color: var(--text);
+  font: inherit;
+}
+
 button {
   border: 0;
   border-radius: 999px;
