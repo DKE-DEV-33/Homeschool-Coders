@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homeschool Coders</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Local-first coding playground</p>
+          <h1>Learn Python by drawing, experimenting, and building tiny wins.</h1>
+          <p class="hero-text">
+            One workspace for guided lessons, code editing, turtle-style canvas
+            art, checkpoints, and progress tracking designed for both adult
+            learners and kids ages 6 to 9.
+          </p>
+          <div class="hero-actions">
+            <button id="load-kids-track" class="primary-button">
+              Preview Kids Track
+            </button>
+            <button id="load-explorer-track" class="secondary-button">
+              Preview Explorer Track
+            </button>
+          </div>
+        </div>
+        <div class="hero-card">
+          <p class="card-label">v1 focus</p>
+          <ul>
+            <li>Python first</li>
+            <li>Canvas drawing output</li>
+            <li>Short missions and checkpoints</li>
+            <li>Local browser delivery</li>
+          </ul>
+        </div>
+      </header>
+
+      <main class="workspace-grid">
+        <section class="panel lesson-panel">
+          <div class="panel-heading">
+            <p class="panel-kicker">Lesson path</p>
+            <h2 id="track-title">Little Learners</h2>
+          </div>
+          <div id="lesson-list" class="lesson-list"></div>
+        </section>
+
+        <section class="panel editor-panel">
+          <div class="panel-heading">
+            <p class="panel-kicker">Integrated studio</p>
+            <h2>Starter code</h2>
+          </div>
+          <label class="editor-label" for="code-editor">Code playground</label>
+          <textarea id="code-editor" spellcheck="false">
+pen_color("skyblue")
+repeat(4):
+    move(90)
+    turn(90)
+          </textarea>
+          <div class="editor-actions">
+            <button id="run-demo" class="primary-button">Run Demo</button>
+            <button id="reset-demo" class="secondary-button">Reset</button>
+          </div>
+          <p id="editor-status" class="status-text">
+            This is a visual scaffold for the next step, where we add the Python
+            runtime and sandboxed drawing commands.
+          </p>
+        </section>
+
+        <section class="panel output-panel">
+          <div class="panel-heading">
+            <p class="panel-kicker">Visual output</p>
+            <h2>Canvas preview</h2>
+          </div>
+          <canvas id="drawing-surface" width="520" height="360"></canvas>
+          <div class="checkpoint-card">
+            <p class="card-label">Checkpoint idea</p>
+            <p id="checkpoint-copy">
+              Draw a square with four equal sides, then explain what the loop is
+              doing.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
+

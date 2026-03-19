@@ -1,0 +1,45 @@
+{
+  "tracks": [
+    {
+      "id": "kids-python",
+      "title": "Little Learners",
+      "ageRange": "6-9",
+      "focus": "Python drawing missions",
+      "lessons": [
+        {
+          "id": "meet-the-turtle",
+          "title": "Meet the Turtle",
+          "goal": "Make the turtle move and draw a line."
+        },
+        {
+          "id": "corners-and-squares",
+          "title": "Corners and Squares",
+          "goal": "Turn the turtle and build your first box."
+        },
+        {
+          "id": "repeat-magic",
+          "title": "Repeat Magic",
+          "goal": "Use repetition to make patterns with less code."
+        }
+      ]
+    },
+    {
+      "id": "explorer-python",
+      "title": "Explorer",
+      "ageRange": "Adult",
+      "focus": "Python concepts through visual output",
+      "lessons": [
+        {
+          "id": "drawing-with-intent",
+          "title": "Drawing with Intent",
+          "goal": "Connect drawing commands to geometric outcomes."
+        },
+        {
+          "id": "loops-and-patterns",
+          "title": "Loops and Patterns",
+          "goal": "Use repetition to simplify and scale drawing logic."
+        }
+      ]
+    }
+  ]
+}
