@@ -324,6 +324,27 @@ button:hover {
   font-size: 1rem;
 }
 
+.history-card {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(33, 78, 95, 0.12);
+}
+
+.history-list {
+  display: grid;
+  gap: 8px;
+}
+
+.history-item {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 250, 242, 0.72);
+  border: 1px solid rgba(33, 78, 95, 0.08);
+  color: var(--muted);
+  line-height: 1.45;
+  font-size: 0.9rem;
+}
+
 .lesson-status {
   display: inline-block;
   margin-top: 12px;

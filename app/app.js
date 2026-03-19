@@ -39,6 +39,7 @@ const dashboardTrack = document.querySelector("#dashboard-track");
 const dashboardMission = document.querySelector("#dashboard-mission");
 const dashboardBadges = document.querySelector("#dashboard-badges");
 const dashboardLastResult = document.querySelector("#dashboard-last-result");
+const dashboardHistory = document.querySelector("#dashboard-history");
 const runDemoButton = document.querySelector("#run-demo");
 const resetDemoButton = document.querySelector("#reset-demo");
 const loadKidsTrackButton = document.querySelector("#load-kids-track");
@@ -93,6 +94,7 @@ function createDefaultLearnerProgress() {
     completedLessons: {},
     earnedBadges: {},
     lastResultByLesson: {},
+    recentActivity: [],
   };
 }
 
@@ -148,6 +150,7 @@ function loadAppState() {
         completedLessons: savedLearner.completedLessons || {},
         earnedBadges: savedLearner.earnedBadges || {},
         lastResultByLesson: savedLearner.lastResultByLesson || {},
+        recentActivity: savedLearner.recentActivity || [],
       };
     });
   } catch (error) {
@@ -283,6 +286,17 @@ function setLessonRunResult(trackId, lessonId, resultLabel) {
   persistAppState();
 }
 
+function addRecentActivity(message) {
+  const learnerState = getLearnerState();
+  const activityEntry = {
+    id: `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+    message,
+  };
+
+  learnerState.recentActivity = [activityEntry, ...(learnerState.recentActivity || [])].slice(0, 6);
+  persistAppState();
+}
+
 function getTrackProgressLabel(trackId) {
   const track = getTrack(trackId);
   return `${getCompletedCount(trackId)} of ${track?.lessons.length || 0} missions complete`;
@@ -335,6 +349,26 @@ function renderDashboard() {
   dashboardMission.textContent = `Mission: ${currentLesson?.title || "None selected"}`;
   dashboardBadges.textContent = `Badges earned: ${getEarnedBadgeCount()}`;
   dashboardLastResult.textContent = `Last result: ${lastResult}`;
+  renderDashboardHistory(learnerState.recentActivity || []);
+}
+
+function renderDashboardHistory(activityItems) {
+  dashboardHistory.innerHTML = "";
+
+  if (!activityItems.length) {
+    const emptyState = document.createElement("div");
+    emptyState.className = "history-item";
+    emptyState.textContent = "No activity yet. Run a lesson to start the trail.";
+    dashboardHistory.append(emptyState);
+    return;
+  }
+
+  activityItems.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = "history-item";
+    row.textContent = item.message;
+    dashboardHistory.append(row);
+  });
 }
 
 function renderBadgeShelf(trackId) {
@@ -771,6 +805,7 @@ function evaluateCheckpoint(lesson, source) {
     hideCelebration();
     checkpointResult.textContent = `Checkpoint not yet passed. Next try: ${failures.join(", ")}.`;
     setLessonRunResult(activeTrackId, lesson.id, "Needs another try");
+    addRecentActivity(`${lesson.title}: needs another try`);
     renderDashboard();
     return false;
   }
@@ -779,6 +814,7 @@ function evaluateCheckpoint(lesson, source) {
   markLessonComplete(activeTrackId, lesson.id);
   markBadgeEarned(activeTrackId, lesson.id);
   setLessonRunResult(activeTrackId, lesson.id, "Checkpoint passed");
+  addRecentActivity(`${lesson.title}: checkpoint passed and ${lesson.reward?.title || "badge"} earned`);
   trackProgress.textContent = getTrackProgressLabel(activeTrackId);
   renderBadgeShelf(activeTrackId);
   lessonStatus.textContent = "Completed";
@@ -962,6 +998,7 @@ run_user_code(source_code)
     setStatus("The code needs a small fix before it can run.");
     checkpointResult.textContent = "The mission checkpoint is waiting for a successful run.";
     setLessonRunResult(activeTrackId, activeLessonId, "Code needs a fix");
+    addRecentActivity(`${getActiveLesson()?.title || "Lesson"}: code needs a fix`);
     renderDashboard();
     appendLogLine(error?.message || String(error));
   } finally {
