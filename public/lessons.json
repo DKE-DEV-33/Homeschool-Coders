@@ -1,43 +1,101 @@
 {
   "tracks": [
     {
-      "id": "kids-python",
+      "id": "kids",
       "title": "Little Learners",
       "ageRange": "6-9",
       "focus": "Python drawing missions",
+      "checkpointPrompt": "Finish the mission, then explain what your code is repeating or changing.",
       "lessons": [
         {
           "id": "meet-the-turtle",
           "title": "Meet the Turtle",
-          "goal": "Make the turtle move and draw a line."
+          "description": "Tell the turtle where to go and watch a line appear on the canvas.",
+          "mission": "Make at least one line and add a message to your picture.",
+          "hint": "Start with move(90), then try write(\"hello\", 24).",
+          "concept": "Commands run from top to bottom in order.",
+          "starterCode": "pen_color(\"skyblue\")\nmove(120)\nwrite(\"Hello, turtle!\", 22)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 1,
+            "requiresWrite": true,
+            "requiredCommands": ["move", "write"]
+          },
+          "successMessage": "Nice work. You made the turtle move and added your own message."
         },
         {
           "id": "corners-and-squares",
           "title": "Corners and Squares",
-          "goal": "Turn the turtle and build your first box."
+          "description": "Use turns to make corners and close a square.",
+          "mission": "Draw a square with four equal sides.",
+          "hint": "A square can be made with repeat(4): move(90) turn(90).",
+          "concept": "Turning the turtle changes the direction of the next line.",
+          "starterCode": "pen_color(\"tomato\")\nline_width(6)\nrepeat(4):\n    move(90)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 4,
+            "minTurns": 4,
+            "requiresRepeat": true,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Square complete. You used a loop to repeat the same two commands."
         },
         {
           "id": "repeat-magic",
           "title": "Repeat Magic",
-          "goal": "Use repetition to make patterns with less code."
+          "description": "Use loops and colors to turn one shape into a pattern.",
+          "mission": "Make a colorful pattern with more than one color.",
+          "hint": "Try drawing a small shape, turning a little, and changing colors before you repeat again.",
+          "concept": "Loops help us create patterns with less code.",
+          "starterCode": "line_width(4)\npen_color(\"goldenrod\")\nrepeat(6):\n    move(70)\n    turn(60)\n\nturn(20)\npen_color(\"teal\")\nrepeat(6):\n    move(70)\n    turn(60)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 8,
+            "requiresRepeat": true,
+            "minColorChanges": 2
+          },
+          "successMessage": "Pattern unlocked. You mixed loops and colors to build something bigger."
         }
       ]
     },
     {
-      "id": "explorer-python",
+      "id": "explorer",
       "title": "Explorer",
       "ageRange": "Adult",
       "focus": "Python concepts through visual output",
+      "checkpointPrompt": "Build the drawing, then explain how the code structure made it easier to change.",
       "lessons": [
         {
           "id": "drawing-with-intent",
           "title": "Drawing with Intent",
-          "goal": "Connect drawing commands to geometric outcomes."
+          "description": "Connect movement commands to geometric results.",
+          "mission": "Draw at least two distinct shapes on the canvas.",
+          "hint": "A line plus a looped shape is enough to pass this one.",
+          "concept": "Geometric output is a direct result of sequence, heading, and distance.",
+          "starterCode": "pen_color(\"coral\")\nline_width(5)\nrepeat(3):\n    move(80)\n    turn(120)\n\npen_up()\ngo_to(360, 220)\npen_down()\npen_color(\"steelblue\")\nrepeat(4):\n    move(70)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 7,
+            "minTurns": 6,
+            "requiredCommands": ["go_to", "pen_up", "pen_down"]
+          },
+          "successMessage": "You built multiple shapes and controlled where drawing started."
         },
         {
-          "id": "loops-and-patterns",
-          "title": "Loops and Patterns",
-          "goal": "Use repetition to simplify and scale drawing logic."
+          "id": "functions-as-tools",
+          "title": "Functions as Tools",
+          "description": "Package drawing behavior into reusable helpers.",
+          "mission": "Create a helper function and use it more than once.",
+          "hint": "Try defining a shape helper such as def petal(): or def square(): then call it in a loop.",
+          "concept": "Functions let us name and reuse a pattern of instructions.",
+          "starterCode": "pen_color(\"orchid\")\nline_width(3)\n\ndef petal():\n    repeat(6):\n        move(50)\n        turn(60)\n\nrepeat(6):\n    petal()\n    turn(60)",
+          "check": {
+            "type": "code",
+            "requiresFunctionDefinition": true,
+            "minFunctionCalls": 2,
+            "requiresRepeat": true
+          },
+          "successMessage": "Function success. Your drawing uses a reusable helper instead of repeated copy-paste."
         }
       ]
     }

@@ -48,6 +48,7 @@ Note: the current Python runtime uses Pyodide loaded from the official CDN on fi
 
 - A visual shell for the learning environment.
 - A working in-browser Python runtime connected to a canvas drawing API.
+- A lesson catalog with mission text, hints, and simple checkpoint rules.
 - A first-pass lesson map and child-friendly product direction.
 - Architecture notes for adding a Python runner and lesson engine next.
 

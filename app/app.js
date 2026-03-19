@@ -1,81 +1,15 @@
-const lessonTracks = {
-  kids: {
-    title: "Little Learners",
-    checkpoint:
-      "Draw a square with four equal sides, then explain what the loop is doing.",
-    starterCode: `pen_color("skyblue")
-line_width(6)
-repeat(4):
-    move(90)
-    turn(90)
-
-turn(45)
-pen_color("goldenrod")
-move(60)
-write("Square complete!", 22)`,
-    lessons: [
-      {
-        title: "Meet the Turtle",
-        description: "Tell the turtle where to move and watch lines appear.",
-      },
-      {
-        title: "Corners and Squares",
-        description: "Use turn commands to make your first neat shape.",
-      },
-      {
-        title: "Repeat Magic",
-        description: "Learn how loops help the turtle do the same job again.",
-      },
-      {
-        title: "Color Party",
-        description: "Change line colors and make your drawing feel alive.",
-      },
-    ],
-  },
-  explorer: {
-    title: "Explorer",
-    checkpoint:
-      "Refactor repeated drawing instructions into a reusable helper and describe why that makes the program easier to change.",
-    starterCode: `pen_color("coral")
-line_width(4)
-
-def petal():
-    repeat(6):
-        move(70)
-        turn(60)
-
-repeat(8):
-    petal()
-    turn(45)
-
-write("Loops create patterns", 18)`,
-    lessons: [
-      {
-        title: "Drawing with Intent",
-        description: "Map motion commands to geometric outcomes on the canvas.",
-      },
-      {
-        title: "Loops and Patterns",
-        description: "Use repetition to simplify code and generate visuals.",
-      },
-      {
-        title: "Functions as Tools",
-        description: "Bundle drawing logic into reusable building blocks.",
-      },
-      {
-        title: "Challenge Missions",
-        description: "Recreate a target pattern with less code and more clarity.",
-      },
-    ],
-  },
-};
-
 const PYODIDE_VERSION = "0.27.7";
 const pyodideModuleUrl = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
 
 const trackTitle = document.querySelector("#track-title");
 const lessonList = document.querySelector("#lesson-list");
+const lessonTitle = document.querySelector("#lesson-title");
+const lessonDescription = document.querySelector("#lesson-description");
+const lessonConcept = document.querySelector("#lesson-concept");
+const lessonMission = document.querySelector("#lesson-mission");
+const lessonHint = document.querySelector("#lesson-hint");
 const checkpointCopy = document.querySelector("#checkpoint-copy");
+const checkpointResult = document.querySelector("#checkpoint-result");
 const codeEditor = document.querySelector("#code-editor");
 const editorStatus = document.querySelector("#editor-status");
 const runtimeLog = document.querySelector("#runtime-log");
@@ -86,7 +20,13 @@ const loadExplorerTrackButton = document.querySelector("#load-explorer-track");
 const canvas = document.querySelector("#drawing-surface");
 const context = canvas.getContext("2d");
 
-let activeTrackKey = "kids";
+const fallbackLessonCatalog = {
+  tracks: [],
+};
+
+let lessonCatalog = fallbackLessonCatalog;
+let activeTrackId = "kids";
+let activeLessonId = "";
 let pyodide;
 let pyodideReadyPromise;
 
@@ -99,24 +39,106 @@ const turtleState = {
   lineWidth: 4,
 };
 
-function renderTrack(trackKey) {
-  const track = lessonTracks[trackKey];
+const runMetrics = {
+  segments: 0,
+  turns: 0,
+  colorChanges: 0,
+  writes: 0,
+  functionCalls: {},
+};
 
-  activeTrackKey = trackKey;
+function resetMetrics() {
+  runMetrics.segments = 0;
+  runMetrics.turns = 0;
+  runMetrics.colorChanges = 0;
+  runMetrics.writes = 0;
+  runMetrics.functionCalls = {};
+}
+
+async function loadLessonCatalog() {
+  try {
+    const response = await fetch("../public/lessons.json");
+
+    if (!response.ok) {
+      throw new Error(`Lesson catalog request failed with ${response.status}.`);
+    }
+
+    lessonCatalog = await response.json();
+  } catch (error) {
+    lessonCatalog = fallbackLessonCatalog;
+    setLog(`Could not load lesson catalog.\n${error.message}`);
+    setStatus("Lesson data could not be loaded.");
+  }
+}
+
+function getTrack(trackId) {
+  return lessonCatalog.tracks.find((track) => track.id === trackId);
+}
+
+function getActiveTrack() {
+  return getTrack(activeTrackId);
+}
+
+function getLesson(trackId, lessonId) {
+  const track = getTrack(trackId);
+  return track?.lessons.find((lesson) => lesson.id === lessonId);
+}
+
+function getActiveLesson() {
+  return getLesson(activeTrackId, activeLessonId);
+}
+
+function renderTrack(trackId) {
+  const track = getTrack(trackId);
+
+  if (!track) {
+    return;
+  }
+
+  activeTrackId = trackId;
+  activeLessonId = track.lessons[0]?.id || "";
   trackTitle.textContent = track.title;
-  checkpointCopy.textContent = track.checkpoint;
-  codeEditor.value = track.starterCode;
+  checkpointCopy.textContent = track.checkpointPrompt;
+  renderLessonList(track);
+  renderLessonDetails();
+}
+
+function renderLessonList(track) {
   lessonList.innerHTML = "";
 
-  track.lessons.forEach((lesson, index) => {
-    const item = document.createElement("article");
-    item.className = `lesson-card ${index === 0 ? "active" : ""}`;
+  track.lessons.forEach((lesson) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = `lesson-card ${lesson.id === activeLessonId ? "active" : ""}`;
     item.innerHTML = `
       <strong>${lesson.title}</strong>
       <span>${lesson.description}</span>
     `;
+    item.addEventListener("click", () => {
+      activeLessonId = lesson.id;
+      renderLessonList(track);
+      renderLessonDetails();
+      checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
+      setStatus(`Loaded lesson: ${lesson.title}`);
+      setLog(`Lesson loaded: ${lesson.title}`);
+    });
     lessonList.append(item);
   });
+}
+
+function renderLessonDetails() {
+  const lesson = getActiveLesson();
+
+  if (!lesson) {
+    return;
+  }
+
+  lessonTitle.textContent = lesson.title;
+  lessonDescription.textContent = lesson.description;
+  lessonConcept.textContent = `Concept: ${lesson.concept}`;
+  lessonMission.textContent = `Mission: ${lesson.mission}`;
+  lessonHint.textContent = `Hint: ${lesson.hint}`;
+  codeEditor.value = lesson.starterCode;
 }
 
 function setStatus(message) {
@@ -125,6 +147,14 @@ function setStatus(message) {
 
 function setLog(message) {
   runtimeLog.textContent = message;
+}
+
+function appendLogLine(message) {
+  if (runtimeLog.textContent === "Runtime log will appear here.") {
+    runtimeLog.textContent = "";
+  }
+
+  runtimeLog.textContent += `${message}\n`;
 }
 
 function resetCanvasState() {
@@ -187,6 +217,7 @@ function setStrokeStyle(color) {
   turtleState.strokeStyle = color;
   context.strokeStyle = color;
   context.fillStyle = color;
+  runMetrics.colorChanges += 1;
 }
 
 function setLineWidth(width) {
@@ -208,6 +239,7 @@ function turnBy(degrees) {
   }
 
   turtleState.angle += parsedDegrees;
+  runMetrics.turns += 1;
 }
 
 function moveBy(distance) {
@@ -226,6 +258,7 @@ function moveBy(distance) {
     context.moveTo(turtleState.x, turtleState.y);
     context.lineTo(nextX, nextY);
     context.stroke();
+    runMetrics.segments += 1;
   }
 
   turtleState.x = nextX;
@@ -245,6 +278,7 @@ function goTo(x, y) {
     context.moveTo(turtleState.x, turtleState.y);
     context.lineTo(nextX, nextY);
     context.stroke();
+    runMetrics.segments += 1;
   }
 
   turtleState.x = nextX;
@@ -264,11 +298,86 @@ function writeText(message, size = 20) {
   context.font = `700 ${fontSize}px "Avenir Next", sans-serif`;
   context.fillText(String(message), 0, 0);
   context.restore();
+  runMetrics.writes += 1;
+}
+
+function recordFunctionCall(functionName) {
+  const safeName = String(functionName);
+  runMetrics.functionCalls[safeName] = (runMetrics.functionCalls[safeName] || 0) + 1;
 }
 
 function preprocessCode(source) {
   const normalized = source.replace(/\r\n/g, "\n");
   return normalized.replace(/^(\s*)repeat\((.+)\):/gm, "$1for _ in range($2):");
+}
+
+function buildCodeFacts(source) {
+  const normalized = source.replace(/\r\n/g, "\n");
+  const facts = {
+    usesRepeat: /(^|\n)\s*repeat\(/.test(normalized),
+    functionDefinitions: [...normalized.matchAll(/^\s*def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/gm)].map(
+      (match) => match[1],
+    ),
+    commands: new Set([...normalized.matchAll(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g)].map((match) => match[1])),
+  };
+
+  return facts;
+}
+
+function evaluateCheckpoint(lesson, source) {
+  const check = lesson.check || {};
+  const facts = buildCodeFacts(source);
+  const failures = [];
+
+  if (check.minSegments && runMetrics.segments < check.minSegments) {
+    failures.push(`draw at least ${check.minSegments} line segments`);
+  }
+
+  if (check.minTurns && runMetrics.turns < check.minTurns) {
+    failures.push(`use turn at least ${check.minTurns} times`);
+  }
+
+  if (check.minColorChanges && runMetrics.colorChanges < check.minColorChanges) {
+    failures.push(`use at least ${check.minColorChanges} colors`);
+  }
+
+  if (check.requiresWrite && runMetrics.writes < 1) {
+    failures.push("add a write message to the canvas");
+  }
+
+  if (check.requiresRepeat && !facts.usesRepeat) {
+    failures.push("use repeat(...) in your code");
+  }
+
+  if (check.requiredCommands) {
+    check.requiredCommands.forEach((commandName) => {
+      if (!facts.commands.has(commandName)) {
+        failures.push(`include ${commandName}(...)`);
+      }
+    });
+  }
+
+  if (check.requiresFunctionDefinition && facts.functionDefinitions.length === 0) {
+    failures.push("define your own helper function with def");
+  }
+
+  if (check.minFunctionCalls) {
+    const helperCalls = facts.functionDefinitions.reduce((total, functionName) => {
+      return total + (runMetrics.functionCalls[functionName] || 0);
+    }, 0);
+
+    if (helperCalls < check.minFunctionCalls) {
+      failures.push(`call your helper function at least ${check.minFunctionCalls} times`);
+    }
+  }
+
+  if (failures.length > 0) {
+    checkpointResult.textContent = `Checkpoint not yet passed. Next try: ${failures.join(", ")}.`;
+    return false;
+  }
+
+  checkpointResult.textContent = lesson.successMessage;
+  return true;
 }
 
 async function ensurePyodide() {
@@ -299,13 +408,16 @@ async function ensurePyodide() {
       line_width: setLineWidth,
       go_to: goTo,
       write_text: writeText,
+      record_function_call: recordFunctionCall,
       reset_canvas: () => {
         resetCanvasState();
+        resetMetrics();
         prepareCanvas();
       },
     });
 
     await pyodide.runPythonAsync(`
+import ast
 from canvas_api import (
     move_by as canvas_move_by,
     turn_by as canvas_turn_by,
@@ -315,6 +427,7 @@ from canvas_api import (
     line_width as canvas_line_width,
     go_to as canvas_go_to,
     write_text as canvas_write_text,
+    record_function_call as canvas_record_function_call,
     reset_canvas as canvas_reset,
 )
 
@@ -344,6 +457,46 @@ def write(message, size=20):
 
 def reset_drawing():
     canvas_reset()
+
+class FunctionCallTracker(ast.NodeTransformer):
+    def __init__(self, function_names):
+        self.function_names = set(function_names)
+
+    def visit_Expr(self, node):
+        node = self.generic_visit(node)
+        if isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Name) and node.value.func.id in self.function_names:
+            tracker_call = ast.Expr(
+                value=ast.Call(
+                    func=ast.Name(id="__record_function_call__", ctx=ast.Load()),
+                    args=[ast.Constant(value=node.value.func.id)],
+                    keywords=[],
+                )
+            )
+            return [tracker_call, node]
+        return node
+
+def __record_function_call__(name):
+    canvas_record_function_call(name)
+
+def run_user_code(source):
+    module = ast.parse(source, mode="exec")
+    function_names = [node.name for node in module.body if isinstance(node, ast.FunctionDef)]
+    tracked_module = FunctionCallTracker(function_names).visit(module)
+    ast.fix_missing_locations(tracked_module)
+    namespace = {
+        "move": move,
+        "turn": turn,
+        "pen_up": pen_up,
+        "pen_down": pen_down,
+        "pen_color": pen_color,
+        "line_width": line_width,
+        "go_to": go_to,
+        "write": write,
+        "reset_drawing": reset_drawing,
+        "range": range,
+        "__record_function_call__": __record_function_call__,
+    }
+    exec(compile(tracked_module, "<lesson>", "exec"), namespace, namespace)
 `);
 
     setStatus("Python runtime ready.");
@@ -354,40 +507,48 @@ def reset_drawing():
   return pyodideReadyPromise;
 }
 
-function appendLogLine(message) {
-  if (runtimeLog.textContent === "Runtime log will appear here.") {
-    runtimeLog.textContent = "";
-  }
-
-  runtimeLog.textContent += `${message}\n`;
-}
-
 async function runPythonCode() {
   runDemoButton.disabled = true;
   setStatus("Preparing Python runtime...");
 
   try {
     const runtime = await ensurePyodide();
-    const preparedCode = preprocessCode(codeEditor.value).trim();
-
-    resetCanvasState();
-    prepareCanvas();
-    setLog("Running Python code...");
-    setStatus("Running lesson code...");
+    const lesson = getActiveLesson();
+    const originalSource = codeEditor.value;
+    const preparedCode = preprocessCode(originalSource).trim();
 
     if (!preparedCode) {
       throw new Error("Write a few commands first, then press Run Python.");
     }
 
+    resetCanvasState();
+    resetMetrics();
+    prepareCanvas();
+    setLog("Running Python code...");
+    setStatus("Running lesson code...");
+
+    runtime.globals.set("source_code", preparedCode);
     await runtime.runPythonAsync(`
 reset_drawing()
-${preparedCode}
+run_user_code(source_code)
 `);
+    runtime.globals.delete("source_code");
 
+    const passed = evaluateCheckpoint(lesson, originalSource);
     appendLogLine("Run complete.");
-    setStatus("Python finished. Tweak the code and run again to explore.");
+    appendLogLine(
+      passed
+        ? "Checkpoint passed."
+        : "Checkpoint not passed yet. Use the mission note for the next tweak.",
+    );
+    setStatus(
+      passed
+        ? "Checkpoint passed. Nice work."
+        : "The code ran, and the checkpoint has a clue for your next try.",
+    );
   } catch (error) {
     setStatus("The code needs a small fix before it can run.");
+    checkpointResult.textContent = "The mission checkpoint is waiting for a successful run.";
     appendLogLine(error?.message || String(error));
   } finally {
     runDemoButton.disabled = false;
@@ -395,21 +556,25 @@ ${preparedCode}
 }
 
 function resetWorkspace() {
-  renderTrack(activeTrackKey);
+  renderTrack(activeTrackId);
   resetCanvasState();
+  resetMetrics();
   drawWelcomeScene();
+  checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
   setLog("Canvas reset. Starter code restored for this track.");
   setStatus("Workspace reset.");
 }
 
 loadKidsTrackButton.addEventListener("click", () => {
   renderTrack("kids");
+  checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
   setStatus("Kids track loaded.");
   setLog("Little Learners track loaded with beginner-friendly drawing prompts.");
 });
 
 loadExplorerTrackButton.addEventListener("click", () => {
   renderTrack("explorer");
+  checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
   setStatus("Explorer track loaded.");
   setLog("Explorer track loaded with the same concepts and more open-ended patterns.");
 });
@@ -422,7 +587,19 @@ resetDemoButton.addEventListener("click", () => {
   resetWorkspace();
 });
 
-renderTrack("kids");
-resetCanvasState();
-drawWelcomeScene();
-setStatus("Pick a track, then run the starter Python code.");
+async function boot() {
+  await loadLessonCatalog();
+
+  if (!lessonCatalog.tracks.length) {
+    return;
+  }
+
+  renderTrack("kids");
+  resetCanvasState();
+  resetMetrics();
+  drawWelcomeScene();
+  checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
+  setStatus("Pick a track, then run the starter Python code.");
+}
+
+boot();
