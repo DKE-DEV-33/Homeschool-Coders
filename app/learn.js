@@ -1,6 +1,7 @@
 import {
   addRecentActivity,
   ensureTrackContainers,
+  getCompletedCheckpointSteps,
   getCompletedCount,
   getDraft,
   getEarnedBadgeCount,
@@ -17,6 +18,7 @@ import {
   markLessonComplete,
   saveAppState,
   saveDraft,
+  setCompletedCheckpointSteps,
   setActiveProfile,
   setLessonRunResult,
 } from "./state.js";
@@ -33,6 +35,7 @@ const lessonDescription = document.querySelector("#lesson-description");
 const lessonMission = document.querySelector("#lesson-mission");
 const lessonSteps = document.querySelector("#lesson-steps");
 const checkpointCopy = document.querySelector("#checkpoint-copy");
+const checkpointSteps = document.querySelector("#checkpoint-steps");
 const lessonHint = document.querySelector("#lesson-hint");
 const trackTitle = document.querySelector("#track-title");
 const trackProgress = document.querySelector("#track-progress");
@@ -46,6 +49,7 @@ const panelMissions = document.querySelector("#panel-missions");
 const panelBadges = document.querySelector("#panel-badges");
 const runPythonButton = document.querySelector("#run-python");
 const resetWorkspaceButton = document.querySelector("#reset-workspace");
+const editorMicroHint = document.querySelector("#editor-micro-hint");
 const codeEditor = document.querySelector("#code-editor");
 const editorStatus = document.querySelector("#editor-status");
 const lessonStatus = document.querySelector("#lesson-status");
@@ -73,18 +77,18 @@ let saveDraftTimeoutId;
 let pyodide;
 let pyodideReadyPromise;
 
-const COMMAND_REFERENCE = [
-  { signature: 'move(distance)', description: 'Draw forward by a number of pixels.' },
-  { signature: 'turn(degrees)', description: 'Turn the turtle before the next move.' },
-  { signature: 'pen_color("color")', description: 'Change the drawing color.' },
-  { signature: 'line_width(size)', description: 'Make lines thinner or thicker.' },
-  { signature: 'write("text", size)', description: 'Write a message on the canvas.' },
-  { signature: 'pen_up()', description: 'Move without drawing a line.' },
-  { signature: 'pen_down()', description: 'Start drawing again after lifting the pen.' },
-  { signature: 'go_to(x, y)', description: 'Jump to a new spot on the canvas.' },
-  { signature: 'repeat(4):', description: 'Repeat the indented code block multiple times.' },
-  { signature: 'def shape_name():', description: 'Create your own reusable command in later lessons.' },
-];
+const COMMAND_REFERENCE = {
+  move: { signature: "move(distance)", description: "Draw forward by a number of pixels." },
+  turn: { signature: "turn(degrees)", description: "Turn the turtle before the next move." },
+  pen_color: { signature: 'pen_color("color")', description: "Change the drawing color." },
+  line_width: { signature: "line_width(size)", description: "Make lines thinner or thicker." },
+  write: { signature: 'write("text", size)', description: "Write a message on the canvas." },
+  pen_up: { signature: "pen_up()", description: "Move without drawing a line." },
+  pen_down: { signature: "pen_down()", description: "Start drawing again after lifting the pen." },
+  go_to: { signature: "go_to(x, y)", description: "Jump to a new spot on the canvas." },
+  repeat: { signature: "repeat(4):", description: "Repeat the indented code block multiple times." },
+  def: { signature: "def shape_name():", description: "Create your own reusable command in later lessons." },
+};
 
 const turtleState = {
   x: drawingSurface.width / 2,
@@ -132,6 +136,136 @@ function getActiveTrack() {
 
 function getActiveLesson() {
   return getLesson(lessonCatalog, activeTrackId, activeLessonId);
+}
+
+function collectLessonCommandKeys(lesson) {
+  const check = lesson?.check || {};
+  const commandKeys = new Set(check.requiredCommands || []);
+
+  if (check.minSegments) {
+    commandKeys.add("move");
+  }
+  if (check.minTurns) {
+    commandKeys.add("turn");
+  }
+  if (check.minColorChanges) {
+    commandKeys.add("pen_color");
+  }
+  if (check.requiresWrite) {
+    commandKeys.add("write");
+  }
+  if (check.requiresRepeat) {
+    commandKeys.add("repeat");
+  }
+  if (check.requiresFunctionDefinition || check.minFunctionCalls) {
+    commandKeys.add("def");
+  }
+  if (!commandKeys.size) {
+    commandKeys.add("move");
+  }
+
+  return [...commandKeys].filter((key) => COMMAND_REFERENCE[key]);
+}
+
+function buildCheckLabel(check) {
+  const pieces = [];
+
+  if (check.minSegments) {
+    pieces.push(`${check.minSegments}+ line segment${check.minSegments === 1 ? "" : "s"}`);
+  }
+  if (check.minTurns) {
+    pieces.push(`${check.minTurns}+ turn${check.minTurns === 1 ? "" : "s"}`);
+  }
+  if (check.minColorChanges) {
+    pieces.push(`${check.minColorChanges}+ color change${check.minColorChanges === 1 ? "" : "s"}`);
+  }
+  if (check.requiresWrite) {
+    pieces.push("a write message");
+  }
+  if (check.requiresRepeat) {
+    pieces.push("a repeat loop");
+  }
+  if (check.requiresFunctionDefinition) {
+    pieces.push("your own helper function");
+  }
+  if (check.requiredCommands?.length) {
+    pieces.push(check.requiredCommands.join(", "));
+  }
+
+  return pieces.join(", ");
+}
+
+function makeSoftCheck(check) {
+  const softCheck = {};
+
+  if (check.minSegments && check.minSegments > 1) {
+    softCheck.minSegments = Math.max(1, Math.ceil(check.minSegments / 2));
+  }
+  if (check.minTurns && check.minTurns > 1) {
+    softCheck.minTurns = Math.max(1, Math.ceil(check.minTurns / 2));
+  }
+  if (check.minColorChanges && check.minColorChanges > 1) {
+    softCheck.minColorChanges = Math.max(1, Math.ceil(check.minColorChanges / 2));
+  }
+  if (check.minFunctionCalls && check.minFunctionCalls > 1) {
+    softCheck.minFunctionCalls = Math.max(1, Math.ceil(check.minFunctionCalls / 2));
+  }
+  if (check.requiresWrite && !check.minSegments) {
+    softCheck.requiresWrite = true;
+  }
+  if (check.requiresRepeat && !check.requiredCommands?.length) {
+    softCheck.requiresRepeat = true;
+  }
+
+  return softCheck;
+}
+
+function getLessonMilestones(lesson) {
+  const check = lesson?.check || {};
+  const commandKeys = collectLessonCommandKeys(lesson);
+  const milestones = [];
+
+  milestones.push({
+    id: "toolbox",
+    title: "Use the lesson tools",
+    description: `Work in this lesson with ${commandKeys.map((key) => COMMAND_REFERENCE[key].signature).join(", ")}.`,
+    hint: `Try building with ${COMMAND_REFERENCE[commandKeys[0]].signature} first.`,
+    check: {
+      requiredCommands: commandKeys.filter((key) => !["repeat", "def"].includes(key)),
+      requiresRepeat: commandKeys.includes("repeat"),
+      requiresFunctionDefinition: commandKeys.includes("def"),
+      requiresWrite: commandKeys.includes("write"),
+    },
+  });
+
+  const softCheck = makeSoftCheck(check);
+  if (Object.keys(softCheck).length > 0) {
+    milestones.push({
+      id: "progress",
+      title: "Make the picture start to happen",
+      description: `Show visible progress with ${buildCheckLabel(softCheck)}.`,
+      hint: lesson.targetSteps?.[0] || lesson.hint,
+      check: softCheck,
+    });
+  }
+
+  milestones.push({
+    id: "finish",
+    title: "Finish the mission",
+    description: lesson.successMessage,
+    hint: lesson.hint,
+    check,
+  });
+
+  return milestones;
+}
+
+function getCurrentMilestone(lesson) {
+  if (!lesson || !activeProfile) {
+    return null;
+  }
+  const completedSteps = new Set(getCompletedCheckpointSteps(activeProfile, activeTrackId, lesson.id));
+  return getLessonMilestones(lesson).find((step) => !completedSteps.has(step.id)) || null;
 }
 
 function setSidebarTab(tabId) {
@@ -389,9 +523,11 @@ function renderBadgeShelf() {
 }
 
 function renderFunctionReference() {
+  const lesson = getActiveLesson();
   functionReference.innerHTML = "";
 
-  COMMAND_REFERENCE.forEach((item) => {
+  collectLessonCommandKeys(lesson).forEach((key) => {
+    const item = COMMAND_REFERENCE[key];
     const row = document.createElement("article");
     row.className = "reference-item";
     row.innerHTML = `
@@ -399,6 +535,26 @@ function renderFunctionReference() {
       <p>${item.description}</p>
     `;
     functionReference.append(row);
+  });
+}
+
+function renderCheckpointSteps(lesson) {
+  const completedStepIds = new Set(getCompletedCheckpointSteps(activeProfile, activeTrackId, lesson.id));
+  const currentStep = getCurrentMilestone(lesson);
+
+  checkpointSteps.innerHTML = "";
+
+  getLessonMilestones(lesson).forEach((step, index) => {
+    const item = document.createElement("article");
+    const isDone = completedStepIds.has(step.id);
+    const isActive = !isDone && currentStep?.id === step.id;
+
+    item.className = `checkpoint-step ${isDone ? "done" : ""} ${isActive ? "active" : ""}`.trim();
+    item.innerHTML = `
+      <strong>${index + 1}. ${step.title}${isDone ? " - done" : ""}</strong>
+      <p>${step.description}</p>
+    `;
+    checkpointSteps.append(item);
   });
 }
 
@@ -430,20 +586,29 @@ function renderLessonHeader() {
   const lesson = getActiveLesson();
   const track = getActiveTrack();
   const lessonNumber = getLessonIndex(lessonCatalog, activeTrackId, activeLessonId) + 1;
+  const currentMilestone = getCurrentMilestone(lesson);
   if (!lesson || !track || !activeProfile) {
     return;
   }
+  const milestoneCount = getLessonMilestones(lesson).length;
+  const completedMilestoneCount = getCompletedCheckpointSteps(activeProfile, activeTrackId, lesson.id).length;
 
   workspaceTitle.textContent = `${activeProfile.name}'s Python Canvas Missions`;
   lessonTitle.textContent = `${track.title} · Lesson ${lessonNumber}: ${lesson.title}`;
   lessonDescription.textContent = lesson.description;
   lessonMission.textContent = lesson.mission;
   checkpointCopy.textContent = buildCheckpointSummary(track, lesson);
-  lessonHint.textContent = `Hint: ${lesson.hint}`;
+  renderCheckpointSteps(lesson);
+  lessonHint.textContent = `Hint: ${currentMilestone?.hint || lesson.hint}`;
+  editorMicroHint.textContent = currentMilestone
+    ? `Next micro-hint: ${currentMilestone.hint}`
+    : "All milestones are clear. Remix the code or move on to the next lesson.";
   targetPreviewCopy.textContent = lesson.visualGoal || "Create your own version of the target idea.";
   trackTitle.textContent = track.title;
   trackProgress.textContent = `${getCompletedCount(lessonCatalog, activeProfile, activeTrackId)} of ${track.lessons.length} lessons complete · ${getEarnedBadgeCount(activeProfile)} badges earned`;
-  lessonStatus.textContent = isLessonComplete(activeProfile, activeTrackId, activeLessonId) ? "Completed" : "In progress";
+  lessonStatus.textContent = isLessonComplete(activeProfile, activeTrackId, activeLessonId)
+    ? "Completed"
+    : `${completedMilestoneCount}/${milestoneCount} milestones`;
   lessonSteps.innerHTML = "";
   (lesson.targetSteps || []).forEach((step) => {
     const chip = document.createElement("span");
@@ -454,27 +619,7 @@ function renderLessonHeader() {
 }
 
 function buildCheckpointSummary(track, lesson) {
-  const parts = [track.checkpointPrompt];
-  const check = lesson.check || {};
-  if (check.minSegments) {
-    parts.push(`Draw at least ${check.minSegments} line segment${check.minSegments === 1 ? "" : "s"}.`);
-  }
-  if (check.minTurns) {
-    parts.push(`Use turn at least ${check.minTurns} times.`);
-  }
-  if (check.minColorChanges) {
-    parts.push(`Change colors at least ${check.minColorChanges} times.`);
-  }
-  if (check.requiresWrite) {
-    parts.push("Include a write(...) message.");
-  }
-  if (check.requiresRepeat) {
-    parts.push("Use repeat(...) to show a loop.");
-  }
-  if (check.requiredCommands?.length) {
-    parts.push(`Include: ${check.requiredCommands.join(", ")}.`);
-  }
-  return parts.join(" ");
+  return `${track.checkpointPrompt} Clear each milestone below to finish the lesson.`;
 }
 
 function renderEditor() {
@@ -610,6 +755,75 @@ function buildCodeFacts(source) {
   };
 }
 
+function getFunctionCallCount(facts) {
+  return facts.functionDefinitions.reduce((total, functionName) => {
+    return total + (runMetrics.functionCalls[functionName] || 0);
+  }, 0);
+}
+
+function passesCheck(check, facts) {
+  if (check.minSegments && runMetrics.segments < check.minSegments) {
+    return false;
+  }
+  if (check.minTurns && runMetrics.turns < check.minTurns) {
+    return false;
+  }
+  if (check.minColorChanges && runMetrics.colorChanges < check.minColorChanges) {
+    return false;
+  }
+  if (check.requiresWrite && runMetrics.writes < 1) {
+    return false;
+  }
+  if (check.requiresRepeat && !facts.usesRepeat) {
+    return false;
+  }
+  if (check.requiredCommands?.some((commandName) => !facts.commands.has(commandName))) {
+    return false;
+  }
+  if (check.requiresFunctionDefinition && facts.functionDefinitions.length === 0) {
+    return false;
+  }
+  if (check.minFunctionCalls && getFunctionCallCount(facts) < check.minFunctionCalls) {
+    return false;
+  }
+  return true;
+}
+
+function describeFailures(check, facts) {
+  const failures = [];
+
+  if (check.minSegments && runMetrics.segments < check.minSegments) {
+    failures.push(`draw at least ${check.minSegments} line segments`);
+  }
+  if (check.minTurns && runMetrics.turns < check.minTurns) {
+    failures.push(`use turn at least ${check.minTurns} times`);
+  }
+  if (check.minColorChanges && runMetrics.colorChanges < check.minColorChanges) {
+    failures.push(`use at least ${check.minColorChanges} colors`);
+  }
+  if (check.requiresWrite && runMetrics.writes < 1) {
+    failures.push("add a write message to the canvas");
+  }
+  if (check.requiresRepeat && !facts.usesRepeat) {
+    failures.push("use repeat(...) in your code");
+  }
+  if (check.requiredCommands) {
+    check.requiredCommands.forEach((commandName) => {
+      if (!facts.commands.has(commandName)) {
+        failures.push(`include ${commandName}(...)`);
+      }
+    });
+  }
+  if (check.requiresFunctionDefinition && facts.functionDefinitions.length === 0) {
+    failures.push("define your own helper function with def");
+  }
+  if (check.minFunctionCalls && getFunctionCallCount(facts) < check.minFunctionCalls) {
+    failures.push(`call your helper function at least ${check.minFunctionCalls} times`);
+  }
+
+  return failures;
+}
+
 function hideCelebration() {
   celebrationModal.classList.remove("open");
   celebrationModal.setAttribute("aria-hidden", "true");
@@ -645,50 +859,44 @@ function showCelebration(lesson, nextLesson) {
 }
 
 function evaluateCheckpoint(lesson, source) {
-  const check = lesson.check || {};
   const facts = buildCodeFacts(source);
-  const failures = [];
+  const milestones = getLessonMilestones(lesson);
+  const completedStepIds = new Set(getCompletedCheckpointSteps(activeProfile, activeTrackId, lesson.id));
+  const newlyCompleted = [];
 
-  if (check.minSegments && runMetrics.segments < check.minSegments) {
-    failures.push(`draw at least ${check.minSegments} line segments`);
-  }
-  if (check.minTurns && runMetrics.turns < check.minTurns) {
-    failures.push(`use turn at least ${check.minTurns} times`);
-  }
-  if (check.minColorChanges && runMetrics.colorChanges < check.minColorChanges) {
-    failures.push(`use at least ${check.minColorChanges} colors`);
-  }
-  if (check.requiresWrite && runMetrics.writes < 1) {
-    failures.push("add a write message to the canvas");
-  }
-  if (check.requiresRepeat && !facts.usesRepeat) {
-    failures.push("use repeat(...) in your code");
-  }
-  if (check.requiredCommands) {
-    check.requiredCommands.forEach((commandName) => {
-      if (!facts.commands.has(commandName)) {
-        failures.push(`include ${commandName}(...)`);
-      }
-    });
-  }
-  if (check.requiresFunctionDefinition && facts.functionDefinitions.length === 0) {
-    failures.push("define your own helper function with def");
-  }
-  if (check.minFunctionCalls) {
-    const helperCalls = facts.functionDefinitions.reduce((total, functionName) => {
-      return total + (runMetrics.functionCalls[functionName] || 0);
-    }, 0);
-    if (helperCalls < check.minFunctionCalls) {
-      failures.push(`call your helper function at least ${check.minFunctionCalls} times`);
+  milestones.forEach((step) => {
+    if (!completedStepIds.has(step.id) && passesCheck(step.check, facts)) {
+      completedStepIds.add(step.id);
+      newlyCompleted.push(step.title);
     }
-  }
+  });
 
-  if (failures.length) {
+  setCompletedCheckpointSteps(activeProfile, activeTrackId, lesson.id, [...completedStepIds]);
+
+  const nextMilestone = milestones.find((step) => !completedStepIds.has(step.id)) || null;
+  const finalMilestone = milestones[milestones.length - 1];
+  const finalPassed = passesCheck(finalMilestone.check, facts);
+
+  if (!finalPassed) {
     hideCelebration();
-    checkpointResult.textContent = `Checkpoint not passed yet. Next try: ${failures.join(", ")}.`;
-    setLessonRunResult(activeProfile, activeTrackId, lesson.id, "Needs another try");
-    addRecentActivity(activeProfile, `${lesson.title}: needs another try`);
+    const finalFailures = describeFailures(finalMilestone.check, facts);
+    checkpointResult.textContent = newlyCompleted.length
+      ? `Nice. You cleared ${newlyCompleted.join(", ")}. Next up: ${nextMilestone?.title || "keep going"}. ${nextMilestone?.hint || finalFailures.join(", ")}`
+      : `Next milestone: ${nextMilestone?.title || "keep going"}. ${nextMilestone?.hint || finalFailures.join(", ")}`;
+    setLessonRunResult(
+      activeProfile,
+      activeTrackId,
+      lesson.id,
+      `${completedStepIds.size}/${milestones.length} checkpoints cleared`,
+    );
+    addRecentActivity(
+      activeProfile,
+      newlyCompleted.length
+        ? `${lesson.title}: cleared ${completedStepIds.size} of ${milestones.length} checkpoints`
+        : `${lesson.title}: working on checkpoint ${nextMilestone ? milestones.indexOf(nextMilestone) + 1 : milestones.length}`,
+    );
     saveAppState(appState);
+    renderLessonHeader();
     return false;
   }
 
@@ -999,7 +1207,12 @@ resetWorkspaceButton.addEventListener("click", resetWorkspace);
 nextLessonButton.addEventListener("click", openNextLesson);
 closeCelebrationButton.addEventListener("click", hideCelebration);
 codeEditor.addEventListener("input", () => {
-  lessonStatus.textContent = isLessonComplete(activeProfile, activeTrackId, activeLessonId) ? "Completed" : "In progress";
+  const lesson = getActiveLesson();
+  const milestoneCount = lesson ? getLessonMilestones(lesson).length : 0;
+  const completedMilestoneCount = lesson ? getCompletedCheckpointSteps(activeProfile, activeTrackId, lesson.id).length : 0;
+  lessonStatus.textContent = isLessonComplete(activeProfile, activeTrackId, activeLessonId)
+    ? "Completed"
+    : `${completedMilestoneCount}/${milestoneCount} milestones`;
   scheduleDraftSave();
 });
 

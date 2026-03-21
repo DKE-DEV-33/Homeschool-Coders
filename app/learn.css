@@ -220,6 +220,36 @@ h3 {
   margin-top: 10px;
 }
 
+.checkpoint-steps {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.checkpoint-step {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(25, 51, 61, 0.06);
+}
+
+.checkpoint-step strong {
+  font-size: 0.98rem;
+}
+
+.checkpoint-step p {
+  color: var(--muted);
+}
+
+.checkpoint-step.done {
+  background: rgba(78, 159, 105, 0.14);
+}
+
+.checkpoint-step.active {
+  outline: 2px solid rgba(232, 110, 59, 0.18);
+}
+
 .chip-row {
   flex-wrap: wrap;
   margin-top: 12px;
@@ -333,6 +363,15 @@ h3 {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.editor-micro-hint {
+  margin-top: -4px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(232, 110, 59, 0.1);
+  color: var(--ink);
+  font-weight: 700;
 }
 
 #code-editor {

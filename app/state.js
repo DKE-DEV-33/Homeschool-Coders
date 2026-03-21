@@ -7,6 +7,7 @@ function createEmptyProgress(defaultTrackId = "kids") {
     activeTrackId: defaultTrackId,
     activeLessonIdByTrack: {},
     codeDrafts: {},
+    completedCheckpointSteps: {},
     completedLessons: {},
     earnedBadges: {},
     lastResultByLesson: {},
@@ -46,6 +47,7 @@ function normalizeProfile(rawProfile = {}, index = 0) {
       activeTrackId: progress.activeTrackId || defaultTrackId,
       activeLessonIdByTrack: progress.activeLessonIdByTrack || {},
       codeDrafts: progress.codeDrafts || {},
+      completedCheckpointSteps: progress.completedCheckpointSteps || {},
       completedLessons: progress.completedLessons || {},
       earnedBadges: progress.earnedBadges || {},
       lastResultByLesson: progress.lastResultByLesson || {},
@@ -85,6 +87,7 @@ function migrateLegacyState() {
             activeTrackId: learner.activeTrackId || inferTrackIdFromAge(profile.age),
             activeLessonIdByTrack: learner.activeLessonIdByTrack || {},
             codeDrafts: learner.codeDrafts || {},
+            completedCheckpointSteps: learner.completedCheckpointSteps || {},
             completedLessons: learner.completedLessons || {},
             earnedBadges: learner.earnedBadges || {},
             lastResultByLesson: learner.lastResultByLesson || {},
@@ -175,6 +178,7 @@ export function ensureTrackContainers(profile, trackId) {
 
   const progress = profile.progress;
   progress.codeDrafts[trackId] = progress.codeDrafts[trackId] || {};
+  progress.completedCheckpointSteps[trackId] = progress.completedCheckpointSteps[trackId] || {};
   progress.completedLessons[trackId] = progress.completedLessons[trackId] || {};
   progress.earnedBadges[trackId] = progress.earnedBadges[trackId] || {};
   progress.lastResultByLesson[trackId] = progress.lastResultByLesson[trackId] || {};
@@ -260,6 +264,15 @@ export function saveDraft(profile, trackId, lessonId, code) {
   profile.progress.codeDrafts[trackId][lessonId] = code;
   profile.progress.activeTrackId = trackId;
   profile.progress.activeLessonIdByTrack[trackId] = lessonId;
+}
+
+export function getCompletedCheckpointSteps(profile, trackId, lessonId) {
+  return profile?.progress?.completedCheckpointSteps?.[trackId]?.[lessonId] || [];
+}
+
+export function setCompletedCheckpointSteps(profile, trackId, lessonId, stepIds) {
+  ensureTrackContainers(profile, trackId);
+  profile.progress.completedCheckpointSteps[trackId][lessonId] = stepIds;
 }
 
 export function getDraft(profile, trackId, lessonId) {
