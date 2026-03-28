@@ -139,6 +139,10 @@ function getActiveLesson() {
 }
 
 function collectLessonCommandKeys(lesson) {
+  if (Array.isArray(lesson?.allowedCommands) && lesson.allowedCommands.length) {
+    return lesson.allowedCommands.filter((key) => COMMAND_REFERENCE[key]);
+  }
+
   const check = lesson?.check || {};
   const commandKeys = new Set(check.requiredCommands || []);
 
@@ -221,21 +225,43 @@ function makeSoftCheck(check) {
 }
 
 function getLessonMilestones(lesson) {
+  if (Array.isArray(lesson?.milestones) && lesson.milestones.length) {
+    return lesson.milestones.map((step) => ({
+      id: step.id,
+      title: step.title,
+      description: step.description,
+      hint: step.hint,
+      check: step.check || {},
+    }));
+  }
+
   const check = lesson?.check || {};
   const commandKeys = collectLessonCommandKeys(lesson);
   const milestones = [];
 
+  const toolboxCheck = {};
+  if (check.requiredCommands?.length) {
+    toolboxCheck.requiredCommands = [...check.requiredCommands];
+  }
+  if (check.requiresRepeat) {
+    toolboxCheck.requiresRepeat = true;
+  }
+  if (check.requiresWrite) {
+    toolboxCheck.requiresWrite = true;
+  }
+  if (check.requiresFunctionDefinition) {
+    toolboxCheck.requiresFunctionDefinition = true;
+  }
+  if (check.minFunctionCalls) {
+    toolboxCheck.minFunctionCalls = 1;
+  }
+
   milestones.push({
     id: "toolbox",
     title: "Use the lesson tools",
-    description: `Work in this lesson with ${commandKeys.map((key) => COMMAND_REFERENCE[key].signature).join(", ")}.`,
-    hint: `Try building with ${COMMAND_REFERENCE[commandKeys[0]].signature} first.`,
-    check: {
-      requiredCommands: commandKeys.filter((key) => !["repeat", "def"].includes(key)),
-      requiresRepeat: commandKeys.includes("repeat"),
-      requiresFunctionDefinition: commandKeys.includes("def"),
-      requiresWrite: commandKeys.includes("write"),
-    },
+    description: `Use: ${commandKeys.map((key) => COMMAND_REFERENCE[key].signature).join(", ")}.`,
+    hint: `Try ${COMMAND_REFERENCE[commandKeys[0]].signature} first.`,
+    check: toolboxCheck,
   });
 
   const softCheck = makeSoftCheck(check);
@@ -599,10 +625,13 @@ function renderLessonHeader() {
   lessonMission.textContent = lesson.mission;
   checkpointCopy.textContent = buildCheckpointSummary(track, lesson);
   renderCheckpointSteps(lesson);
-  lessonHint.textContent = `Hint: ${currentMilestone?.hint || lesson.hint}`;
-  editorMicroHint.textContent = currentMilestone
-    ? `Next micro-hint: ${currentMilestone.hint}`
-    : "All milestones are clear. Remix the code or move on to the next lesson.";
+  const microHints = Array.isArray(lesson.microHints) ? lesson.microHints : [];
+  const selectedMicroHint = microHints.length
+    ? microHints[Math.min(getCompletedCheckpointSteps(activeProfile, activeTrackId, lesson.id).length, microHints.length - 1)]
+    : currentMilestone?.hint || lesson.hint;
+
+  lessonHint.textContent = `Hint: ${selectedMicroHint}`;
+  editorMicroHint.textContent = selectedMicroHint ? `Next micro-hint: ${selectedMicroHint}` : "";
   targetPreviewCopy.textContent = lesson.visualGoal || "Create your own version of the target idea.";
   trackTitle.textContent = track.title;
   trackProgress.textContent = `${getCompletedCount(lessonCatalog, activeProfile, activeTrackId)} of ${track.lessons.length} lessons complete · ${getEarnedBadgeCount(activeProfile)} badges earned`;

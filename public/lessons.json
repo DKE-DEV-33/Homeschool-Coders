@@ -14,6 +14,39 @@
           "mission": "Make one bright path and add a short message.",
           "visualGoal": "A single line with a happy word at the end.",
           "targetSteps": ["Move the turtle forward", "Add a short message"],
+          "microHints": [
+            "Type one line: move(120)",
+            "Then add a message with write(\"Hi\", 22)"
+          ],
+          "allowedCommands": ["move", "write"],
+          "milestones": [
+            {
+              "id": "step-move",
+              "title": "Make a trail",
+              "description": "Draw at least one line using move(...).",
+              "hint": "Try `move(120)`.",
+              "check": { "type": "drawing", "minSegments": 1, "requiredCommands": ["move"] }
+            },
+            {
+              "id": "step-write",
+              "title": "Say hello",
+              "description": "Write a short message at the end of your trail.",
+              "hint": "Try `write(\"Hi!\", 22)` after your move.",
+              "check": { "type": "drawing", "requiresWrite": true, "requiredCommands": ["write"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make one bright path and add a short message.",
+              "hint": "Move first, then write.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 1,
+                "requiresWrite": true,
+                "requiredCommands": ["move", "write"]
+              }
+            }
+          ],
           "reward": {
             "title": "Trailblazer Badge",
             "flavor": "You made your very first turtle trail."
@@ -40,6 +73,40 @@
           "mission": "Draw at least three lines, and make one of them longer than the others.",
           "visualGoal": "A group of lines with clearly different lengths.",
           "targetSteps": ["Draw more than one line", "Try a small number and a bigger number"],
+          "microHints": [
+            "Start with a small move: move(40)",
+            "Turn a little: turn(120)",
+            "Try a bigger move: move(140)"
+          ],
+          "allowedCommands": ["move", "turn"],
+          "milestones": [
+            {
+              "id": "step-many-lines",
+              "title": "Make 3 lines",
+              "description": "Draw at least three lines.",
+              "hint": "Try move, turn, move, turn, move.",
+              "check": { "type": "drawing", "minSegments": 3, "requiredCommands": ["move"] }
+            },
+            {
+              "id": "step-corners",
+              "title": "Add corners",
+              "description": "Use turn(...) so your lines are not all on top of each other.",
+              "hint": "Try `turn(120)` between moves.",
+              "check": { "type": "drawing", "minTurns": 2, "requiredCommands": ["turn"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw at least three lines, and make one of them longer than the others.",
+              "hint": "Try a small number (40) and a bigger number (140).",
+              "check": {
+                "type": "drawing",
+                "minSegments": 3,
+                "minTurns": 2,
+                "requiredCommands": ["move", "turn"]
+              }
+            }
+          ],
           "reward": {
             "title": "Length Explorer Badge",
             "flavor": "You discovered that numbers change how far the turtle moves."
@@ -66,6 +133,40 @@
           "mission": "Make a zigzag path with lots of corners.",
           "visualGoal": "A back-and-forth zigzag path.",
           "targetSteps": ["Move a little", "Turn and move again", "Repeat the bend a few times"],
+          "microHints": [
+            "Try: move(60)",
+            "Then: turn(60) and move(60)",
+            "Then: turn(-120) and move(60)"
+          ],
+          "allowedCommands": ["move", "turn", "line_width", "pen_color"],
+          "milestones": [
+            {
+              "id": "step-bend",
+              "title": "Make the first bend",
+              "description": "Draw a short line, turn, and draw another line.",
+              "hint": "Try `move(60)`, then `turn(60)`, then `move(60)`.",
+              "check": { "type": "drawing", "minSegments": 2, "minTurns": 1, "requiredCommands": ["move", "turn"] }
+            },
+            {
+              "id": "step-zigzag",
+              "title": "Zigzag time",
+              "description": "Make a zigzag with lots of corners.",
+              "hint": "Alternate turns like `60` and `-120`.",
+              "check": { "type": "drawing", "minSegments": 4, "minTurns": 3, "requiredCommands": ["move", "turn"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a zigzag path with lots of corners.",
+              "hint": "Move, turn, move, turn, repeat.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 4,
+                "minTurns": 3,
+                "requiredCommands": ["move", "turn"]
+              }
+            }
+          ],
           "reward": {
             "title": "Turn Tamer Badge",
             "flavor": "You learned how direction changes the next line."
@@ -92,6 +193,41 @@
           "mission": "Draw a square with four equal sides.",
           "visualGoal": "A neat square with four matching sides.",
           "targetSteps": ["Move the same amount each time", "Turn a quarter-turn after every side"],
+          "microHints": [
+            "Try one side: move(90) then turn(90)",
+            "Do it four times",
+            "If you know repeat(...), use it"
+          ],
+          "allowedCommands": ["move", "turn", "repeat", "line_width", "pen_color"],
+          "milestones": [
+            {
+              "id": "step-corner",
+              "title": "Make a corner",
+              "description": "Draw one side and make one clean turn.",
+              "hint": "Try `move(90)` then `turn(90)`.",
+              "check": { "type": "drawing", "minSegments": 1, "minTurns": 1, "requiredCommands": ["move", "turn"] }
+            },
+            {
+              "id": "step-loop-or-four",
+              "title": "Do it 4 times",
+              "description": "Make 4 sides. Using repeat(4): is the easiest way.",
+              "hint": "Try:\nrepeat(4):\n    move(90)\n    turn(90)",
+              "check": { "type": "drawing", "minSegments": 4, "minTurns": 4, "requiresRepeat": true, "requiredCommands": ["move", "turn"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw a square with four equal sides.",
+              "hint": "Same move each time, same turn each time.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 4,
+                "minTurns": 4,
+                "requiresRepeat": true,
+                "requiredCommands": ["move", "turn"]
+              }
+            }
+          ],
           "reward": {
             "title": "Corner Captain Badge",
             "flavor": "You taught the turtle how to make clean corners."
