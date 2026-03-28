@@ -255,6 +255,35 @@
           "mission": "Draw a repeated shape without copying the same line of code over and over.",
           "visualGoal": "A shape made with a loop instead of lots of repeated lines.",
           "targetSteps": ["Use repeat(...)", "Put move and turn inside the loop"],
+          "microHints": [
+            "Start a loop: repeat(6):",
+            "Inside the loop, do: move(60)",
+            "Then turn(60) so it goes around"
+          ],
+          "allowedCommands": ["repeat", "move", "turn", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-loop",
+              "title": "Start a loop",
+              "description": "Use repeat(...) with an indented block.",
+              "hint": "Try:\nrepeat(6):\n    move(60)\n    turn(60)",
+              "check": { "type": "drawing", "requiresRepeat": true }
+            },
+            {
+              "id": "step-around",
+              "title": "Go all the way around",
+              "description": "Make a full loop shape with lots of sides.",
+              "hint": "Repeat 6 times and turn 60 each time.",
+              "check": { "type": "drawing", "minSegments": 6, "minTurns": 6, "requiresRepeat": true }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw a repeated shape without copying the same line of code over and over.",
+              "hint": "One loop can make a whole shape.",
+              "check": { "type": "drawing", "minSegments": 6, "minTurns": 6, "requiresRepeat": true }
+            }
+          ],
           "reward": {
             "title": "Loop Starter Badge",
             "flavor": "You used a loop to make the turtle do magic repeats."
@@ -281,6 +310,41 @@
           "mission": "Draw a triangle and then a hexagon.",
           "visualGoal": "Two different loop-made shapes on the page.",
           "targetSteps": ["Make a triangle with 3 sides", "Make a hexagon with 6 sides"],
+          "microHints": [
+            "Triangle: repeat(3): move(80) turn(120)",
+            "Hop away: pen_up(); go_to(...); pen_down()",
+            "Hexagon: repeat(6): move(55) turn(60)"
+          ],
+          "allowedCommands": ["repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-triangle",
+              "title": "Make a triangle",
+              "description": "Draw a 3-sided triangle with a loop.",
+              "hint": "Try:\nrepeat(3):\n    move(80)\n    turn(120)",
+              "check": { "type": "drawing", "requiresRepeat": true, "minSegments": 3, "minTurns": 3 }
+            },
+            {
+              "id": "step-hop",
+              "title": "Hop to a new spot",
+              "description": "Move without drawing a line between shapes.",
+              "hint": "Use `pen_up()`, `go_to(x, y)`, then `pen_down()`.",
+              "check": { "type": "drawing", "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw a triangle and then a hexagon.",
+              "hint": "Hexagon turn is 60 degrees (360 / 6).",
+              "check": {
+                "type": "drawing",
+                "minSegments": 9,
+                "minTurns": 9,
+                "requiresRepeat": true,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
           "reward": {
             "title": "Shape Switcher Badge",
             "flavor": "You discovered that loops can build different polygons."
@@ -308,6 +372,35 @@
           "mission": "Make a pattern by drawing a shape, turning, and drawing it again.",
           "visualGoal": "A spinning shape pattern that grows around the center.",
           "targetSteps": ["Draw one shape with a loop", "Turn a little", "Repeat the whole shape again"],
+          "microHints": [
+            "Make a small shape loop first (like a square)",
+            "Wrap it in another repeat(...)",
+            "Turn a little between shapes"
+          ],
+          "allowedCommands": ["repeat", "move", "turn", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-shape",
+              "title": "Make one shape",
+              "description": "Use a loop to draw a shape (like a square).",
+              "hint": "Try:\nrepeat(4):\n    move(50)\n    turn(90)",
+              "check": { "type": "drawing", "requiresRepeat": true, "minSegments": 4, "minTurns": 4 }
+            },
+            {
+              "id": "step-spin",
+              "title": "Spin it",
+              "description": "Turn a little and draw the shape again to make a pattern.",
+              "hint": "Put your shape loop inside another repeat(...), then `turn(45)`.",
+              "check": { "type": "drawing", "requiresRepeat": true, "minSegments": 12, "minTurns": 8 }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a pattern by drawing a shape, turning, and drawing it again.",
+              "hint": "Keep the turn between shapes small (like 30–60).",
+              "check": { "type": "drawing", "minSegments": 16, "minTurns": 12, "requiresRepeat": true }
+            }
+          ],
           "reward": {
             "title": "Pattern Spinner Badge",
             "flavor": "You turned one shape into a whole pattern."
@@ -334,6 +427,35 @@
           "mission": "Make a repeating drawing with at least three colors.",
           "visualGoal": "A colorful pattern with obvious color changes.",
           "targetSteps": ["Draw a repeating shape", "Change color", "Draw again in new colors"],
+          "microHints": [
+            "Pick a color: pen_color(\"tomato\")",
+            "Draw a little shape with repeat(...)",
+            "Change colors and draw again"
+          ],
+          "allowedCommands": ["pen_color", "repeat", "move", "turn", "pen_up", "pen_down", "go_to", "line_width"],
+          "milestones": [
+            {
+              "id": "step-first-color",
+              "title": "First color",
+              "description": "Set a pen color and draw something.",
+              "hint": "Try `pen_color(\"tomato\")` before you draw.",
+              "check": { "type": "drawing", "minSegments": 4, "minColorChanges": 1 }
+            },
+            {
+              "id": "step-three-colors",
+              "title": "Three colors",
+              "description": "Use at least three different pen colors.",
+              "hint": "Call pen_color(...) again before the next drawing.",
+              "check": { "type": "drawing", "minColorChanges": 3 }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a repeating drawing with at least three colors.",
+              "hint": "Repeat makes the shape. Color makes it pop.",
+              "check": { "type": "drawing", "minSegments": 12, "requiresRepeat": true, "minColorChanges": 3 }
+            }
+          ],
           "reward": {
             "title": "Color Spark Badge",
             "flavor": "You added color changes like a coding artist."
