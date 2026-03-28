@@ -482,6 +482,41 @@
           "mission": "Draw one shape, hop to a new place, and draw another shape.",
           "visualGoal": "Two shapes with a gap between them and no line connecting the gap.",
           "targetSteps": ["Draw one shape", "Lift the pen", "Move somewhere else", "Put the pen down and draw again"],
+          "microHints": [
+            "Draw one shape first (a square is great)",
+            "Hop: pen_up(); go_to(340, 210); pen_down()",
+            "Draw your second shape there"
+          ],
+          "allowedCommands": ["repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-first-shape",
+              "title": "Draw the first shape",
+              "description": "Draw one shape anywhere on the canvas.",
+              "hint": "A square works: repeat(4): move(50) turn(90)",
+              "check": { "type": "drawing", "minSegments": 4, "minTurns": 4, "requiresRepeat": true }
+            },
+            {
+              "id": "step-hop",
+              "title": "Hop without drawing",
+              "description": "Use pen_up + go_to + pen_down so you don't draw a travel line.",
+              "hint": "Try: pen_up(); go_to(340, 210); pen_down()",
+              "check": { "type": "drawing", "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw one shape, hop to a new place, and draw another shape.",
+              "hint": "If you see a line between shapes, your pen is still down while moving.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 7,
+                "minTurns": 7,
+                "requiresRepeat": true,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
           "reward": {
             "title": "Hop Scout Badge",
             "flavor": "You learned how to move the turtle without leaving a trail."
@@ -509,6 +544,41 @@
           "mission": "Draw at least two shapes in different spots on the page.",
           "visualGoal": "Shapes placed in clearly different parts of the canvas.",
           "targetSteps": ["Draw one shape", "Move to a new spot", "Draw another shape there"],
+          "microHints": [
+            "Place shape 1 with: pen_up(); go_to(150, 120); pen_down()",
+            "Draw a small shape with repeat(...)",
+            "Place shape 2 with go_to(360, 220) and draw again"
+          ],
+          "allowedCommands": ["repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-place-one",
+              "title": "Place the first shape",
+              "description": "Use go_to(...) to choose where your first shape goes.",
+              "hint": "Try: pen_up(); go_to(150, 120); pen_down()",
+              "check": { "type": "drawing", "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "step-place-two",
+              "title": "Place another shape",
+              "description": "Draw a second shape after moving to a new spot.",
+              "hint": "Go to a different corner and draw again.",
+              "check": { "type": "drawing", "minSegments": 7, "minTurns": 7, "requiresRepeat": true }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw at least two shapes in different spots on the page.",
+              "hint": "You can reuse the same shape twice. Placement is the point.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 7,
+                "minTurns": 7,
+                "requiresRepeat": true,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
           "reward": {
             "title": "Map Maker Badge",
             "flavor": "You started placing art exactly where you wanted it."
@@ -536,6 +606,41 @@
           "mission": "Make a tiny scene with at least three parts, like a house, sun, and ground.",
           "visualGoal": "A simple scene with multiple shapes working together.",
           "targetSteps": ["Draw one main shape", "Add two more details", "Place them so they feel like one picture"],
+          "microHints": [
+            "Start with one big shape (the house)",
+            "Add a roof or ground line",
+            "Add one more detail (sun, tree, or flower)"
+          ],
+          "allowedCommands": ["repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-main",
+              "title": "Make the main thing",
+              "description": "Draw one main shape for your scene (like a house body).",
+              "hint": "A square or rectangle is a great start.",
+              "check": { "type": "drawing", "minSegments": 4, "minTurns": 4, "requiresRepeat": true }
+            },
+            {
+              "id": "step-details",
+              "title": "Add two details",
+              "description": "Add two more parts (roof, sun, ground, door, etc.).",
+              "hint": "Use pen_up/go_to to place details without messy travel lines.",
+              "check": { "type": "drawing", "minSegments": 12, "minTurns": 10, "requiresRepeat": true, "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a tiny scene with at least three parts, like a house, sun, and ground.",
+              "hint": "One big shape + two small shapes = a scene.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 19,
+                "minTurns": 19,
+                "requiresRepeat": true,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
           "reward": {
             "title": "Scene Starter Badge",
             "flavor": "You turned separate shapes into one little world."
@@ -563,6 +668,42 @@
           "mission": "Make a scene with overlapping or layered shapes in at least two colors.",
           "visualGoal": "A scene where one shape sits in front of or behind another.",
           "targetSteps": ["Draw a big shape first", "Add another shape over or near it", "Use more than one color"],
+          "microHints": [
+            "Draw a big background shape first",
+            "Then draw a smaller shape on top of it",
+            "Change colors so the layers stand out"
+          ],
+          "allowedCommands": ["pen_color", "repeat", "move", "turn", "pen_up", "go_to", "pen_down", "line_width"],
+          "milestones": [
+            {
+              "id": "step-background",
+              "title": "Background first",
+              "description": "Draw one big shape first (the background).",
+              "hint": "A big square/rectangle works great.",
+              "check": { "type": "drawing", "minSegments": 4, "minTurns": 4, "requiresRepeat": true }
+            },
+            {
+              "id": "step-front",
+              "title": "Put something in front",
+              "description": "Draw another shape after the background so it looks on top.",
+              "hint": "Use go_to(...) to place a smaller square/triangle on the big one.",
+              "check": { "type": "drawing", "minSegments": 12, "minTurns": 12, "requiresRepeat": true, "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a scene with overlapping or layered shapes in at least two colors.",
+              "hint": "Change colors between layers so it feels like depth.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 20,
+                "minTurns": 20,
+                "requiresRepeat": true,
+                "minColorChanges": 3,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
           "reward": {
             "title": "Layer Artist Badge",
             "flavor": "You learned that drawing order changes the whole picture."
