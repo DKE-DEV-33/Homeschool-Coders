@@ -5,6 +5,7 @@ import {
   getCompletedCount,
   getDraft,
   getEarnedBadgeCount,
+  getHintLevel,
   getLesson,
   getLessonIndex,
   getNextLesson,
@@ -20,6 +21,7 @@ import {
   saveDraft,
   setCompletedCheckpointSteps,
   setActiveProfile,
+  setHintLevel,
   setLessonRunResult,
 } from "./state.js";
 
@@ -50,6 +52,7 @@ const panelBadges = document.querySelector("#panel-badges");
 const runPythonButton = document.querySelector("#run-python");
 const resetWorkspaceButton = document.querySelector("#reset-workspace");
 const editorMicroHint = document.querySelector("#editor-micro-hint");
+const showHintButton = document.querySelector("#show-hint");
 const codeEditor = document.querySelector("#code-editor");
 const editorStatus = document.querySelector("#editor-status");
 const lessonStatus = document.querySelector("#lesson-status");
@@ -633,12 +636,16 @@ function renderLessonHeader() {
   checkpointCopy.textContent = buildCheckpointSummary(track, lesson);
   renderCheckpointSteps(lesson);
   const microHints = Array.isArray(lesson.microHints) ? lesson.microHints : [];
-  const selectedMicroHint = microHints.length
-    ? microHints[Math.min(getCompletedCheckpointSteps(activeProfile, activeTrackId, lesson.id).length, microHints.length - 1)]
-    : currentMilestone?.hint || lesson.hint;
+  const hintLevel = getHintLevel(activeProfile, activeTrackId, lesson.id);
+  const selectedMicroHint =
+    microHints.length && hintLevel > 0 ? microHints[Math.min(hintLevel - 1, microHints.length - 1)] : "";
 
-  lessonHint.textContent = `Hint: ${selectedMicroHint}`;
-  editorMicroHint.textContent = selectedMicroHint ? `Next micro-hint: ${selectedMicroHint}` : "";
+  lessonHint.textContent = `Hint: ${currentMilestone?.hint || lesson.hint}`;
+  editorMicroHint.textContent = selectedMicroHint ? `Hint revealed: ${selectedMicroHint}` : "Need a hint? Press Show hint.";
+  if (showHintButton) {
+    showHintButton.disabled = !microHints.length || hintLevel >= microHints.length;
+    showHintButton.textContent = hintLevel ? "Show next hint" : "Show hint";
+  }
   targetPreviewCopy.textContent = lesson.visualGoal || "Create your own version of the target idea.";
   trackTitle.textContent = track.title;
   trackProgress.textContent = `${getCompletedCount(lessonCatalog, activeProfile, activeTrackId)} of ${track.lessons.length} lessons complete · ${getEarnedBadgeCount(activeProfile)} badges earned`;
@@ -930,6 +937,9 @@ function evaluateCheckpoint(lesson, source) {
   });
 
   setCompletedCheckpointSteps(activeProfile, activeTrackId, lesson.id, [...completedStepIds]);
+  if (newlyCompleted.length) {
+    setHintLevel(activeProfile, activeTrackId, lesson.id, 0);
+  }
 
   const nextMilestone = milestones.find((step) => !completedStepIds.has(step.id)) || null;
   const finalMilestone = milestones[milestones.length - 1];
@@ -1163,6 +1173,7 @@ function openLesson(lessonId) {
   saveCurrentDraft();
   activeLessonId = lessonId;
   activeProfile.progress.activeLessonIdByTrack[activeTrackId] = lessonId;
+  setHintLevel(activeProfile, activeTrackId, lessonId, 0);
   saveAppState(appState);
   hideCelebration();
   renderAll();
@@ -1196,6 +1207,7 @@ function switchTrack(trackId) {
     ? preferredLessonId
     : track?.lessons?.[0]?.id || "";
   activeProfile.progress.activeLessonIdByTrack[trackId] = activeLessonId;
+  setHintLevel(activeProfile, activeTrackId, activeLessonId, 0);
   saveAppState(appState);
   hideCelebration();
   renderAll();
@@ -1221,6 +1233,7 @@ function switchProfile(profileId) {
   ensureTrackContainers(activeProfile, activeTrackId);
   const track = getActiveTrack();
   activeLessonId = activeProfile.progress.activeLessonIdByTrack[activeTrackId] || track?.lessons?.[0]?.id || "";
+  setHintLevel(activeProfile, activeTrackId, activeLessonId, 0);
   renderAll();
   drawWelcomeScene();
   hideCelebration();
@@ -1235,6 +1248,7 @@ function resetWorkspace() {
   }
   codeEditor.value = "";
   saveDraft(activeProfile, activeTrackId, activeLessonId, "");
+  setHintLevel(activeProfile, activeTrackId, activeLessonId, 0);
   saveAppState(appState);
   resetCanvasState();
   resetMetrics();
@@ -1270,6 +1284,22 @@ runPythonButton.addEventListener("click", runPythonCode);
 resetWorkspaceButton.addEventListener("click", resetWorkspace);
 nextLessonButton.addEventListener("click", openNextLesson);
 closeCelebrationButton.addEventListener("click", hideCelebration);
+if (showHintButton) {
+  showHintButton.addEventListener("click", () => {
+    const lesson = getActiveLesson();
+    if (!lesson || !activeProfile) {
+      return;
+    }
+    const microHints = Array.isArray(lesson.microHints) ? lesson.microHints : [];
+    if (!microHints.length) {
+      return;
+    }
+    const hintLevel = getHintLevel(activeProfile, activeTrackId, lesson.id);
+    setHintLevel(activeProfile, activeTrackId, lesson.id, Math.min(hintLevel + 1, microHints.length));
+    saveAppState(appState);
+    renderLessonHeader();
+  });
+}
 codeEditor.addEventListener("input", () => {
   const lesson = getActiveLesson();
   const milestoneCount = lesson ? getLessonMilestones(lesson).length : 0;

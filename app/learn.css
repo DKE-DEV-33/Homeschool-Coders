@@ -390,6 +390,13 @@ h3 {
   font-weight: 700;
 }
 
+.hint-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
 #code-editor {
   width: 100%;
   min-height: 420px;

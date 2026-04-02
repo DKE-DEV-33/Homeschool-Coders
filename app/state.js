@@ -8,6 +8,7 @@ function createEmptyProgress(defaultTrackId = "kids") {
     activeLessonIdByTrack: {},
     codeDrafts: {},
     completedCheckpointSteps: {},
+    hintLevelByLesson: {},
     completedLessons: {},
     earnedBadges: {},
     lastResultByLesson: {},
@@ -48,6 +49,7 @@ function normalizeProfile(rawProfile = {}, index = 0) {
       activeLessonIdByTrack: progress.activeLessonIdByTrack || {},
       codeDrafts: progress.codeDrafts || {},
       completedCheckpointSteps: progress.completedCheckpointSteps || {},
+      hintLevelByLesson: progress.hintLevelByLesson || {},
       completedLessons: progress.completedLessons || {},
       earnedBadges: progress.earnedBadges || {},
       lastResultByLesson: progress.lastResultByLesson || {},
@@ -88,6 +90,7 @@ function migrateLegacyState() {
             activeLessonIdByTrack: learner.activeLessonIdByTrack || {},
             codeDrafts: learner.codeDrafts || {},
             completedCheckpointSteps: learner.completedCheckpointSteps || {},
+            hintLevelByLesson: learner.hintLevelByLesson || {},
             completedLessons: learner.completedLessons || {},
             earnedBadges: learner.earnedBadges || {},
             lastResultByLesson: learner.lastResultByLesson || {},
@@ -179,6 +182,7 @@ export function ensureTrackContainers(profile, trackId) {
   const progress = profile.progress;
   progress.codeDrafts[trackId] = progress.codeDrafts[trackId] || {};
   progress.completedCheckpointSteps[trackId] = progress.completedCheckpointSteps[trackId] || {};
+  progress.hintLevelByLesson[trackId] = progress.hintLevelByLesson[trackId] || {};
   progress.completedLessons[trackId] = progress.completedLessons[trackId] || {};
   progress.earnedBadges[trackId] = progress.earnedBadges[trackId] || {};
   progress.lastResultByLesson[trackId] = progress.lastResultByLesson[trackId] || {};
@@ -273,6 +277,15 @@ export function getCompletedCheckpointSteps(profile, trackId, lessonId) {
 export function setCompletedCheckpointSteps(profile, trackId, lessonId, stepIds) {
   ensureTrackContainers(profile, trackId);
   profile.progress.completedCheckpointSteps[trackId][lessonId] = stepIds;
+}
+
+export function getHintLevel(profile, trackId, lessonId) {
+  return Number(profile?.progress?.hintLevelByLesson?.[trackId]?.[lessonId] || 0);
+}
+
+export function setHintLevel(profile, trackId, lessonId, hintLevel) {
+  ensureTrackContainers(profile, trackId);
+  profile.progress.hintLevelByLesson[trackId][lessonId] = Math.max(0, Math.floor(Number(hintLevel) || 0));
 }
 
 export function getDraft(profile, trackId, lessonId) {
