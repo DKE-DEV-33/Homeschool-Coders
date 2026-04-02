@@ -67,6 +67,7 @@ const celebrationCopy = document.querySelector("#celebration-copy");
 const nextLessonButton = document.querySelector("#next-lesson-button");
 const closeCelebrationButton = document.querySelector("#close-celebration");
 const confettiLayer = document.querySelector("#confetti-layer");
+const toastLayer = document.querySelector("#toast-layer");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
@@ -595,6 +596,11 @@ function renderLessonList() {
     const active = lesson.id === activeLessonId;
     const complete = isLessonComplete(activeProfile, track.id, lesson.id);
     const unlocked = isLessonUnlocked(lessonCatalog, activeProfile, track.id, lesson.id);
+    const milestones = getLessonMilestones(lesson);
+    const totalMilestones = milestones.length;
+    const completedMilestones = complete
+      ? totalMilestones
+      : getCompletedCheckpointSteps(activeProfile, track.id, lesson.id).length;
     const button = document.createElement("button");
     button.type = "button";
     button.className = `lesson-card ${active ? "active" : ""} ${complete ? "completed" : ""} ${unlocked ? "" : "locked"}`.trim();
@@ -603,6 +609,7 @@ function renderLessonList() {
     button.innerHTML = `
       <strong>${index + 1}. ${lesson.title}</strong>
       <span>${unlocked ? lesson.description : "Finish the previous lesson to unlock this one."}</span>
+      <span class="lesson-progress">${completedMilestones}/${totalMilestones} steps</span>
     `;
     lessonList.append(button);
   });
@@ -875,6 +882,28 @@ function spawnConfetti() {
   }
 }
 
+function showToast(title, body, tone = "success") {
+  if (!toastLayer) {
+    return;
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${tone}`.trim();
+  toast.innerHTML = `
+    <strong>${title}</strong>
+    <p>${body}</p>
+  `;
+  toastLayer.append(toast);
+
+  window.setTimeout(() => {
+    toast.classList.add("fade-out");
+  }, 2400);
+
+  window.setTimeout(() => {
+    toast.remove();
+  }, 2900);
+}
+
 function showCelebration(lesson, nextLesson) {
   celebrationTitle.textContent = lesson.reward?.title || "Lesson complete";
   celebrationCopy.textContent = nextLesson
@@ -925,7 +954,13 @@ function evaluateCheckpoint(lesson, source) {
         : `${lesson.title}: working on checkpoint ${nextMilestone ? milestones.indexOf(nextMilestone) + 1 : milestones.length}`,
     );
     saveAppState(appState);
+    renderLessonList();
     renderLessonHeader();
+
+    if (newlyCompleted.length) {
+      const nextLabel = nextMilestone?.title ? `Next: ${nextMilestone.title}` : "Next step ready";
+      showToast("Step cleared!", `${newlyCompleted.join(", ")}. ${nextLabel}`);
+    }
     return false;
   }
 
