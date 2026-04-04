@@ -9,6 +9,7 @@ import {
   getLesson,
   getLessonIndex,
   getNextLesson,
+  getNoProgressRuns,
   getProfile,
   getTrack,
   isLessonComplete,
@@ -22,6 +23,7 @@ import {
   setCompletedCheckpointSteps,
   setActiveProfile,
   setHintLevel,
+  setNoProgressRuns,
   setLessonRunResult,
 } from "./state.js";
 
@@ -53,6 +55,7 @@ const runPythonButton = document.querySelector("#run-python");
 const resetWorkspaceButton = document.querySelector("#reset-workspace");
 const editorMicroHint = document.querySelector("#editor-micro-hint");
 const showHintButton = document.querySelector("#show-hint");
+const stuckHelpButton = document.querySelector("#stuck-help");
 const codeEditor = document.querySelector("#code-editor");
 const editorStatus = document.querySelector("#editor-status");
 const lessonStatus = document.querySelector("#lesson-status");
@@ -639,12 +642,18 @@ function renderLessonHeader() {
   const hintLevel = getHintLevel(activeProfile, activeTrackId, lesson.id);
   const selectedMicroHint =
     microHints.length && hintLevel > 0 ? microHints[Math.min(hintLevel - 1, microHints.length - 1)] : "";
+  const noProgressRuns = getNoProgressRuns(activeProfile, activeTrackId, lesson.id);
 
   lessonHint.textContent = `Hint: ${currentMilestone?.hint || lesson.hint}`;
   editorMicroHint.textContent = selectedMicroHint ? `Hint revealed: ${selectedMicroHint}` : "Need a hint? Press Show hint.";
   if (showHintButton) {
-    showHintButton.disabled = !microHints.length || hintLevel >= microHints.length;
+    // Avoid spoilers: require at least one no-progress run before hints unlock.
+    const hintsUnlocked = noProgressRuns > 0;
+    showHintButton.disabled = !microHints.length || hintLevel >= microHints.length || !hintsUnlocked;
     showHintButton.textContent = hintLevel ? "Show next hint" : "Show hint";
+  }
+  if (stuckHelpButton) {
+    stuckHelpButton.disabled = !microHints.length || hintLevel >= microHints.length || noProgressRuns < 2;
   }
   targetPreviewCopy.textContent = lesson.visualGoal || "Create your own version of the target idea.";
   trackTitle.textContent = track.title;
@@ -939,6 +948,7 @@ function evaluateCheckpoint(lesson, source) {
   setCompletedCheckpointSteps(activeProfile, activeTrackId, lesson.id, [...completedStepIds]);
   if (newlyCompleted.length) {
     setHintLevel(activeProfile, activeTrackId, lesson.id, 0);
+    setNoProgressRuns(activeProfile, activeTrackId, lesson.id, 0);
   }
 
   const nextMilestone = milestones.find((step) => !completedStepIds.has(step.id)) || null;
@@ -947,6 +957,10 @@ function evaluateCheckpoint(lesson, source) {
 
   if (!finalPassed) {
     hideCelebration();
+    if (!newlyCompleted.length) {
+      const currentNoProgressRuns = getNoProgressRuns(activeProfile, activeTrackId, lesson.id);
+      setNoProgressRuns(activeProfile, activeTrackId, lesson.id, currentNoProgressRuns + 1);
+    }
     const finalFailures = describeFailures(finalMilestone.check, facts);
     checkpointResult.textContent = newlyCompleted.length
       ? `Nice. You cleared ${newlyCompleted.join(", ")}. Next up: ${nextMilestone?.title || "keep going"}. ${nextMilestone?.hint || finalFailures.join(", ")}`
@@ -1174,6 +1188,7 @@ function openLesson(lessonId) {
   activeLessonId = lessonId;
   activeProfile.progress.activeLessonIdByTrack[activeTrackId] = lessonId;
   setHintLevel(activeProfile, activeTrackId, lessonId, 0);
+  setNoProgressRuns(activeProfile, activeTrackId, lessonId, 0);
   saveAppState(appState);
   hideCelebration();
   renderAll();
@@ -1208,6 +1223,7 @@ function switchTrack(trackId) {
     : track?.lessons?.[0]?.id || "";
   activeProfile.progress.activeLessonIdByTrack[trackId] = activeLessonId;
   setHintLevel(activeProfile, activeTrackId, activeLessonId, 0);
+  setNoProgressRuns(activeProfile, activeTrackId, activeLessonId, 0);
   saveAppState(appState);
   hideCelebration();
   renderAll();
@@ -1234,6 +1250,7 @@ function switchProfile(profileId) {
   const track = getActiveTrack();
   activeLessonId = activeProfile.progress.activeLessonIdByTrack[activeTrackId] || track?.lessons?.[0]?.id || "";
   setHintLevel(activeProfile, activeTrackId, activeLessonId, 0);
+  setNoProgressRuns(activeProfile, activeTrackId, activeLessonId, 0);
   renderAll();
   drawWelcomeScene();
   hideCelebration();
@@ -1249,6 +1266,7 @@ function resetWorkspace() {
   codeEditor.value = "";
   saveDraft(activeProfile, activeTrackId, activeLessonId, "");
   setHintLevel(activeProfile, activeTrackId, activeLessonId, 0);
+  setNoProgressRuns(activeProfile, activeTrackId, activeLessonId, 0);
   saveAppState(appState);
   resetCanvasState();
   resetMetrics();
@@ -1294,10 +1312,37 @@ if (showHintButton) {
     if (!microHints.length) {
       return;
     }
+    const noProgressRuns = getNoProgressRuns(activeProfile, activeTrackId, lesson.id);
+    if (noProgressRuns < 1) {
+      showToast("Try once first", "Run your code once. If you're still stuck, I'll reveal a hint.");
+      return;
+    }
     const hintLevel = getHintLevel(activeProfile, activeTrackId, lesson.id);
     setHintLevel(activeProfile, activeTrackId, lesson.id, Math.min(hintLevel + 1, microHints.length));
     saveAppState(appState);
     renderLessonHeader();
+  });
+}
+if (stuckHelpButton) {
+  stuckHelpButton.addEventListener("click", () => {
+    const lesson = getActiveLesson();
+    if (!lesson || !activeProfile) {
+      return;
+    }
+    const microHints = Array.isArray(lesson.microHints) ? lesson.microHints : [];
+    if (!microHints.length) {
+      return;
+    }
+    const noProgressRuns = getNoProgressRuns(activeProfile, activeTrackId, lesson.id);
+    if (noProgressRuns < 2) {
+      showToast("Almost there", "Try running your code a couple times first. Then I'll give a stronger hint.");
+      return;
+    }
+    const hintLevel = getHintLevel(activeProfile, activeTrackId, lesson.id);
+    setHintLevel(activeProfile, activeTrackId, lesson.id, Math.min(hintLevel + 1, microHints.length));
+    saveAppState(appState);
+    renderLessonHeader();
+    showToast("Hint unlocked", "Check the hint line above the editor.");
   });
 }
 codeEditor.addEventListener("input", () => {

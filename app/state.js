@@ -9,6 +9,7 @@ function createEmptyProgress(defaultTrackId = "kids") {
     codeDrafts: {},
     completedCheckpointSteps: {},
     hintLevelByLesson: {},
+    noProgressRunsByLesson: {},
     completedLessons: {},
     earnedBadges: {},
     lastResultByLesson: {},
@@ -50,6 +51,7 @@ function normalizeProfile(rawProfile = {}, index = 0) {
       codeDrafts: progress.codeDrafts || {},
       completedCheckpointSteps: progress.completedCheckpointSteps || {},
       hintLevelByLesson: progress.hintLevelByLesson || {},
+      noProgressRunsByLesson: progress.noProgressRunsByLesson || {},
       completedLessons: progress.completedLessons || {},
       earnedBadges: progress.earnedBadges || {},
       lastResultByLesson: progress.lastResultByLesson || {},
@@ -91,6 +93,7 @@ function migrateLegacyState() {
             codeDrafts: learner.codeDrafts || {},
             completedCheckpointSteps: learner.completedCheckpointSteps || {},
             hintLevelByLesson: learner.hintLevelByLesson || {},
+            noProgressRunsByLesson: learner.noProgressRunsByLesson || {},
             completedLessons: learner.completedLessons || {},
             earnedBadges: learner.earnedBadges || {},
             lastResultByLesson: learner.lastResultByLesson || {},
@@ -183,6 +186,7 @@ export function ensureTrackContainers(profile, trackId) {
   progress.codeDrafts[trackId] = progress.codeDrafts[trackId] || {};
   progress.completedCheckpointSteps[trackId] = progress.completedCheckpointSteps[trackId] || {};
   progress.hintLevelByLesson[trackId] = progress.hintLevelByLesson[trackId] || {};
+  progress.noProgressRunsByLesson[trackId] = progress.noProgressRunsByLesson[trackId] || {};
   progress.completedLessons[trackId] = progress.completedLessons[trackId] || {};
   progress.earnedBadges[trackId] = progress.earnedBadges[trackId] || {};
   progress.lastResultByLesson[trackId] = progress.lastResultByLesson[trackId] || {};
@@ -286,6 +290,15 @@ export function getHintLevel(profile, trackId, lessonId) {
 export function setHintLevel(profile, trackId, lessonId, hintLevel) {
   ensureTrackContainers(profile, trackId);
   profile.progress.hintLevelByLesson[trackId][lessonId] = Math.max(0, Math.floor(Number(hintLevel) || 0));
+}
+
+export function getNoProgressRuns(profile, trackId, lessonId) {
+  return Number(profile?.progress?.noProgressRunsByLesson?.[trackId]?.[lessonId] || 0);
+}
+
+export function setNoProgressRuns(profile, trackId, lessonId, count) {
+  ensureTrackContainers(profile, trackId);
+  profile.progress.noProgressRunsByLesson[trackId][lessonId] = Math.max(0, Math.floor(Number(count) || 0));
 }
 
 export function getDraft(profile, trackId, lessonId) {
