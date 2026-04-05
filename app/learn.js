@@ -1039,6 +1039,7 @@ async function ensurePyodide() {
 
     await pyodide.runPythonAsync(`
 import ast
+import sys
 from canvas_api import (
     move_by as canvas_move_by,
     turn_by as canvas_turn_by,
@@ -1079,6 +1080,23 @@ def write(message, size=20):
 def reset_drawing():
     canvas_reset()
 
+MAX_TRACE_STEPS = 25000
+
+class StepLimitReached(RuntimeError):
+    pass
+
+def _make_step_tracer(limit):
+    counter = {"steps": 0}
+
+    def tracer(frame, event, arg):
+        if event == "line":
+            counter["steps"] += 1
+            if counter["steps"] > limit:
+                raise StepLimitReached(f"Execution limit reached ({limit} steps).")
+        return tracer
+
+    return tracer
+
 class FunctionCallTracker(ast.NodeTransformer):
     def __init__(self, function_names):
         self.function_names = set(function_names)
@@ -1117,7 +1135,12 @@ def run_user_code(source):
         "range": range,
         "__record_function_call__": __record_function_call__,
     }
-    exec(compile(tracked_module, "<lesson>", "exec"), namespace, namespace)
+    tracer = _make_step_tracer(MAX_TRACE_STEPS)
+    sys.settrace(tracer)
+    try:
+        exec(compile(tracked_module, "<lesson>", "exec"), namespace, namespace)
+    finally:
+        sys.settrace(None)
 `);
 
     setStatus("Python runtime ready.");
@@ -1167,12 +1190,20 @@ run_user_code(source_code)
     setStatus(passed ? "Checkpoint passed. Nice work." : "The code ran. Tweak it and try again.");
   } catch (error) {
     hideCelebration();
-    checkpointResult.textContent = "The mission checkpoint is waiting for a successful run.";
+    const message = error?.message || String(error);
+    const hitStepLimit = message.includes("Execution limit reached");
+
+    checkpointResult.textContent = hitStepLimit
+      ? "That run went on for a really long time. Try a smaller repeat count, and avoid infinite loops."
+      : "The mission checkpoint is waiting for a successful run.";
     setLessonRunResult(activeProfile, activeTrackId, activeLessonId, "Code needs a fix");
     addRecentActivity(activeProfile, `${lesson.title}: code needs a fix`);
     saveAppState(appState);
-    setStatus("The code needs a small fix before it can run.");
-    appendLogLine(error?.message || String(error));
+    setStatus(hitStepLimit ? "Loop alert: the code ran too long." : "The code needs a small fix before it can run.");
+    appendLogLine(message);
+    if (hitStepLimit) {
+      showToast("Loop alert", "That run took too long. Try lowering repeat(...) or simplifying the code.", "success");
+    }
   } finally {
     runPythonButton.disabled = false;
   }
