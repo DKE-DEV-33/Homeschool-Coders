@@ -920,6 +920,73 @@ function showToast(title, body, tone = "success") {
   }, 2900);
 }
 
+function classifyPythonRuntimeIssue(message) {
+  const text = String(message || "");
+
+  if (text.includes("Execution limit reached")) {
+    return {
+      title: "Loop alert",
+      status: "Loop alert: the code ran too long.",
+      checkpoint:
+        "That run went on for a really long time. Try a smaller repeat count, and avoid infinite loops.",
+      toast: "That run took too long. Try lowering repeat(...) or simplifying the code.",
+    };
+  }
+
+  if (text.includes("IndentationError") || text.includes("expected an indented block")) {
+    return {
+      title: "Indentation fix",
+      status: "Indentation fix needed.",
+      checkpoint:
+        "Your code needs indentation. After `repeat(...)` add a new indented line (4 spaces) for the code inside.",
+      toast: "After repeat(...): indent the next lines by 4 spaces.",
+    };
+  }
+
+  if (text.includes("SyntaxError") && (text.includes("expected ':'") || text.includes("expected ':'"))) {
+    return {
+      title: "Missing colon",
+      status: "Syntax fix needed.",
+      checkpoint: "It looks like you forgot a `:` at the end of a line like `repeat(4):`.",
+      toast: "Add a `:` at the end of repeat(4):",
+    };
+  }
+
+  if (text.includes("SyntaxError")) {
+    return {
+      title: "Syntax fix",
+      status: "Syntax fix needed.",
+      checkpoint:
+        "Python didn't understand one line. Check for missing `:` after repeat(...), and make sure parentheses and quotes match.",
+      toast: "Check `:` after repeat(...), plus matching () and quotes.",
+    };
+  }
+
+  const nameErrorMatch = text.match(/NameError: name '([^']+)' is not defined/);
+  if (nameErrorMatch) {
+    const unknownName = nameErrorMatch[1];
+    return {
+      title: "Name not found",
+      status: "Spelling check needed.",
+      checkpoint: `Python doesn't know \`${unknownName}\`. Check spelling (like move/turn/pen_up/go_to) and use the Function Reference list.`,
+      toast: `Check spelling: ${unknownName}`,
+    };
+  }
+
+  const typeErrorMatch = text.match(/TypeError: ([^\n]+)/);
+  if (typeErrorMatch) {
+    return {
+      title: "Wrong inputs",
+      status: "Input fix needed.",
+      checkpoint:
+        "One command was called with the wrong kind of input. Check the Function Reference and match the parentheses and numbers.",
+      toast: typeErrorMatch[1],
+    };
+  }
+
+  return null;
+}
+
 function showCelebration(lesson, nextLesson) {
   celebrationTitle.textContent = lesson.reward?.title || "Lesson complete";
   celebrationCopy.textContent = nextLesson
@@ -1191,18 +1258,16 @@ run_user_code(source_code)
   } catch (error) {
     hideCelebration();
     const message = error?.message || String(error);
-    const hitStepLimit = message.includes("Execution limit reached");
+    const issue = classifyPythonRuntimeIssue(message);
 
-    checkpointResult.textContent = hitStepLimit
-      ? "That run went on for a really long time. Try a smaller repeat count, and avoid infinite loops."
-      : "The mission checkpoint is waiting for a successful run.";
+    checkpointResult.textContent = issue?.checkpoint || "The mission checkpoint is waiting for a successful run.";
     setLessonRunResult(activeProfile, activeTrackId, activeLessonId, "Code needs a fix");
     addRecentActivity(activeProfile, `${lesson.title}: code needs a fix`);
     saveAppState(appState);
-    setStatus(hitStepLimit ? "Loop alert: the code ran too long." : "The code needs a small fix before it can run.");
+    setStatus(issue?.status || "The code needs a small fix before it can run.");
     appendLogLine(message);
-    if (hitStepLimit) {
-      showToast("Loop alert", "That run took too long. Try lowering repeat(...) or simplifying the code.", "success");
+    if (issue) {
+      showToast(issue.title, issue.toast, "success");
     }
   } finally {
     runPythonButton.disabled = false;
