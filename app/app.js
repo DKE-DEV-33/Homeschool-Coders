@@ -1,5 +1,6 @@
 import {
   createProfile,
+  deleteProfile,
   getCompletedCount,
   getEarnedBadgeCount,
   getLesson,
@@ -9,6 +10,7 @@ import {
   loadLessonCatalog,
   saveAppState,
   setActiveProfile,
+  updateProfile,
 } from "./state.js";
 
 const profileForm = document.querySelector("#profile-form");
@@ -77,6 +79,8 @@ function renderProfiles() {
       <div class="profile-actions">
         <button class="primary-button" type="button" data-open-profile="${profile.id}">Open Workspace</button>
         <button class="ghost-button" type="button" data-set-active="${profile.id}">Make Active</button>
+        <button class="ghost-button" type="button" data-edit-profile="${profile.id}">Edit</button>
+        <button class="ghost-button danger-button" type="button" data-delete-profile="${profile.id}">Delete</button>
       </div>
     `;
     profilesGrid.append(card);
@@ -162,6 +166,52 @@ profilesGrid.addEventListener("click", (event) => {
     setActiveProfile(appState, activeId);
     createFeedback.textContent = "Active profile updated.";
     render();
+    return;
+  }
+
+  const editId = target.dataset.editProfile;
+  if (editId) {
+    const profile = appState.profiles.find((item) => item.id === editId);
+    if (!profile) {
+      return;
+    }
+
+    const nextName = window.prompt("Edit name", profile.name);
+    if (nextName === null) {
+      return;
+    }
+
+    const nextAgeRaw = window.prompt("Edit age (4-99)", String(profile.age));
+    if (nextAgeRaw === null) {
+      return;
+    }
+
+    const updated = updateProfile(appState, editId, { name: nextName, age: nextAgeRaw });
+    if (!updated) {
+      return;
+    }
+    createFeedback.textContent = `Updated ${updated.name}.`;
+    render();
+    return;
+  }
+
+  const deleteId = target.dataset.deleteProfile;
+  if (deleteId) {
+    const profile = appState.profiles.find((item) => item.id === deleteId);
+    if (!profile) {
+      return;
+    }
+
+    const ok = window.confirm(`Delete profile "${profile.name}"? This removes local progress for this learner on this device.`);
+    if (!ok) {
+      return;
+    }
+
+    const removed = deleteProfile(appState, deleteId);
+    if (removed) {
+      createFeedback.textContent = "Profile deleted.";
+      render();
+    }
   }
 });
 

@@ -177,6 +177,46 @@ export function setActiveProfile(state, profileId) {
   }
 }
 
+export function updateProfile(state, profileId, updates) {
+  const profile = getProfile(state, profileId);
+  if (!profile) {
+    return null;
+  }
+
+  if (typeof updates?.name === "string") {
+    const trimmedName = updates.name.trim();
+    if (trimmedName) {
+      profile.name = trimmedName.slice(0, 32);
+    }
+  }
+
+  if (updates?.age !== undefined) {
+    const age = Number(updates.age);
+    if (Number.isFinite(age) && age >= 4 && age <= 99) {
+      profile.age = age;
+    }
+  }
+
+  saveAppState(state);
+  return profile;
+}
+
+export function deleteProfile(state, profileId) {
+  const index = state.profiles.findIndex((profile) => profile.id === profileId);
+  if (index < 0) {
+    return false;
+  }
+
+  state.profiles.splice(index, 1);
+
+  if (state.activeProfileId === profileId) {
+    state.activeProfileId = state.profiles[0]?.id || "";
+  }
+
+  saveAppState(state);
+  return true;
+}
+
 export function ensureTrackContainers(profile, trackId) {
   if (!profile) {
     return;
