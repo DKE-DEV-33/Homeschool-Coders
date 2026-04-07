@@ -145,6 +145,36 @@ export function saveAppState(state) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
+export function exportBackup(state) {
+  return {
+    schema: "homeschool-coders-backup-v1",
+    exportedAt: new Date().toISOString(),
+    state,
+  };
+}
+
+export function importBackup(raw) {
+  const backup = raw && typeof raw === "object" ? raw : null;
+  if (!backup || backup.schema !== "homeschool-coders-backup-v1") {
+    throw new Error("Backup file schema not recognized.");
+  }
+  if (!backup.state || typeof backup.state !== "object") {
+    throw new Error("Backup file is missing state.");
+  }
+
+  const nextProfiles = Array.isArray(backup.state.profiles) ? backup.state.profiles : [];
+  const normalizedProfiles = nextProfiles.map((profile, index) => normalizeProfile(profile, index));
+  const nextState = {
+    activeProfileId: normalizedProfiles.some((profile) => profile.id === backup.state.activeProfileId)
+      ? backup.state.activeProfileId
+      : normalizedProfiles[0]?.id || "",
+    profiles: normalizedProfiles,
+  };
+
+  saveAppState(nextState);
+  return nextState;
+}
+
 export function createProfile(state, profileData) {
   const profile = normalizeProfile(
     {

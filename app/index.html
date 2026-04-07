@@ -73,6 +73,26 @@
           </div>
           <div id="overview-grid" class="overview-grid"></div>
         </section>
+
+        <section class="panel" aria-labelledby="backup-title">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Backup</p>
+              <h2 id="backup-title">Export or restore progress</h2>
+            </div>
+            <p class="meta-copy">Use this to move progress to another device.</p>
+          </div>
+          <div class="backup-card">
+            <div class="backup-actions">
+              <button id="export-backup" class="secondary-button" type="button">Export Backup</button>
+              <label class="import-button">
+                <input id="import-backup" type="file" accept="application/json" />
+                <span class="ghost-button">Import Backup</span>
+              </label>
+            </div>
+            <p id="backup-feedback" class="feedback-text">Tip: export occasionally so you can restore if needed.</p>
+          </div>
+        </section>
       </main>
     </div>
   </body>

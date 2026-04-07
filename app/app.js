@@ -1,11 +1,13 @@
 import {
   createProfile,
   deleteProfile,
+  exportBackup,
   getCompletedCount,
   getEarnedBadgeCount,
   getLesson,
   getProfileInitials,
   getTrack,
+  importBackup,
   loadAppState,
   loadLessonCatalog,
   saveAppState,
@@ -20,6 +22,9 @@ const createFeedback = document.querySelector("#create-feedback");
 const profilesGrid = document.querySelector("#profiles-grid");
 const overviewGrid = document.querySelector("#overview-grid");
 const profileCount = document.querySelector("#profile-count");
+const exportBackupButton = document.querySelector("#export-backup");
+const importBackupInput = document.querySelector("#import-backup");
+const backupFeedback = document.querySelector("#backup-feedback");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
@@ -223,6 +228,60 @@ async function boot() {
   }
 
   render();
+}
+
+function downloadJson(filename, data) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+if (exportBackupButton) {
+  exportBackupButton.addEventListener("click", () => {
+    const backup = exportBackup(appState);
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    downloadJson(`homeschool-coders-backup-${dateStamp}.json`, backup);
+    if (backupFeedback) {
+      backupFeedback.textContent = "Backup exported. Keep that JSON file somewhere safe.";
+    }
+  });
+}
+
+if (importBackupInput) {
+  importBackupInput.addEventListener("change", async () => {
+    const file = importBackupInput.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const ok = window.confirm("Importing a backup will replace profiles/progress on this device. Continue?");
+    if (!ok) {
+      importBackupInput.value = "";
+      return;
+    }
+
+    try {
+      const rawText = await file.text();
+      const parsed = JSON.parse(rawText);
+      appState = importBackup(parsed);
+      if (backupFeedback) {
+        backupFeedback.textContent = "Backup imported. Profiles and progress were restored.";
+      }
+      render();
+    } catch (error) {
+      if (backupFeedback) {
+        backupFeedback.textContent = `Import failed: ${error?.message || String(error)}`;
+      }
+    } finally {
+      importBackupInput.value = "";
+    }
+  });
 }
 
 boot();
