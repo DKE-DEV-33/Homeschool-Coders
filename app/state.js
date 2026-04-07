@@ -10,6 +10,7 @@ function createEmptyProgress(defaultTrackId = "kids") {
     completedCheckpointSteps: {},
     hintLevelByLesson: {},
     noProgressRunsByLesson: {},
+    completedLessonAt: {},
     completedLessons: {},
     earnedBadges: {},
     lastResultByLesson: {},
@@ -52,6 +53,7 @@ function normalizeProfile(rawProfile = {}, index = 0) {
       completedCheckpointSteps: progress.completedCheckpointSteps || {},
       hintLevelByLesson: progress.hintLevelByLesson || {},
       noProgressRunsByLesson: progress.noProgressRunsByLesson || {},
+      completedLessonAt: progress.completedLessonAt || {},
       completedLessons: progress.completedLessons || {},
       earnedBadges: progress.earnedBadges || {},
       lastResultByLesson: progress.lastResultByLesson || {},
@@ -94,6 +96,7 @@ function migrateLegacyState() {
             completedCheckpointSteps: learner.completedCheckpointSteps || {},
             hintLevelByLesson: learner.hintLevelByLesson || {},
             noProgressRunsByLesson: learner.noProgressRunsByLesson || {},
+            completedLessonAt: learner.completedLessonAt || {},
             completedLessons: learner.completedLessons || {},
             earnedBadges: learner.earnedBadges || {},
             lastResultByLesson: learner.lastResultByLesson || {},
@@ -257,6 +260,7 @@ export function ensureTrackContainers(profile, trackId) {
   progress.completedCheckpointSteps[trackId] = progress.completedCheckpointSteps[trackId] || {};
   progress.hintLevelByLesson[trackId] = progress.hintLevelByLesson[trackId] || {};
   progress.noProgressRunsByLesson[trackId] = progress.noProgressRunsByLesson[trackId] || {};
+  progress.completedLessonAt[trackId] = progress.completedLessonAt[trackId] || {};
   progress.completedLessons[trackId] = progress.completedLessons[trackId] || {};
   progress.earnedBadges[trackId] = progress.earnedBadges[trackId] || {};
   progress.lastResultByLesson[trackId] = progress.lastResultByLesson[trackId] || {};
@@ -322,9 +326,20 @@ export function addRecentActivity(profile, message) {
   profile.progress.recentActivity = [{ message, time: new Date().toISOString() }, ...(profile.progress.recentActivity || [])].slice(0, 10);
 }
 
+export function getLastActiveAt(profile) {
+  const recentTime = profile?.progress?.recentActivity?.[0]?.time;
+  return recentTime ? new Date(recentTime) : null;
+}
+
+export function getLessonCompletedAt(profile, trackId, lessonId) {
+  const iso = profile?.progress?.completedLessonAt?.[trackId]?.[lessonId];
+  return iso ? new Date(iso) : null;
+}
+
 export function markLessonComplete(profile, trackId, lessonId) {
   ensureTrackContainers(profile, trackId);
   profile.progress.completedLessons[trackId][lessonId] = true;
+  profile.progress.completedLessonAt[trackId][lessonId] = new Date().toISOString();
 }
 
 export function markBadgeEarned(profile, trackId, lessonId) {

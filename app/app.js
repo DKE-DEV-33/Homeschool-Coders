@@ -5,6 +5,7 @@ import {
   getCompletedCount,
   getEarnedBadgeCount,
   getLesson,
+  getLastActiveAt,
   getProfileInitials,
   getTrack,
   importBackup,
@@ -28,6 +29,13 @@ const backupFeedback = document.querySelector("#backup-feedback");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
+
+function formatDateShort(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.valueOf())) {
+    return "Never";
+  }
+  return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(date);
+}
 
 function getCurrentLessonForProfile(profile) {
   const trackId = getTrack(lessonCatalog, profile.progress.activeTrackId)
@@ -62,6 +70,7 @@ function renderProfiles() {
     const completed = getCompletedCount(lessonCatalog, profile, trackId);
     const total = track?.lessons?.length || 0;
     const badges = getEarnedBadgeCount(profile);
+    const lastActiveAt = getLastActiveAt(profile);
 
     const card = document.createElement("article");
     card.className = "profile-card";
@@ -75,6 +84,7 @@ function renderProfiles() {
       <div>
         <h3 class="profile-name">${profile.name}</h3>
         <p class="profile-age">Age ${profile.age}</p>
+        <p class="profile-age">Last active: ${formatDateShort(lastActiveAt)}</p>
       </div>
       <div class="profile-stats">
         <div class="stat-box"><strong>${completed}/${total}</strong><span class="profile-stat">Lessons</span></div>
@@ -107,6 +117,7 @@ function renderOverview() {
   appState.profiles.forEach((profile) => {
     const { track, lesson } = getCurrentLessonForProfile(profile);
     const trackId = track?.id || (profile.age <= 9 ? "kids" : "explorer");
+    const lastActiveAt = getLastActiveAt(profile);
     const card = document.createElement("article");
     card.className = "overview-card";
     card.innerHTML = `
@@ -116,6 +127,7 @@ function renderOverview() {
         <p>Current lesson: ${lesson?.title || "Not started yet"}</p>
         <p>Completed: ${getCompletedCount(lessonCatalog, profile, trackId)} / ${track?.lessons?.length || 0}</p>
         <p>Badges earned: ${getEarnedBadgeCount(profile)}</p>
+        <p>Last active: ${formatDateShort(lastActiveAt)}</p>
       </div>
     `;
     overviewGrid.append(card);
