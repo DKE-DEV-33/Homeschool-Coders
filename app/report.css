@@ -32,6 +32,20 @@ select {
   font: inherit;
 }
 
+.secondary-button {
+  border: none;
+  border-radius: 16px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 700;
+  background: var(--teal);
+  color: white;
+}
+
+.secondary-button:active {
+  transform: translateY(1px);
+}
+
 .report-shell {
   width: 100%;
   padding: 18px;
@@ -202,3 +216,29 @@ h2 {
   }
 }
 
+@media print {
+  body {
+    background: white;
+  }
+
+  .report-shell {
+    padding: 0;
+    gap: 12px;
+  }
+
+  .report-topbar {
+    box-shadow: none;
+  }
+
+  .report-topbar .ghost-link,
+  .report-topbar .topbar-right {
+    display: none;
+  }
+
+  .summary-card,
+  .track-card,
+  .report-topbar {
+    box-shadow: none;
+    border-color: rgba(0, 0, 0, 0.22);
+  }
+}

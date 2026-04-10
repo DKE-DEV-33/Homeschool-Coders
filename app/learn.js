@@ -74,6 +74,7 @@ const nextLessonButton = document.querySelector("#next-lesson-button");
 const closeCelebrationButton = document.querySelector("#close-celebration");
 const confettiLayer = document.querySelector("#confetti-layer");
 const toastLayer = document.querySelector("#toast-layer");
+const openReportLink = document.querySelector("#open-report-link");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
@@ -534,6 +535,17 @@ function renderProfileSelect() {
   profileSelect.value = activeProfile?.id || "";
 }
 
+function renderReportLink() {
+  if (!openReportLink) {
+    return;
+  }
+  if (!activeProfile) {
+    openReportLink.href = "./report.html";
+    return;
+  }
+  openReportLink.href = `./report.html?profile=${encodeURIComponent(activeProfile.id)}`;
+}
+
 function renderTrackSwitcher() {
   trackKidsButton.classList.toggle("active", activeTrackId === "kids");
   trackExplorerButton.classList.toggle("active", activeTrackId === "explorer");
@@ -689,6 +701,7 @@ function renderEditor() {
 
 function renderAll() {
   renderProfileSelect();
+  renderReportLink();
   renderTrackSwitcher();
   renderLessonList();
   renderBadgeShelf();

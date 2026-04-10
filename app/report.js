@@ -21,6 +21,7 @@ const summaryTrack = document.querySelector("#summary-track");
 const summaryLesson = document.querySelector("#summary-lesson");
 const summaryProgress = document.querySelector("#summary-progress");
 const trackSections = document.querySelector("#track-sections");
+const printButton = document.querySelector("#print-report");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
@@ -154,6 +155,12 @@ function switchProfile(profileId) {
 profileSelect.addEventListener("change", () => {
   switchProfile(profileSelect.value);
 });
+
+if (printButton) {
+  printButton.addEventListener("click", () => {
+    window.print();
+  });
+}
 
 async function boot() {
   try {
