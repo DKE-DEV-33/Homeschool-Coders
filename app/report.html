@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homeschool Coders Progress Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./report.css" />
+    <script type="module" src="./report.js"></script>
+  </head>
+  <body>
+    <div class="report-shell">
+      <header class="report-topbar">
+        <div class="topbar-left">
+          <a class="ghost-link" href="./index.html">Back Home</a>
+          <div>
+            <p class="eyebrow">Teacher View</p>
+            <h1>Progress Report</h1>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <label class="profile-picker">
+            <span>Learner</span>
+            <select id="report-profile-select"></select>
+          </label>
+        </div>
+      </header>
+
+      <section class="summary-grid">
+        <article class="summary-card">
+          <p class="eyebrow">Snapshot</p>
+          <h2 id="summary-name">Learner</h2>
+          <div class="summary-lines">
+            <p id="summary-age"></p>
+            <p id="summary-last-active"></p>
+            <p id="summary-badges"></p>
+          </div>
+        </article>
+        <article class="summary-card">
+          <p class="eyebrow">Current</p>
+          <h2 id="summary-track">Track</h2>
+          <div class="summary-lines">
+            <p id="summary-lesson"></p>
+            <p id="summary-progress"></p>
+          </div>
+        </article>
+      </section>
+
+      <main id="track-sections" class="track-sections"></main>
+    </div>
+  </body>
+</html>
+

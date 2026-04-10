@@ -129,6 +129,9 @@ function renderOverview() {
         <p>Badges earned: ${getEarnedBadgeCount(profile)}</p>
         <p>Last active: ${formatDateShort(lastActiveAt)}</p>
       </div>
+      <div class="overview-actions">
+        <a class="ghost-button link-button" href="./report.html?profile=${encodeURIComponent(profile.id)}">View report</a>
+      </div>
     `;
     overviewGrid.append(card);
   });
