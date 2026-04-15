@@ -29,6 +29,8 @@ import {
   setLessonRunResult,
 } from "./state.js";
 
+import { COMMAND_REFERENCE } from "./commands.js";
+
 const PYODIDE_VERSION = "0.27.7";
 const pyodideModuleUrl = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
 
@@ -80,6 +82,7 @@ const closeCelebrationButton = document.querySelector("#close-celebration");
 const confettiLayer = document.querySelector("#confetti-layer");
 const toastLayer = document.querySelector("#toast-layer");
 const openReportLink = document.querySelector("#open-report-link");
+const printLessonLink = document.querySelector("#print-lesson-link");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
@@ -90,19 +93,6 @@ let saveDraftTimeoutId;
 let saveNotesTimeoutId;
 let pyodide;
 let pyodideReadyPromise;
-
-const COMMAND_REFERENCE = {
-  move: { signature: "move(distance)", description: "Draw forward by a number of pixels." },
-  turn: { signature: "turn(degrees)", description: "Turn the turtle before the next move." },
-  pen_color: { signature: 'pen_color("color")', description: "Change the drawing color." },
-  line_width: { signature: "line_width(size)", description: "Make lines thinner or thicker." },
-  write: { signature: 'write("text", size)', description: "Write a message on the canvas." },
-  pen_up: { signature: "pen_up()", description: "Move without drawing a line." },
-  pen_down: { signature: "pen_down()", description: "Start drawing again after lifting the pen." },
-  go_to: { signature: "go_to(x, y)", description: "Jump to a new spot on the canvas." },
-  repeat: { signature: "repeat(4):", description: "Repeat the indented code block multiple times." },
-  def: { signature: "def shape_name():", description: "Create your own reusable command in later lessons." },
-};
 
 const turtleState = {
   x: drawingSurface.width / 2,
@@ -559,6 +549,17 @@ function renderReportLink() {
   openReportLink.href = `./report.html?profile=${encodeURIComponent(activeProfile.id)}`;
 }
 
+function renderPrintLessonLink() {
+  if (!printLessonLink) {
+    return;
+  }
+  if (!activeProfile || !activeTrackId || !activeLessonId) {
+    printLessonLink.href = "./lesson.html";
+    return;
+  }
+  printLessonLink.href = `./lesson.html?profile=${encodeURIComponent(activeProfile.id)}&track=${encodeURIComponent(activeTrackId)}&lesson=${encodeURIComponent(activeLessonId)}`;
+}
+
 function renderTrackSwitcher() {
   trackKidsButton.classList.toggle("active", activeTrackId === "kids");
   trackExplorerButton.classList.toggle("active", activeTrackId === "explorer");
@@ -727,6 +728,7 @@ function renderLessonNotes() {
 function renderAll() {
   renderProfileSelect();
   renderReportLink();
+  renderPrintLessonLink();
   renderTrackSwitcher();
   renderLessonList();
   renderBadgeShelf();

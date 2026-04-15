@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homeschool Coders Lesson Sheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./lesson.css" />
+    <script type="module" src="./lesson.js"></script>
+  </head>
+  <body>
+    <div class="sheet-shell">
+      <header class="sheet-topbar">
+        <div class="topbar-left">
+          <a id="back-studio" class="ghost-link" href="./learn.html">Back to Studio</a>
+          <a id="back-report" class="ghost-link" href="./report.html">Back to Report</a>
+          <div>
+            <p class="eyebrow">Printable Lesson</p>
+            <h1 id="sheet-title">Lesson</h1>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="meta-stack">
+            <p id="sheet-learner" class="meta"></p>
+            <p id="sheet-status" class="meta"></p>
+          </div>
+          <button id="print-sheet" class="secondary-button" type="button">Print</button>
+        </div>
+      </header>
+
+      <main class="sheet-grid">
+        <section class="sheet-card">
+          <p class="eyebrow">Mission</p>
+          <h2 id="mission-title">Mission</h2>
+          <p id="mission-copy" class="copy"></p>
+          <div id="target-steps" class="pill-row"></div>
+        </section>
+
+        <section class="sheet-card">
+          <p class="eyebrow">Checkpoint</p>
+          <h2>Steps to Pass</h2>
+          <ol id="milestone-list" class="milestone-list"></ol>
+          <p id="concept-copy" class="concept"></p>
+        </section>
+
+        <section class="sheet-card">
+          <p class="eyebrow">Commands</p>
+          <h2>Allowed Tools</h2>
+          <div id="command-list" class="command-list"></div>
+        </section>
+
+        <section class="sheet-card notes-card">
+          <p class="eyebrow">Notes</p>
+          <h2>Reflection</h2>
+          <p class="copy">Write a sentence or two after the mission.</p>
+          <div class="note-lines" aria-hidden="true">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
+
