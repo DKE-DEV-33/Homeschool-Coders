@@ -8,6 +8,7 @@ import {
   getHintLevel,
   getLesson,
   getLessonIndex,
+  getLessonNotes,
   getNextLesson,
   getNoProgressRuns,
   getProfile,
@@ -23,6 +24,7 @@ import {
   setCompletedCheckpointSteps,
   setActiveProfile,
   setHintLevel,
+  setLessonNotes,
   setNoProgressRuns,
   setLessonRunResult,
 } from "./state.js";
@@ -62,6 +64,9 @@ const lessonStatus = document.querySelector("#lesson-status");
 const runtimeLog = document.querySelector("#runtime-log");
 const checkpointResult = document.querySelector("#checkpoint-result");
 const functionReference = document.querySelector("#function-reference");
+const learnerNotes = document.querySelector("#learner-notes");
+const parentNotes = document.querySelector("#parent-notes");
+const notesStatus = document.querySelector("#notes-status");
 const drawingSurface = document.querySelector("#drawing-surface");
 const drawingContext = drawingSurface.getContext("2d");
 const targetPreviewCanvas = document.querySelector("#target-preview-canvas");
@@ -82,6 +87,7 @@ let activeProfile = null;
 let activeTrackId = "kids";
 let activeLessonId = "";
 let saveDraftTimeoutId;
+let saveNotesTimeoutId;
 let pyodide;
 let pyodideReadyPromise;
 
@@ -114,6 +120,13 @@ const runMetrics = {
   writes: 0,
   functionCalls: {},
 };
+
+function formatDateShort(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.valueOf())) {
+    return "—";
+  }
+  return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(date);
+}
 
 function resetMetrics() {
   runMetrics.segments = 0;
@@ -699,6 +712,18 @@ function renderEditor() {
   codeEditor.placeholder = `Type your Python here for ${lesson.title}...`;
 }
 
+function renderLessonNotes() {
+  const lesson = getActiveLesson();
+  if (!lesson || !activeProfile || !learnerNotes || !parentNotes || !notesStatus) {
+    return;
+  }
+
+  const notes = getLessonNotes(activeProfile, activeTrackId, lesson.id);
+  learnerNotes.value = notes?.learnerText || "";
+  parentNotes.value = notes?.parentText || "";
+  notesStatus.textContent = notes?.updatedAt ? `Last saved: ${formatDateShort(new Date(notes.updatedAt))}` : "Notes save automatically on this device.";
+}
+
 function renderAll() {
   renderProfileSelect();
   renderReportLink();
@@ -708,6 +733,7 @@ function renderAll() {
   renderFunctionReference();
   renderLessonHeader();
   renderEditor();
+  renderLessonNotes();
 }
 
 function saveCurrentDraft() {
@@ -721,6 +747,26 @@ function saveCurrentDraft() {
 function scheduleDraftSave() {
   window.clearTimeout(saveDraftTimeoutId);
   saveDraftTimeoutId = window.setTimeout(saveCurrentDraft, 160);
+}
+
+function saveCurrentNotes() {
+  if (!activeProfile || !activeTrackId || !activeLessonId || !learnerNotes || !parentNotes || !notesStatus) {
+    return;
+  }
+  setLessonNotes(activeProfile, activeTrackId, activeLessonId, {
+    learnerText: learnerNotes.value,
+    parentText: parentNotes.value,
+  });
+  saveAppState(appState);
+  notesStatus.textContent = `Last saved: ${formatDateShort(new Date())}`;
+}
+
+function scheduleNotesSave() {
+  if (notesStatus) {
+    notesStatus.textContent = "Saving...";
+  }
+  window.clearTimeout(saveNotesTimeoutId);
+  saveNotesTimeoutId = window.setTimeout(saveCurrentNotes, 220);
 }
 
 function setStrokeStyle(color) {
@@ -1463,6 +1509,14 @@ codeEditor.addEventListener("input", () => {
     : `${completedMilestoneCount}/${milestoneCount} milestones`;
   scheduleDraftSave();
 });
+
+if (learnerNotes) {
+  learnerNotes.addEventListener("input", scheduleNotesSave);
+}
+
+if (parentNotes) {
+  parentNotes.addEventListener("input", scheduleNotesSave);
+}
 
 async function boot() {
   try {

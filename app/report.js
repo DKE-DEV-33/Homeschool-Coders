@@ -5,6 +5,7 @@ import {
   getLastActiveAt,
   getLesson,
   getLessonCompletedAt,
+  getLessonNotes,
   getTrack,
   loadAppState,
   loadLessonCatalog,
@@ -33,6 +34,15 @@ function formatDate(date) {
     return "—";
   }
   return new Intl.DateTimeFormat(undefined, { year: "numeric", month: "short", day: "numeric" }).format(date);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function getActiveTrackForProfile(profile) {
@@ -108,6 +118,7 @@ function renderTrackCards() {
             <th>Status</th>
             <th>Completed</th>
             <th>Steps</th>
+            <th>Notes</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -120,6 +131,11 @@ function renderTrackCards() {
       const completedAt = getLessonCompletedAt(activeProfile, trackId, lesson.id);
       const stepsCleared = getCompletedCheckpointSteps(activeProfile, trackId, lesson.id).length;
       const stepsTotal = Array.isArray(lesson.milestones) ? lesson.milestones.length : "—";
+      const notes = getLessonNotes(activeProfile, trackId, lesson.id);
+      const noteText = (notes?.parentText || notes?.learnerText || "").trim();
+      const noteSnippet = noteText ? (noteText.length > 48 ? `${noteText.slice(0, 48)}…` : noteText) : "—";
+      const safeSnippet = escapeHtml(noteSnippet);
+      const safeTitle = escapeHtml(noteText);
 
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -127,6 +143,7 @@ function renderTrackCards() {
         <td><span class="pill ${done ? "done" : "todo"}">${done ? "Completed" : "In progress"}</span></td>
         <td>${done ? formatDate(completedAt) : "—"}</td>
         <td>${stepsCleared} / ${stepsTotal}</td>
+        <td class="muted" title="${safeTitle}">${safeSnippet}</td>
       `;
       tbody.append(row);
     });

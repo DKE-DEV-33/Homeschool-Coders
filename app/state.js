@@ -14,6 +14,7 @@ function createEmptyProgress(defaultTrackId = "kids") {
     completedLessons: {},
     earnedBadges: {},
     lastResultByLesson: {},
+    lessonNotes: {},
     recentActivity: [],
   };
 }
@@ -57,6 +58,7 @@ function normalizeProfile(rawProfile = {}, index = 0) {
       completedLessons: progress.completedLessons || {},
       earnedBadges: progress.earnedBadges || {},
       lastResultByLesson: progress.lastResultByLesson || {},
+      lessonNotes: progress.lessonNotes || {},
       recentActivity: Array.isArray(progress.recentActivity) ? progress.recentActivity.slice(0, 12) : [],
     },
   };
@@ -100,6 +102,7 @@ function migrateLegacyState() {
             completedLessons: learner.completedLessons || {},
             earnedBadges: learner.earnedBadges || {},
             lastResultByLesson: learner.lastResultByLesson || {},
+            lessonNotes: learner.lessonNotes || {},
             recentActivity: learner.recentActivity || [],
           },
         },
@@ -264,6 +267,7 @@ export function ensureTrackContainers(profile, trackId) {
   progress.completedLessons[trackId] = progress.completedLessons[trackId] || {};
   progress.earnedBadges[trackId] = progress.earnedBadges[trackId] || {};
   progress.lastResultByLesson[trackId] = progress.lastResultByLesson[trackId] || {};
+  progress.lessonNotes[trackId] = progress.lessonNotes[trackId] || {};
 }
 
 export function getTrack(catalog, trackId) {
@@ -388,6 +392,20 @@ export function setNoProgressRuns(profile, trackId, lessonId, count) {
 
 export function getDraft(profile, trackId, lessonId) {
   return profile?.progress?.codeDrafts?.[trackId]?.[lessonId] || "";
+}
+
+export function getLessonNotes(profile, trackId, lessonId) {
+  return profile?.progress?.lessonNotes?.[trackId]?.[lessonId] || null;
+}
+
+export function setLessonNotes(profile, trackId, lessonId, notes) {
+  ensureTrackContainers(profile, trackId);
+  const next = notes && typeof notes === "object" ? notes : {};
+  profile.progress.lessonNotes[trackId][lessonId] = {
+    learnerText: typeof next.learnerText === "string" ? next.learnerText : "",
+    parentText: typeof next.parentText === "string" ? next.parentText : "",
+    updatedAt: new Date().toISOString(),
+  };
 }
 
 export async function loadLessonCatalog() {
