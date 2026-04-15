@@ -1534,6 +1534,8 @@ async function boot() {
 
   const params = new URLSearchParams(window.location.search);
   const requestedProfile = params.get("profile");
+  const requestedTrack = params.get("track");
+  const requestedLesson = params.get("lesson");
   activeProfile = getProfile(appState, requestedProfile) || getProfile(appState, appState.activeProfileId) || appState.profiles[0];
 
   if (!activeProfile) {
@@ -1542,14 +1544,26 @@ async function boot() {
   }
 
   setActiveProfile(appState, activeProfile.id);
-  activeTrackId = getTrack(lessonCatalog, activeProfile.progress.activeTrackId)
-    ? activeProfile.progress.activeTrackId
-    : activeProfile.age <= 9
-      ? "kids"
-      : "explorer";
+  activeTrackId = getTrack(lessonCatalog, requestedTrack)
+    ? requestedTrack
+    : getTrack(lessonCatalog, activeProfile.progress.activeTrackId)
+      ? activeProfile.progress.activeTrackId
+      : activeProfile.age <= 9
+        ? "kids"
+        : "explorer";
   ensureTrackContainers(activeProfile, activeTrackId);
   const track = getActiveTrack();
-  activeLessonId = activeProfile.progress.activeLessonIdByTrack[activeTrackId] || track?.lessons?.[0]?.id || "";
+  activeLessonId =
+    requestedLesson &&
+    getLesson(lessonCatalog, activeTrackId, requestedLesson) &&
+    isLessonUnlocked(lessonCatalog, activeProfile, activeTrackId, requestedLesson)
+      ? requestedLesson
+      : activeProfile.progress.activeLessonIdByTrack[activeTrackId] || track?.lessons?.[0]?.id || "";
+  activeProfile.progress.activeTrackId = activeTrackId;
+  if (activeLessonId) {
+    activeProfile.progress.activeLessonIdByTrack[activeTrackId] = activeLessonId;
+  }
+  saveAppState(appState);
   setSidebarTab("missions");
   renderAll();
   resetCanvasState();

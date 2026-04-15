@@ -136,10 +136,16 @@ function renderTrackCards() {
       const noteSnippet = noteText ? (noteText.length > 48 ? `${noteText.slice(0, 48)}…` : noteText) : "—";
       const safeSnippet = escapeHtml(noteSnippet);
       const safeTitle = escapeHtml(noteText);
+      const lessonHref = `./learn.html?profile=${encodeURIComponent(activeProfile.id)}&track=${encodeURIComponent(trackId)}&lesson=${encodeURIComponent(lesson.id)}`;
 
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td><strong>${index + 1}. ${lesson.title}</strong><div class="muted">${lesson.description}</div></td>
+        <td>
+          <a class="lesson-link" href="${lessonHref}">
+            <strong>${index + 1}. ${lesson.title}</strong>
+          </a>
+          <div class="muted">${lesson.description}</div>
+        </td>
         <td><span class="pill ${done ? "done" : "todo"}">${done ? "Completed" : "In progress"}</span></td>
         <td>${done ? formatDate(completedAt) : "—"}</td>
         <td>${stepsCleared} / ${stepsTotal}</td>

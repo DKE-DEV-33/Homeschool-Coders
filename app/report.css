@@ -87,6 +87,17 @@ select {
   background: rgba(25, 51, 61, 0.08);
 }
 
+.lesson-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.lesson-link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-decoration-color: rgba(231, 111, 60, 0.65);
+}
+
 .eyebrow {
   margin: 0 0 6px;
   text-transform: uppercase;
