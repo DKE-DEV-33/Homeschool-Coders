@@ -98,6 +98,22 @@ select {
   text-decoration-color: rgba(231, 111, 60, 0.65);
 }
 
+.notes-button {
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(25, 51, 61, 0.12);
+  border-radius: 16px;
+  padding: 10px 12px;
+  background: rgba(25, 51, 61, 0.05);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.notes-button:hover {
+  background: rgba(25, 51, 61, 0.08);
+  color: var(--ink);
+}
+
 .eyebrow {
   margin: 0 0 6px;
   text-transform: uppercase;
@@ -218,6 +234,92 @@ h2 {
   color: var(--blue);
 }
 
+.notes-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 70;
+}
+
+.notes-modal.open {
+  display: flex;
+}
+
+.notes-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 21, 26, 0.48);
+  backdrop-filter: blur(4px);
+}
+
+.notes-card {
+  position: relative;
+  width: min(720px, calc(100vw - 36px));
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.notes-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.notes-subtitle {
+  margin-top: 8px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.notes-fields {
+  display: grid;
+  gap: 12px;
+}
+
+.notes-field {
+  display: grid;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.notes-field span {
+  color: var(--muted);
+}
+
+.notes-field textarea {
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid rgba(25, 51, 61, 0.14);
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink);
+  font-family: "Atkinson Hyperlegible", sans-serif;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.notes-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.notes-status {
+  margin: 0;
+  color: var(--muted);
+}
+
 .muted {
   color: var(--muted);
 }
@@ -256,5 +358,9 @@ h2 {
   .report-topbar {
     box-shadow: none;
     border-color: rgba(0, 0, 0, 0.22);
+  }
+
+  .notes-modal {
+    display: none !important;
   }
 }

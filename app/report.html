@@ -54,5 +54,37 @@
 
       <main id="track-sections" class="track-sections"></main>
     </div>
+
+    <div id="notes-modal" class="notes-modal" aria-hidden="true">
+      <div class="notes-backdrop" data-close-modal="true"></div>
+      <div class="notes-card" role="dialog" aria-modal="true" aria-labelledby="notes-title">
+        <div class="notes-head">
+          <div>
+            <p class="eyebrow">Lesson Notes</p>
+            <h2 id="notes-title">Edit notes</h2>
+            <p id="notes-subtitle" class="notes-subtitle"></p>
+          </div>
+          <button id="close-notes" class="ghost-link" type="button">Close</button>
+        </div>
+
+        <div class="notes-fields">
+          <label class="notes-field">
+            <span>Learner notes</span>
+            <textarea id="notes-learner" rows="4" placeholder="What did you build today?"></textarea>
+          </label>
+          <label class="notes-field">
+            <span>Parent/Teacher notes</span>
+            <textarea id="notes-parent" rows="4" placeholder="What went well? What should we practice next?"></textarea>
+          </label>
+        </div>
+
+        <div class="notes-actions">
+          <a id="notes-open-sheet" class="ghost-link" href="./lesson.html">Open printable sheet</a>
+          <button id="save-notes" class="secondary-button" type="button">Save notes</button>
+        </div>
+
+        <p id="notes-status" class="notes-status"></p>
+      </div>
+    </div>
   </body>
 </html>

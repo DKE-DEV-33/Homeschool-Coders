@@ -10,6 +10,7 @@ import {
   loadAppState,
   loadLessonCatalog,
   saveAppState,
+  setLessonNotes,
   setActiveProfile,
 } from "./state.js";
 
@@ -23,11 +24,21 @@ const summaryLesson = document.querySelector("#summary-lesson");
 const summaryProgress = document.querySelector("#summary-progress");
 const trackSections = document.querySelector("#track-sections");
 const printButton = document.querySelector("#print-report");
+const notesModal = document.querySelector("#notes-modal");
+const closeNotesButton = document.querySelector("#close-notes");
+const notesSubtitle = document.querySelector("#notes-subtitle");
+const notesLearner = document.querySelector("#notes-learner");
+const notesParent = document.querySelector("#notes-parent");
+const notesSaveButton = document.querySelector("#save-notes");
+const notesStatus = document.querySelector("#notes-status");
+const notesOpenSheet = document.querySelector("#notes-open-sheet");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
 let activeProfile = null;
 const profileFromQuery = new URLSearchParams(window.location.search).get("profile");
+let editingTrackId = "";
+let editingLessonId = "";
 
 function formatDate(date) {
   if (!(date instanceof Date) || Number.isNaN(date.valueOf())) {
@@ -139,6 +150,8 @@ function renderTrackCards() {
       const lessonHref = `./learn.html?profile=${encodeURIComponent(activeProfile.id)}&track=${encodeURIComponent(trackId)}&lesson=${encodeURIComponent(lesson.id)}`;
 
       const row = document.createElement("tr");
+      row.dataset.trackId = trackId;
+      row.dataset.lessonId = lesson.id;
       row.innerHTML = `
         <td>
           <a class="lesson-link" href="${lessonHref}">
@@ -149,7 +162,11 @@ function renderTrackCards() {
         <td><span class="pill ${done ? "done" : "todo"}">${done ? "Completed" : "In progress"}</span></td>
         <td>${done ? formatDate(completedAt) : "—"}</td>
         <td>${stepsCleared} / ${stepsTotal}</td>
-        <td class="muted" title="${safeTitle}">${safeSnippet}</td>
+        <td>
+          <button class="notes-button" type="button" data-edit-notes="true" title="${safeTitle}">
+            ${safeSnippet || "—"}
+          </button>
+        </td>
       `;
       tbody.append(row);
     });
@@ -175,6 +192,40 @@ function switchProfile(profileId) {
   renderAll();
 }
 
+function hideNotesModal() {
+  if (!notesModal) {
+    return;
+  }
+  notesModal.classList.remove("open");
+  notesModal.setAttribute("aria-hidden", "true");
+  editingTrackId = "";
+  editingLessonId = "";
+}
+
+function showNotesModal(trackId, lessonId) {
+  if (!notesModal || !activeProfile || !notesLearner || !notesParent || !notesSubtitle || !notesStatus || !notesOpenSheet) {
+    return;
+  }
+  const lesson = getLesson(lessonCatalog, trackId, lessonId);
+  if (!lesson) {
+    return;
+  }
+
+  editingTrackId = trackId;
+  editingLessonId = lessonId;
+
+  const existing = getLessonNotes(activeProfile, trackId, lessonId);
+  notesLearner.value = existing?.learnerText || "";
+  notesParent.value = existing?.parentText || "";
+  notesSubtitle.textContent = `${activeProfile.name} · ${getTrack(lessonCatalog, trackId)?.title || trackId} · ${lesson.title}`;
+  notesStatus.textContent = existing?.updatedAt ? `Last saved: ${formatDate(new Date(existing.updatedAt))}` : "Add notes, then save.";
+  notesOpenSheet.href = `./lesson.html?profile=${encodeURIComponent(activeProfile.id)}&track=${encodeURIComponent(trackId)}&lesson=${encodeURIComponent(lessonId)}`;
+
+  notesModal.classList.add("open");
+  notesModal.setAttribute("aria-hidden", "false");
+  notesParent.focus();
+}
+
 profileSelect.addEventListener("change", () => {
   switchProfile(profileSelect.value);
 });
@@ -182,6 +233,63 @@ profileSelect.addEventListener("change", () => {
 if (printButton) {
   printButton.addEventListener("click", () => {
     window.print();
+  });
+}
+
+if (trackSections) {
+  trackSections.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    const editButton = target.closest("[data-edit-notes]");
+    if (!editButton) {
+      return;
+    }
+    const row = editButton.closest("tr");
+    const trackId = row?.dataset?.trackId;
+    const lessonId = row?.dataset?.lessonId;
+    if (!trackId || !lessonId) {
+      return;
+    }
+    showNotesModal(trackId, lessonId);
+  });
+}
+
+if (notesModal) {
+  notesModal.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    if (target.dataset.closeModal) {
+      hideNotesModal();
+    }
+  });
+}
+
+if (closeNotesButton) {
+  closeNotesButton.addEventListener("click", hideNotesModal);
+}
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && notesModal?.classList.contains("open")) {
+    hideNotesModal();
+  }
+});
+
+if (notesSaveButton) {
+  notesSaveButton.addEventListener("click", () => {
+    if (!activeProfile || !editingTrackId || !editingLessonId || !notesLearner || !notesParent || !notesStatus) {
+      return;
+    }
+    setLessonNotes(activeProfile, editingTrackId, editingLessonId, {
+      learnerText: notesLearner.value,
+      parentText: notesParent.value,
+    });
+    saveAppState(appState);
+    notesStatus.textContent = `Saved: ${formatDate(new Date())}`;
+    renderTrackCards();
   });
 }
 
