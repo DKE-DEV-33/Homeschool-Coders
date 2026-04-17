@@ -24,6 +24,7 @@ const summaryLesson = document.querySelector("#summary-lesson");
 const summaryProgress = document.querySelector("#summary-progress");
 const trackSections = document.querySelector("#track-sections");
 const printButton = document.querySelector("#print-report");
+const hideCompletedToggle = document.querySelector("#report-hide-completed");
 const notesModal = document.querySelector("#notes-modal");
 const closeNotesButton = document.querySelector("#close-notes");
 const notesSubtitle = document.querySelector("#notes-subtitle");
@@ -39,6 +40,8 @@ let activeProfile = null;
 const profileFromQuery = new URLSearchParams(window.location.search).get("profile");
 let editingTrackId = "";
 let editingLessonId = "";
+const REPORT_HIDE_COMPLETED_KEY = "homeschool-coders-report-hide-completed-v1";
+let hideCompleted = false;
 
 function formatDate(date) {
   if (!(date instanceof Date) || Number.isNaN(date.valueOf())) {
@@ -111,6 +114,7 @@ function renderTrackCards() {
     const trackId = track.id;
     const completedCount = getCompletedCount(lessonCatalog, activeProfile, trackId);
     const totalCount = track.lessons.length;
+    const remainingCount = Math.max(0, totalCount - completedCount);
 
     const card = document.createElement("section");
     card.className = "track-card";
@@ -119,7 +123,9 @@ function renderTrackCards() {
         <div>
           <p class="eyebrow">Track</p>
           <h2>${track.title}</h2>
-          <p class="track-meta">${completedCount} / ${totalCount} lessons completed</p>
+          <p class="track-meta">
+            ${completedCount} / ${totalCount} lessons completed${hideCompleted ? ` · ${remainingCount} remaining shown` : ""}
+          </p>
         </div>
       </div>
       <table class="lesson-table">
@@ -139,6 +145,9 @@ function renderTrackCards() {
     const tbody = card.querySelector("tbody");
     track.lessons.forEach((lesson, index) => {
       const done = Boolean(activeProfile.progress.completedLessons?.[trackId]?.[lesson.id]);
+      if (hideCompleted && done) {
+        return;
+      }
       const completedAt = getLessonCompletedAt(activeProfile, trackId, lesson.id);
       const stepsCleared = getCompletedCheckpointSteps(activeProfile, trackId, lesson.id).length;
       const stepsTotal = Array.isArray(lesson.milestones) ? lesson.milestones.length : "—";
@@ -230,6 +239,14 @@ profileSelect.addEventListener("change", () => {
   switchProfile(profileSelect.value);
 });
 
+if (hideCompletedToggle) {
+  hideCompletedToggle.addEventListener("change", () => {
+    hideCompleted = Boolean(hideCompletedToggle.checked);
+    window.localStorage.setItem(REPORT_HIDE_COMPLETED_KEY, hideCompleted ? "1" : "0");
+    renderTrackCards();
+  });
+}
+
 if (printButton) {
   printButton.addEventListener("click", () => {
     window.print();
@@ -303,6 +320,11 @@ async function boot() {
   if (!appState.profiles.length) {
     window.location.href = "./index.html";
     return;
+  }
+
+  hideCompleted = window.localStorage.getItem(REPORT_HIDE_COMPLETED_KEY) === "1";
+  if (hideCompletedToggle) {
+    hideCompletedToggle.checked = hideCompleted;
   }
 
   activeProfile =
