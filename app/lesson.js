@@ -3,6 +3,7 @@ import {
   getCompletedCheckpointSteps,
   getLesson,
   getLessonCompletedAt,
+  getLessonNotes,
   getProfile,
   getTrack,
   isLessonComplete,
@@ -22,6 +23,9 @@ const targetSteps = document.querySelector("#target-steps");
 const milestoneList = document.querySelector("#milestone-list");
 const conceptCopy = document.querySelector("#concept-copy");
 const commandList = document.querySelector("#command-list");
+const savedNotesMeta = document.querySelector("#saved-notes-meta");
+const savedNotesLearner = document.querySelector("#saved-notes-learner");
+const savedNotesParent = document.querySelector("#saved-notes-parent");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
@@ -99,9 +103,22 @@ function renderLessonSheet({ profileId, trackId, lessonId }) {
     sheetStatus.textContent = done
       ? `Status: Completed on ${formatDate(completedAt)} · ${stepsCleared}/${totalSteps} steps`
       : `Status: In progress · ${stepsCleared}/${totalSteps} steps`;
+
+    const notes = getLessonNotes(profile, trackId, lessonId);
+    const updatedAt = notes?.updatedAt ? new Date(notes.updatedAt) : null;
+    if (savedNotesMeta && savedNotesLearner && savedNotesParent) {
+      savedNotesMeta.textContent = updatedAt ? `Last saved: ${formatDate(updatedAt)}` : "No notes saved for this lesson yet.";
+      savedNotesLearner.textContent = (notes?.learnerText || "").trim() || "—";
+      savedNotesParent.textContent = (notes?.parentText || "").trim() || "—";
+    }
   } else {
     sheetLearner.textContent = "";
     sheetStatus.textContent = "";
+    if (savedNotesMeta && savedNotesLearner && savedNotesParent) {
+      savedNotesMeta.textContent = "Open this sheet from the Report or Studio to include saved notes.";
+      savedNotesLearner.textContent = "—";
+      savedNotesParent.textContent = "—";
+    }
   }
 }
 
@@ -125,4 +142,3 @@ async function boot() {
 }
 
 boot();
-
