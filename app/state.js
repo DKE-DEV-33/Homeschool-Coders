@@ -15,6 +15,9 @@ function createEmptyProgress(defaultTrackId = "kids") {
     earnedBadges: {},
     lastResultByLesson: {},
     lessonNotes: {},
+    teacherOverrides: {
+      unlockAllLessons: false,
+    },
     recentActivity: [],
   };
 }
@@ -59,6 +62,9 @@ function normalizeProfile(rawProfile = {}, index = 0) {
       earnedBadges: progress.earnedBadges || {},
       lastResultByLesson: progress.lastResultByLesson || {},
       lessonNotes: progress.lessonNotes || {},
+      teacherOverrides: {
+        unlockAllLessons: Boolean(progress.teacherOverrides?.unlockAllLessons),
+      },
       recentActivity: Array.isArray(progress.recentActivity) ? progress.recentActivity.slice(0, 12) : [],
     },
   };
@@ -103,6 +109,9 @@ function migrateLegacyState() {
             earnedBadges: learner.earnedBadges || {},
             lastResultByLesson: learner.lastResultByLesson || {},
             lessonNotes: learner.lessonNotes || {},
+            teacherOverrides: {
+              unlockAllLessons: Boolean(learner.teacherOverrides?.unlockAllLessons),
+            },
             recentActivity: learner.recentActivity || [],
           },
         },
@@ -305,6 +314,10 @@ export function isLessonUnlocked(catalog, profile, trackId, lessonId) {
     return false;
   }
 
+  if (profile?.progress?.teacherOverrides?.unlockAllLessons) {
+    return true;
+  }
+
   if (lessonIndex === 0) {
     return true;
   }
@@ -406,6 +419,18 @@ export function setLessonNotes(profile, trackId, lessonId, notes) {
     parentText: typeof next.parentText === "string" ? next.parentText : "",
     updatedAt: new Date().toISOString(),
   };
+}
+
+export function getUnlockAllLessons(profile) {
+  return Boolean(profile?.progress?.teacherOverrides?.unlockAllLessons);
+}
+
+export function setUnlockAllLessons(profile, enabled) {
+  if (!profile) {
+    return;
+  }
+  profile.progress.teacherOverrides = profile.progress.teacherOverrides || {};
+  profile.progress.teacherOverrides.unlockAllLessons = Boolean(enabled);
 }
 
 export async function loadLessonCatalog() {

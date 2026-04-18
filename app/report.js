@@ -6,11 +6,13 @@ import {
   getLesson,
   getLessonCompletedAt,
   getLessonNotes,
+  getUnlockAllLessons,
   getTrack,
   loadAppState,
   loadLessonCatalog,
   saveAppState,
   setLessonNotes,
+  setUnlockAllLessons,
   setActiveProfile,
 } from "./state.js";
 
@@ -33,6 +35,7 @@ const notesParent = document.querySelector("#notes-parent");
 const notesSaveButton = document.querySelector("#save-notes");
 const notesStatus = document.querySelector("#notes-status");
 const notesOpenSheet = document.querySelector("#notes-open-sheet");
+const unlockAllLessonsToggle = document.querySelector("#unlock-all-lessons");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
@@ -102,6 +105,10 @@ function renderSummary() {
   summaryTrack.textContent = track?.title || "Track";
   summaryLesson.textContent = `Current lesson: ${lesson?.title || "Not started yet"}`;
   summaryProgress.textContent = `Track progress: ${completed} / ${total}`;
+
+  if (unlockAllLessonsToggle) {
+    unlockAllLessonsToggle.checked = getUnlockAllLessons(activeProfile);
+  }
 }
 
 function renderTrackCards() {
@@ -307,6 +314,17 @@ if (notesSaveButton) {
     saveAppState(appState);
     notesStatus.textContent = `Saved: ${formatDate(new Date())}`;
     renderTrackCards();
+  });
+}
+
+if (unlockAllLessonsToggle) {
+  unlockAllLessonsToggle.addEventListener("change", () => {
+    if (!activeProfile) {
+      return;
+    }
+    setUnlockAllLessons(activeProfile, unlockAllLessonsToggle.checked);
+    saveAppState(appState);
+    renderAll();
   });
 }
 

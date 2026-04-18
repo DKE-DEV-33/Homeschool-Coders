@@ -9,6 +9,7 @@ import {
   getLesson,
   getLessonIndex,
   getLessonNotes,
+  getUnlockAllLessons,
   getNextLesson,
   getNoProgressRuns,
   getProfile,
@@ -83,6 +84,7 @@ const confettiLayer = document.querySelector("#confetti-layer");
 const toastLayer = document.querySelector("#toast-layer");
 const openReportLink = document.querySelector("#open-report-link");
 const printLessonLink = document.querySelector("#print-lesson-link");
+const teacherOverridePill = document.querySelector("#teacher-override-pill");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
@@ -560,6 +562,15 @@ function renderPrintLessonLink() {
   printLessonLink.href = `./lesson.html?profile=${encodeURIComponent(activeProfile.id)}&track=${encodeURIComponent(activeTrackId)}&lesson=${encodeURIComponent(activeLessonId)}`;
 }
 
+function renderTeacherOverridePill() {
+  if (!teacherOverridePill) {
+    return;
+  }
+  const enabled = activeProfile ? getUnlockAllLessons(activeProfile) : false;
+  teacherOverridePill.classList.toggle("show", enabled);
+  teacherOverridePill.setAttribute("aria-hidden", enabled ? "false" : "true");
+}
+
 function renderTrackSwitcher() {
   trackKidsButton.classList.toggle("active", activeTrackId === "kids");
   trackExplorerButton.classList.toggle("active", activeTrackId === "explorer");
@@ -729,6 +740,7 @@ function renderAll() {
   renderProfileSelect();
   renderReportLink();
   renderPrintLessonLink();
+  renderTeacherOverridePill();
   renderTrackSwitcher();
   renderLessonList();
   renderBadgeShelf();

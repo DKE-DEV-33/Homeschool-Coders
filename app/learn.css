@@ -158,6 +158,21 @@ h3 {
   border-radius: 18px;
 }
 
+.teacher-override-pill {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(47, 143, 157, 0.14);
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.teacher-override-pill.show {
+  display: inline-flex;
+}
+
 .track-button,
 .sidebar-tab,
 .icon-button,
