@@ -27,6 +27,8 @@ const summaryProgress = document.querySelector("#summary-progress");
 const trackSections = document.querySelector("#track-sections");
 const printButton = document.querySelector("#print-report");
 const hideCompletedToggle = document.querySelector("#report-hide-completed");
+const activityList = document.querySelector("#activity-list");
+const clearActivityButton = document.querySelector("#clear-activity");
 const notesModal = document.querySelector("#notes-modal");
 const closeNotesButton = document.querySelector("#close-notes");
 const notesSubtitle = document.querySelector("#notes-subtitle");
@@ -109,6 +111,35 @@ function renderSummary() {
   if (unlockAllLessonsToggle) {
     unlockAllLessonsToggle.checked = getUnlockAllLessons(activeProfile);
   }
+}
+
+function renderActivity() {
+  if (!activityList) {
+    return;
+  }
+  activityList.innerHTML = "";
+
+  if (!activeProfile) {
+    return;
+  }
+
+  const items = Array.isArray(activeProfile.progress.recentActivity) ? activeProfile.progress.recentActivity : [];
+  if (!items.length) {
+    activityList.innerHTML = `<div class="muted">No recent activity yet.</div>`;
+    return;
+  }
+
+  items.slice(0, 12).forEach((item) => {
+    const message = typeof item?.message === "string" ? item.message : "";
+    const time = item?.time ? new Date(item.time) : null;
+    const row = document.createElement("article");
+    row.className = "activity-item";
+    row.innerHTML = `
+      <strong>${escapeHtml(message || "Activity")}</strong>
+      <p>${escapeHtml(time ? formatDate(time) : "—")}</p>
+    `;
+    activityList.append(row);
+  });
 }
 
 function renderTrackCards() {
@@ -194,6 +225,7 @@ function renderTrackCards() {
 function renderAll() {
   renderProfileSelect();
   renderSummary();
+  renderActivity();
   renderTrackCards();
 }
 
@@ -245,6 +277,21 @@ function showNotesModal(trackId, lessonId) {
 profileSelect.addEventListener("change", () => {
   switchProfile(profileSelect.value);
 });
+
+if (clearActivityButton) {
+  clearActivityButton.addEventListener("click", () => {
+    if (!activeProfile) {
+      return;
+    }
+    const ok = window.confirm(`Clear recent activity for ${activeProfile.name}?`);
+    if (!ok) {
+      return;
+    }
+    activeProfile.progress.recentActivity = [];
+    saveAppState(appState);
+    renderActivity();
+  });
+}
 
 if (hideCompletedToggle) {
   hideCompletedToggle.addEventListener("change", () => {
