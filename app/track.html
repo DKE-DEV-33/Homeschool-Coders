@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homeschool Coders Track Sheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./track.css" />
+    <script type="module" src="./track.js"></script>
+  </head>
+  <body>
+    <div class="track-shell">
+      <header class="track-topbar">
+        <div class="topbar-left">
+          <a id="back-report" class="ghost-link" href="./report.html">Back to Report</a>
+          <a id="back-studio" class="ghost-link" href="./learn.html">Back to Studio</a>
+          <div>
+            <p class="eyebrow">Printable Track</p>
+            <h1 id="track-title">Track sheet</h1>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="meta-stack">
+            <p id="track-learner" class="meta"></p>
+            <p id="track-progress" class="meta"></p>
+          </div>
+          <button id="print-track" class="secondary-button" type="button">Print</button>
+        </div>
+      </header>
+
+      <main class="track-grid">
+        <section class="track-card">
+          <p class="eyebrow">Checklist</p>
+          <h2>Lessons</h2>
+          <ol id="track-lessons" class="lesson-list"></ol>
+        </section>
+
+        <section class="track-card">
+          <p class="eyebrow">Notes</p>
+          <h2>Parent notes</h2>
+          <p class="copy">Use this space for goals, reminders, and what to try next.</p>
+          <div class="note-lines" aria-hidden="true">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
+

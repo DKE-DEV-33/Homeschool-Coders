@@ -165,6 +165,9 @@ function renderTrackCards() {
             ${completedCount} / ${totalCount} lessons completed${hideCompleted ? ` · ${remainingCount} remaining shown` : ""}
           </p>
         </div>
+        <div class="track-actions">
+          <a class="ghost-link" href="./track.html?profile=${encodeURIComponent(activeProfile.id)}&track=${encodeURIComponent(trackId)}">Print track</a>
+        </div>
       </div>
       <table class="lesson-table">
         <thead>

@@ -255,6 +255,12 @@ h2 {
   margin-bottom: 14px;
 }
 
+.track-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .track-meta {
   color: var(--muted);
 }
