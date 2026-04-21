@@ -237,6 +237,37 @@ h2 {
   max-width: 46ch;
 }
 
+.lock-hint {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(231, 111, 60, 0.12);
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.teacher-locked [data-teacher-only="true"] {
+  opacity: 0.6;
+}
+
+.teacher-locked .notes-button {
+  cursor: not-allowed;
+}
+
+.teacher-locked #teacher-lock-hint {
+  display: block;
+}
+
+.teacher-unlocked #teacher-lock-hint {
+  display: none;
+}
+
+button:disabled,
+input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .track-sections {
   display: grid;
   gap: 18px;

@@ -32,6 +32,7 @@
             <input id="report-hide-completed" type="checkbox" />
             <span>Hide completed</span>
           </label>
+          <button id="teacher-mode" class="ghost-link" type="button" aria-pressed="false">Teacher mode: Locked</button>
           <button id="print-report" class="secondary-button" type="button">Print</button>
         </div>
       </header>
@@ -58,12 +59,15 @@
           <p class="eyebrow">Teacher Tools</p>
           <h2>Overrides</h2>
           <div class="summary-lines">
-            <label class="toggle-pill tool-toggle">
+            <label class="toggle-pill tool-toggle" data-teacher-only="true">
               <input id="unlock-all-lessons" type="checkbox" />
               <span>Unlock all lessons</span>
             </label>
             <p class="meta-note">
               Lets you open any lesson in the Studio without completing previous lessons first.
+            </p>
+            <p id="teacher-lock-hint" class="lock-hint">
+              Teacher mode is locked. Click “Teacher mode” in the top bar to edit overrides and notes.
             </p>
           </div>
         </article>
@@ -75,7 +79,7 @@
             <p class="eyebrow">Log</p>
             <h2 id="activity-title">Recent activity</h2>
           </div>
-          <button id="clear-activity" class="ghost-link" type="button">Clear</button>
+          <button id="clear-activity" class="ghost-link" type="button" data-teacher-only="true">Clear</button>
         </div>
         <div id="activity-list" class="activity-list"></div>
       </section>
@@ -108,7 +112,8 @@
 
         <div class="notes-actions">
           <a id="notes-open-sheet" class="ghost-link" href="./lesson.html">Open printable sheet</a>
-          <button id="save-notes" class="secondary-button" type="button">Save notes</button>
+          <button id="unlock-teacher" class="ghost-link" type="button">Unlock teacher mode</button>
+          <button id="save-notes" class="secondary-button" type="button" data-teacher-only="true">Save notes</button>
         </div>
 
         <p id="notes-status" class="notes-status"></p>

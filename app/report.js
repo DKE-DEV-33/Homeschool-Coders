@@ -29,11 +29,13 @@ const printButton = document.querySelector("#print-report");
 const hideCompletedToggle = document.querySelector("#report-hide-completed");
 const activityList = document.querySelector("#activity-list");
 const clearActivityButton = document.querySelector("#clear-activity");
+const teacherModeButton = document.querySelector("#teacher-mode");
 const notesModal = document.querySelector("#notes-modal");
 const closeNotesButton = document.querySelector("#close-notes");
 const notesSubtitle = document.querySelector("#notes-subtitle");
 const notesLearner = document.querySelector("#notes-learner");
 const notesParent = document.querySelector("#notes-parent");
+const unlockTeacherButton = document.querySelector("#unlock-teacher");
 const notesSaveButton = document.querySelector("#save-notes");
 const notesStatus = document.querySelector("#notes-status");
 const notesOpenSheet = document.querySelector("#notes-open-sheet");
@@ -47,6 +49,79 @@ let editingTrackId = "";
 let editingLessonId = "";
 const REPORT_HIDE_COMPLETED_KEY = "homeschool-coders-report-hide-completed-v1";
 let hideCompleted = false;
+const TEACHER_PIN_KEY = "homeschool-coders-teacher-pin-v1";
+let teacherModeUnlocked = false;
+
+function setTeacherMode(unlocked) {
+  teacherModeUnlocked = Boolean(unlocked);
+  document.body.classList.toggle("teacher-unlocked", teacherModeUnlocked);
+  document.body.classList.toggle("teacher-locked", !teacherModeUnlocked);
+
+  if (teacherModeButton) {
+    teacherModeButton.textContent = teacherModeUnlocked ? "Teacher mode: Unlocked" : "Teacher mode: Locked";
+    teacherModeButton.setAttribute("aria-pressed", teacherModeUnlocked ? "true" : "false");
+  }
+
+  if (unlockAllLessonsToggle) {
+    unlockAllLessonsToggle.disabled = !teacherModeUnlocked;
+  }
+
+  if (clearActivityButton) {
+    clearActivityButton.disabled = !teacherModeUnlocked;
+  }
+
+  if (notesLearner) {
+    notesLearner.readOnly = !teacherModeUnlocked;
+  }
+  if (notesParent) {
+    notesParent.readOnly = !teacherModeUnlocked;
+  }
+
+  if (notesSaveButton) {
+    notesSaveButton.disabled = !teacherModeUnlocked;
+    notesSaveButton.hidden = !teacherModeUnlocked;
+  }
+  if (unlockTeacherButton) {
+    unlockTeacherButton.hidden = teacherModeUnlocked;
+  }
+}
+
+function unlockTeacherMode() {
+  const storedPin = window.localStorage.getItem(TEACHER_PIN_KEY);
+  if (!storedPin) {
+    const nextPin = window.prompt("Set a parent code (letters/numbers). Keep it simple to type:");
+    if (nextPin === null) {
+      return;
+    }
+    const trimmed = String(nextPin).trim();
+    if (!trimmed) {
+      window.alert("Parent code can’t be empty.");
+      return;
+    }
+    const confirmPin = window.prompt("Confirm parent code:");
+    if (confirmPin === null) {
+      return;
+    }
+    if (String(confirmPin).trim() !== trimmed) {
+      window.alert("Codes didn’t match. Teacher mode stays locked.");
+      return;
+    }
+    window.localStorage.setItem(TEACHER_PIN_KEY, trimmed);
+    setTeacherMode(true);
+    return;
+  }
+
+  const attempt = window.prompt("Enter parent code to unlock Teacher mode:");
+  if (attempt === null) {
+    return;
+  }
+  if (String(attempt).trim() !== storedPin) {
+    window.alert("Not quite. Teacher mode stays locked.");
+    return;
+  }
+
+  setTeacherMode(true);
+}
 
 function formatDate(date) {
   if (!(date instanceof Date) || Number.isNaN(date.valueOf())) {
@@ -269,12 +344,20 @@ function showNotesModal(trackId, lessonId) {
   notesLearner.value = existing?.learnerText || "";
   notesParent.value = existing?.parentText || "";
   notesSubtitle.textContent = `${activeProfile.name} · ${getTrack(lessonCatalog, trackId)?.title || trackId} · ${lesson.title}`;
-  notesStatus.textContent = existing?.updatedAt ? `Last saved: ${formatDate(new Date(existing.updatedAt))}` : "Add notes, then save.";
+  if (!teacherModeUnlocked) {
+    notesStatus.textContent = "Teacher mode is locked. Unlock to edit and save notes.";
+  } else {
+    notesStatus.textContent = existing?.updatedAt ? `Last saved: ${formatDate(new Date(existing.updatedAt))}` : "Add notes, then save.";
+  }
   notesOpenSheet.href = `./lesson.html?profile=${encodeURIComponent(activeProfile.id)}&track=${encodeURIComponent(trackId)}&lesson=${encodeURIComponent(lessonId)}`;
 
   notesModal.classList.add("open");
   notesModal.setAttribute("aria-hidden", "false");
-  notesParent.focus();
+  if (!teacherModeUnlocked && unlockTeacherButton) {
+    unlockTeacherButton.focus();
+  } else {
+    notesParent.focus();
+  }
 }
 
 profileSelect.addEventListener("change", () => {
@@ -283,6 +366,10 @@ profileSelect.addEventListener("change", () => {
 
 if (clearActivityButton) {
   clearActivityButton.addEventListener("click", () => {
+    if (!teacherModeUnlocked) {
+      unlockTeacherMode();
+      return;
+    }
     if (!activeProfile) {
       return;
     }
@@ -354,6 +441,10 @@ window.addEventListener("keydown", (event) => {
 
 if (notesSaveButton) {
   notesSaveButton.addEventListener("click", () => {
+    if (!teacherModeUnlocked) {
+      unlockTeacherMode();
+      return;
+    }
     if (!activeProfile || !editingTrackId || !editingLessonId || !notesLearner || !notesParent || !notesStatus) {
       return;
     }
@@ -369,12 +460,40 @@ if (notesSaveButton) {
 
 if (unlockAllLessonsToggle) {
   unlockAllLessonsToggle.addEventListener("change", () => {
+    if (!teacherModeUnlocked) {
+      unlockTeacherMode();
+      unlockAllLessonsToggle.checked = activeProfile ? getUnlockAllLessons(activeProfile) : false;
+      return;
+    }
     if (!activeProfile) {
       return;
     }
     setUnlockAllLessons(activeProfile, unlockAllLessonsToggle.checked);
     saveAppState(appState);
     renderAll();
+  });
+}
+
+if (teacherModeButton) {
+  teacherModeButton.addEventListener("click", () => {
+    if (teacherModeUnlocked) {
+      setTeacherMode(false);
+      return;
+    }
+    unlockTeacherMode();
+  });
+}
+
+if (unlockTeacherButton) {
+  unlockTeacherButton.addEventListener("click", () => {
+    unlockTeacherMode();
+    if (notesModal?.classList.contains("open")) {
+      setTeacherMode(teacherModeUnlocked);
+      if (teacherModeUnlocked) {
+        notesParent?.focus();
+        notesStatus.textContent = "Teacher mode unlocked. You can edit and save now.";
+      }
+    }
   });
 }
 
@@ -394,6 +513,8 @@ async function boot() {
   if (hideCompletedToggle) {
     hideCompletedToggle.checked = hideCompleted;
   }
+
+  setTeacherMode(false);
 
   activeProfile =
     appState.profiles.find((profile) => profile.id === profileFromQuery) ||
