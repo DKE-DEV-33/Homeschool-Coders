@@ -16,6 +16,8 @@ import {
   setActiveProfile,
 } from "./state.js";
 
+import { ensureTeacherModeUnlocked, isTeacherModeUnlocked, lockTeacherModeSession } from "./teacherGate.js";
+
 const profileSelect = document.querySelector("#report-profile-select");
 const summaryName = document.querySelector("#summary-name");
 const summaryAge = document.querySelector("#summary-age");
@@ -49,7 +51,6 @@ let editingTrackId = "";
 let editingLessonId = "";
 const REPORT_HIDE_COMPLETED_KEY = "homeschool-coders-report-hide-completed-v1";
 let hideCompleted = false;
-const TEACHER_PIN_KEY = "homeschool-coders-teacher-pin-v1";
 let teacherModeUnlocked = false;
 
 function setTeacherMode(unlocked) {
@@ -87,40 +88,10 @@ function setTeacherMode(unlocked) {
 }
 
 function unlockTeacherMode() {
-  const storedPin = window.localStorage.getItem(TEACHER_PIN_KEY);
-  if (!storedPin) {
-    const nextPin = window.prompt("Set a parent code (letters/numbers). Keep it simple to type:");
-    if (nextPin === null) {
-      return;
-    }
-    const trimmed = String(nextPin).trim();
-    if (!trimmed) {
-      window.alert("Parent code can’t be empty.");
-      return;
-    }
-    const confirmPin = window.prompt("Confirm parent code:");
-    if (confirmPin === null) {
-      return;
-    }
-    if (String(confirmPin).trim() !== trimmed) {
-      window.alert("Codes didn’t match. Teacher mode stays locked.");
-      return;
-    }
-    window.localStorage.setItem(TEACHER_PIN_KEY, trimmed);
+  const ok = ensureTeacherModeUnlocked({ purpose: "Teacher mode" });
+  if (ok) {
     setTeacherMode(true);
-    return;
   }
-
-  const attempt = window.prompt("Enter parent code to unlock Teacher mode:");
-  if (attempt === null) {
-    return;
-  }
-  if (String(attempt).trim() !== storedPin) {
-    window.alert("Not quite. Teacher mode stays locked.");
-    return;
-  }
-
-  setTeacherMode(true);
 }
 
 function formatDate(date) {
@@ -477,6 +448,7 @@ if (unlockAllLessonsToggle) {
 if (teacherModeButton) {
   teacherModeButton.addEventListener("click", () => {
     if (teacherModeUnlocked) {
+      lockTeacherModeSession();
       setTeacherMode(false);
       return;
     }
@@ -488,7 +460,6 @@ if (unlockTeacherButton) {
   unlockTeacherButton.addEventListener("click", () => {
     unlockTeacherMode();
     if (notesModal?.classList.contains("open")) {
-      setTeacherMode(teacherModeUnlocked);
       if (teacherModeUnlocked) {
         notesParent?.focus();
         notesStatus.textContent = "Teacher mode unlocked. You can edit and save now.";
@@ -514,7 +485,7 @@ async function boot() {
     hideCompletedToggle.checked = hideCompleted;
   }
 
-  setTeacherMode(false);
+  setTeacherMode(isTeacherModeUnlocked());
 
   activeProfile =
     appState.profiles.find((profile) => profile.id === profileFromQuery) ||

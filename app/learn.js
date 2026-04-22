@@ -31,6 +31,7 @@ import {
 } from "./state.js";
 
 import { COMMAND_REFERENCE } from "./commands.js";
+import { ensureTeacherModeUnlocked } from "./teacherGate.js";
 
 const PYODIDE_VERSION = "0.27.7";
 const pyodideModuleUrl = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
@@ -560,6 +561,28 @@ function renderPrintLessonLink() {
     return;
   }
   printLessonLink.href = `./lesson.html?profile=${encodeURIComponent(activeProfile.id)}&track=${encodeURIComponent(activeTrackId)}&lesson=${encodeURIComponent(activeLessonId)}`;
+}
+
+if (openReportLink) {
+  openReportLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    const ok = ensureTeacherModeUnlocked({ purpose: "the progress report" });
+    if (!ok) {
+      return;
+    }
+    window.location.href = openReportLink.href;
+  });
+}
+
+if (printLessonLink) {
+  printLessonLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    const ok = ensureTeacherModeUnlocked({ purpose: "printing" });
+    if (!ok) {
+      return;
+    }
+    window.location.href = printLessonLink.href;
+  });
 }
 
 function renderTeacherOverridePill() {

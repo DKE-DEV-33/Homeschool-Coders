@@ -16,6 +16,8 @@ import {
   updateProfile,
 } from "./state.js";
 
+import { ensureTeacherModeUnlocked } from "./teacherGate.js";
+
 const profileForm = document.querySelector("#profile-form");
 const profileNameInput = document.querySelector("#profile-name");
 const profileAgeInput = document.querySelector("#profile-age");
@@ -26,6 +28,7 @@ const profileCount = document.querySelector("#profile-count");
 const exportBackupButton = document.querySelector("#export-backup");
 const importBackupInput = document.querySelector("#import-backup");
 const backupFeedback = document.querySelector("#backup-feedback");
+const openReportLink = document.querySelector("#open-report");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
@@ -147,6 +150,22 @@ function openWorkspace(profileId) {
   window.location.href = `./learn.html?profile=${encodeURIComponent(profileId)}`;
 }
 
+function openReport(profileId) {
+  const ok = ensureTeacherModeUnlocked({ purpose: "the progress report" });
+  if (!ok) {
+    return;
+  }
+  const href = profileId ? `./report.html?profile=${encodeURIComponent(profileId)}` : "./report.html";
+  window.location.href = href;
+}
+
+if (openReportLink) {
+  openReportLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    openReport(appState.activeProfileId);
+  });
+}
+
 profileForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const name = profileNameInput.value.trim();
@@ -233,6 +252,26 @@ profilesGrid.addEventListener("click", (event) => {
       render();
     }
   }
+});
+
+overviewGrid.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) {
+    return;
+  }
+  const link = target.closest("a");
+  if (!link) {
+    return;
+  }
+  const href = link.getAttribute("href") || "";
+  if (!href.startsWith("./report.html")) {
+    return;
+  }
+  event.preventDefault();
+
+  const match = href.match(/[?&]profile=([^&]+)/);
+  const profileId = match ? decodeURIComponent(match[1]) : appState.activeProfileId;
+  openReport(profileId);
 });
 
 async function boot() {
