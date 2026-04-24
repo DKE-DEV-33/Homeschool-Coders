@@ -80,6 +80,44 @@ button {
   color: white;
 }
 
+.teacher-lock {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 90;
+}
+
+.teacher-lock.show {
+  display: flex;
+}
+
+.teacher-lock-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 21, 26, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.teacher-lock-card {
+  position: relative;
+  width: min(520px, calc(100vw - 36px));
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  padding: 22px;
+  display: grid;
+  gap: 12px;
+  text-align: center;
+}
+
+.teacher-lock-card .ghost-link {
+  justify-self: center;
+}
+
 .eyebrow {
   margin: 0 0 6px;
   text-transform: uppercase;
@@ -252,6 +290,10 @@ h2 {
 @media print {
   body {
     background: white;
+  }
+
+  .teacher-lock {
+    display: none !important;
   }
 
   .sheet-shell {

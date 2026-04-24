@@ -1,3 +1,4 @@
+import { ensureTeacherModeUnlocked, isTeacherModeUnlocked } from "./teacherGate.js";
 import {
   getCompletedCount,
   getLessonCompletedAt,
@@ -8,6 +9,8 @@ import {
   loadLessonCatalog,
 } from "./state.js";
 
+const teacherLock = document.querySelector("#teacher-lock");
+const unlockTeacherButton = document.querySelector("#unlock-teacher");
 const backReport = document.querySelector("#back-report");
 const backStudio = document.querySelector("#back-studio");
 const printButton = document.querySelector("#print-track");
@@ -33,6 +36,14 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function setTeacherLockVisible(visible) {
+  if (!teacherLock) {
+    return;
+  }
+  teacherLock.classList.toggle("show", visible);
+  teacherLock.setAttribute("aria-hidden", visible ? "false" : "true");
 }
 
 function renderTrackSheet({ profileId, trackId }) {
@@ -81,7 +92,24 @@ if (printButton) {
   printButton.addEventListener("click", () => window.print());
 }
 
+if (unlockTeacherButton) {
+  unlockTeacherButton.addEventListener("click", () => {
+    const ok = ensureTeacherModeUnlocked({ purpose: "printing track checklists" });
+    if (ok) {
+      setTeacherLockVisible(false);
+      boot();
+    }
+  });
+}
+
 async function boot() {
+  if (!isTeacherModeUnlocked()) {
+    setTeacherLockVisible(true);
+    return;
+  }
+
+  setTeacherLockVisible(false);
+
   const params = new URLSearchParams(window.location.search);
   const profileId = params.get("profile") || "";
   const trackId = params.get("track") || "kids";
@@ -96,4 +124,3 @@ async function boot() {
 }
 
 boot();
-

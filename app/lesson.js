@@ -1,4 +1,5 @@
 import { COMMAND_REFERENCE } from "./commands.js";
+import { ensureTeacherModeUnlocked, isTeacherModeUnlocked } from "./teacherGate.js";
 import {
   getCompletedCheckpointSteps,
   getLesson,
@@ -11,6 +12,8 @@ import {
   loadLessonCatalog,
 } from "./state.js";
 
+const teacherLock = document.querySelector("#teacher-lock");
+const unlockTeacherButton = document.querySelector("#unlock-teacher");
 const sheetTitle = document.querySelector("#sheet-title");
 const backStudio = document.querySelector("#back-studio");
 const backReport = document.querySelector("#back-report");
@@ -44,6 +47,14 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function setTeacherLockVisible(visible) {
+  if (!teacherLock) {
+    return;
+  }
+  teacherLock.classList.toggle("show", visible);
+  teacherLock.setAttribute("aria-hidden", visible ? "false" : "true");
 }
 
 function renderLessonSheet({ profileId, trackId, lessonId }) {
@@ -126,7 +137,24 @@ if (printButton) {
   printButton.addEventListener("click", () => window.print());
 }
 
+if (unlockTeacherButton) {
+  unlockTeacherButton.addEventListener("click", () => {
+    const ok = ensureTeacherModeUnlocked({ purpose: "printing lesson sheets" });
+    if (ok) {
+      setTeacherLockVisible(false);
+      boot();
+    }
+  });
+}
+
 async function boot() {
+  if (!isTeacherModeUnlocked()) {
+    setTeacherLockVisible(true);
+    return;
+  }
+
+  setTeacherLockVisible(false);
+
   const params = new URLSearchParams(window.location.search);
   const profileId = params.get("profile") || "";
   const trackId = params.get("track") || "kids";

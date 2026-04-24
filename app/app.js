@@ -150,19 +150,14 @@ function openWorkspace(profileId) {
   window.location.href = `./learn.html?profile=${encodeURIComponent(profileId)}`;
 }
 
-function openReport(profileId) {
-  const ok = ensureTeacherModeUnlocked({ purpose: "the progress report" });
-  if (!ok) {
-    return;
-  }
-  const href = profileId ? `./report.html?profile=${encodeURIComponent(profileId)}` : "./report.html";
-  window.location.href = href;
-}
-
 if (openReportLink) {
   openReportLink.addEventListener("click", (event) => {
     event.preventDefault();
-    openReport(appState.activeProfileId);
+    const ok = ensureTeacherModeUnlocked({ purpose: "the progress report" });
+    if (!ok) {
+      return;
+    }
+    window.location.href = openReportLink.href;
   });
 }
 
@@ -269,9 +264,12 @@ overviewGrid.addEventListener("click", (event) => {
   }
   event.preventDefault();
 
-  const match = href.match(/[?&]profile=([^&]+)/);
-  const profileId = match ? decodeURIComponent(match[1]) : appState.activeProfileId;
-  openReport(profileId);
+  const ok = ensureTeacherModeUnlocked({ purpose: "the progress report" });
+  if (!ok) {
+    return;
+  }
+
+  window.location.href = href;
 });
 
 async function boot() {

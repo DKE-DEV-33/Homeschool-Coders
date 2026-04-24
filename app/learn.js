@@ -577,7 +577,7 @@ if (openReportLink) {
 if (printLessonLink) {
   printLessonLink.addEventListener("click", (event) => {
     event.preventDefault();
-    const ok = ensureTeacherModeUnlocked({ purpose: "printing" });
+    const ok = ensureTeacherModeUnlocked({ purpose: "printing lesson sheets" });
     if (!ok) {
       return;
     }

@@ -16,7 +16,7 @@ import {
   setActiveProfile,
 } from "./state.js";
 
-import { ensureTeacherModeUnlocked, isTeacherModeUnlocked, lockTeacherModeSession } from "./teacherGate.js";
+import { ensureTeacherModeUnlocked } from "./teacherGate.js";
 
 const profileSelect = document.querySelector("#report-profile-select");
 const summaryName = document.querySelector("#summary-name");
@@ -448,7 +448,6 @@ if (unlockAllLessonsToggle) {
 if (teacherModeButton) {
   teacherModeButton.addEventListener("click", () => {
     if (teacherModeUnlocked) {
-      lockTeacherModeSession();
       setTeacherMode(false);
       return;
     }
@@ -485,7 +484,7 @@ async function boot() {
     hideCompletedToggle.checked = hideCompleted;
   }
 
-  setTeacherMode(isTeacherModeUnlocked());
+  setTeacherMode(false);
 
   activeProfile =
     appState.profiles.find((profile) => profile.id === profileFromQuery) ||
