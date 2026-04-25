@@ -724,6 +724,205 @@
             "requiredCommands": ["pen_up", "go_to", "pen_down"]
           },
           "successMessage": "Layering success. You used order and color to make the scene richer."
+        },
+        {
+          "id": "make-a-stamp",
+          "title": "Make a Stamp",
+          "description": "Create your own drawing command with def so you can reuse it.",
+          "mission": "Make a stamp() function that draws a square, then call it once.",
+          "visualGoal": "A square drawn by a helper function you created.",
+          "targetSteps": ["Define stamp()", "Call stamp()"],
+          "microHints": [
+            "Start with: def stamp():",
+            "Indent the square code under it (4 spaces)",
+            "Then call it: stamp()"
+          ],
+          "allowedCommands": ["def", "repeat", "move", "turn", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-define",
+              "title": "Define stamp()",
+              "description": "Create a function named stamp that draws a square.",
+              "hint": "Try:\ndef stamp():\n    repeat(4):\n        move(60)\n        turn(90)",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minSegments": 4,
+                "minTurns": 4
+              }
+            },
+            {
+              "id": "step-call",
+              "title": "Use your stamp",
+              "description": "Call stamp() at least once.",
+              "hint": "On a new line: stamp()",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true, "minFunctionCalls": 1 }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a stamp() function that draws a square, then call it once.",
+              "hint": "If Python complains about indentation, make sure the square lines are indented.",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minFunctionCalls": 1,
+                "minSegments": 4,
+                "minTurns": 4
+              }
+            }
+          ],
+          "reward": {
+            "title": "Stamp Maker Badge",
+            "flavor": "You made your first helper function."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["#5d87ff"]
+          },
+          "hint": "Define stamp() first. Then call stamp().",
+          "concept": "Functions let you name a chunk of code and reuse it.",
+          "starterCode": "def stamp():\n    repeat(4):\n        move(60)\n        turn(90)\n\nstamp()",
+          "check": {
+            "type": "drawing",
+            "requiresFunctionDefinition": true,
+            "requiresRepeat": true,
+            "minFunctionCalls": 1,
+            "minSegments": 4,
+            "minTurns": 4
+          },
+          "successMessage": "Stamp complete. You made your own command with def and used it."
+        },
+        {
+          "id": "stamp-parade",
+          "title": "Stamp Parade",
+          "description": "Reuse your stamp in new places without rewriting the square.",
+          "mission": "Call stamp() three times in different places.",
+          "visualGoal": "Three squares stamped around the canvas.",
+          "targetSteps": ["Make stamp()", "Hop to a new place", "Stamp again", "Do it three times"],
+          "microHints": [
+            "Use pen_up() before go_to(...)",
+            "Then pen_down() and stamp()",
+            "Repeat those hops two more times"
+          ],
+          "allowedCommands": ["def", "repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-define",
+              "title": "Keep stamp() around",
+              "description": "Define stamp() so you can reuse it.",
+              "hint": "Use your stamp() from last lesson.",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true }
+            },
+            {
+              "id": "step-hop",
+              "title": "Hop to a new spot",
+              "description": "Use pen_up + go_to + pen_down between stamps.",
+              "hint": "Try: pen_up(); go_to(320, 220); pen_down()",
+              "check": { "type": "drawing", "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Call stamp() three times in different places.",
+              "hint": "Call stamp(), hop, stamp(), hop, stamp().",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minFunctionCalls": 3,
+                "minSegments": 12,
+                "minTurns": 12,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Stamp Parade Badge",
+            "flavor": "You reused one function to make three shapes."
+          },
+          "preview": {
+            "kind": "placed-shapes",
+            "palette": ["#457bff", "#2f8f9d"]
+          },
+          "hint": "Define stamp() once, then call stamp() three times with hops in between.",
+          "concept": "Reusing a function keeps your code short and easy to change.",
+          "starterCode": "def stamp():\n    repeat(4):\n        move(60)\n        turn(90)\n\nstamp()\npen_up()\ngo_to(340, 220)\npen_down()\nstamp()\npen_up()\ngo_to(480, 160)\npen_down()\nstamp()",
+          "check": {
+            "type": "drawing",
+            "requiresFunctionDefinition": true,
+            "minFunctionCalls": 3,
+            "minSegments": 12,
+            "minTurns": 12,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "Stamp parade complete. One function, three shapes."
+        },
+        {
+          "id": "petal-power",
+          "title": "Petal Power",
+          "description": "Use a helper function inside repeat(...) to make a flower pattern.",
+          "mission": "Make a petal() helper, then repeat it to form a flower.",
+          "visualGoal": "A flower-like pattern made from repeated petals.",
+          "targetSteps": ["Define petal()", "Call it inside repeat(...)", "Turn between petals"],
+          "microHints": [
+            "Start with: def petal():",
+            "Inside: move, turn, move",
+            "Then: repeat(6): petal(); turn(60)"
+          ],
+          "allowedCommands": ["def", "repeat", "move", "turn", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-define",
+              "title": "Define petal()",
+              "description": "Create a helper that draws one petal shape.",
+              "hint": "Try:\ndef petal():\n    move(50)\n    turn(60)\n    move(50)\n    turn(120)",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true, "minSegments": 2, "minTurns": 2 }
+            },
+            {
+              "id": "step-repeat",
+              "title": "Repeat your petal",
+              "description": "Call petal() several times with a small turn between each one.",
+              "hint": "Try:\nrepeat(6):\n    petal()\n    turn(60)",
+              "check": { "type": "drawing", "requiresRepeat": true, "requiresFunctionDefinition": true, "minFunctionCalls": 4 }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a petal() helper, then repeat it to form a flower.",
+              "hint": "If it looks messy, lower your move distances and keep the turn between petals steady.",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minFunctionCalls": 6,
+                "minSegments": 10,
+                "minTurns": 10
+              }
+            }
+          ],
+          "reward": {
+            "title": "Petal Power Badge",
+            "flavor": "You used a helper inside a loop to build a pattern."
+          },
+          "preview": {
+            "kind": "spinner",
+            "palette": ["#e76f3c"]
+          },
+          "hint": "Define petal(), then call it inside repeat(...).",
+          "concept": "Loops + functions let you build big patterns from small pieces.",
+          "starterCode": "pen_color(\"coral\")\nline_width(4)\n\ndef petal():\n    move(50)\n    turn(60)\n    move(50)\n    turn(120)\n\nrepeat(6):\n    petal()\n    turn(60)",
+          "check": {
+            "type": "drawing",
+            "requiresFunctionDefinition": true,
+            "requiresRepeat": true,
+            "minFunctionCalls": 6,
+            "minSegments": 10,
+            "minTurns": 10
+          },
+          "successMessage": "Petal power complete. You built a flower with a helper function."
         }
       ]
     },
@@ -1052,6 +1251,184 @@
             "requiredCommands": ["pen_up", "go_to", "pen_down"]
           },
           "successMessage": "You used order and layering to make the composition clearer."
+        },
+        {
+          "id": "defining-reusable-shapes",
+          "title": "Defining Reusable Shapes",
+          "description": "Use def to package a drawing routine into a reusable tool.",
+          "mission": "Define square(size) and call it once.",
+          "visualGoal": "A square drawn by calling a function you defined.",
+          "targetSteps": ["Define square(size)", "Call square(...) once"],
+          "allowedCommands": ["def", "repeat", "move", "turn", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "toolbox",
+              "title": "Define a helper",
+              "description": "Create a function with def so you can reuse it.",
+              "hint": "Try:\ndef square(size):\n    repeat(4):\n        move(size)\n        turn(90)",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true }
+            },
+            {
+              "id": "progress",
+              "title": "Call your helper",
+              "description": "Call square(...) to draw at least one square.",
+              "hint": "Try: square(80)",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true, "minFunctionCalls": 1 }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Define square(size) and call it once.",
+              "hint": "If your loop won't run, check the ':' after repeat(4): and your indentation.",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minFunctionCalls": 1,
+                "minSegments": 4,
+                "minTurns": 4
+              }
+            }
+          ],
+          "reward": {
+            "title": "Helper Architect Badge",
+            "flavor": "You wrote your first reusable drawing function."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["slateblue"]
+          },
+          "hint": "Define square(size) once, then call it like square(80).",
+          "concept": "Functions turn repeated structure into a named abstraction.",
+          "starterCode": "def square(size):\n    repeat(4):\n        move(size)\n        turn(90)\n\nsquare(80)",
+          "check": {
+            "type": "drawing",
+            "requiresFunctionDefinition": true,
+            "requiresRepeat": true,
+            "minFunctionCalls": 1,
+            "minSegments": 4,
+            "minTurns": 4
+          },
+          "successMessage": "You defined a helper function and reused it to draw a square."
+        },
+        {
+          "id": "parameters-for-reuse",
+          "title": "Parameters for Reuse",
+          "description": "Call the same function with different inputs to get different results.",
+          "mission": "Draw two squares of different sizes in different places using square(size).",
+          "visualGoal": "Two squares with clearly different sizes, separated on the canvas.",
+          "targetSteps": ["Call square(40)", "Hop to a new spot", "Call square(90)"],
+          "allowedCommands": ["def", "repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-define",
+              "title": "Keep square(size)",
+              "description": "Define square(size) so it can be reused.",
+              "hint": "Reuse your square(size) function from the previous lesson.",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true }
+            },
+            {
+              "id": "step-hop",
+              "title": "Place the second square",
+              "description": "Use pen_up + go_to + pen_down so the squares are separated.",
+              "hint": "Try: pen_up(); go_to(360, 210); pen_down()",
+              "check": { "type": "drawing", "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw two squares of different sizes in different places using square(size).",
+              "hint": "Call square(...) twice with different numbers.",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minFunctionCalls": 2,
+                "minSegments": 8,
+                "minTurns": 8,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Parameter Pilot Badge",
+            "flavor": "You changed the output by changing the input."
+          },
+          "preview": {
+            "kind": "placed-shapes",
+            "palette": ["#5d87ff", "#2f8f9d"]
+          },
+          "hint": "Call square(40), then hop and call square(90).",
+          "concept": "Parameters let one function create many related results.",
+          "starterCode": "def square(size):\n    repeat(4):\n        move(size)\n        turn(90)\n\nsquare(40)\npen_up()\ngo_to(360, 210)\npen_down()\nsquare(90)",
+          "check": {
+            "type": "drawing",
+            "requiresFunctionDefinition": true,
+            "requiresRepeat": true,
+            "minFunctionCalls": 2,
+            "minSegments": 8,
+            "minTurns": 8,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You reused one function with two different inputs to draw two different squares."
+        },
+        {
+          "id": "composing-helpers",
+          "title": "Composing Helpers",
+          "description": "Build bigger ideas by combining smaller helper functions.",
+          "mission": "Define square(size) and house(size). Make house(size) call square(size). Then draw two houses.",
+          "visualGoal": "Two house-like drawings built from helper functions.",
+          "targetSteps": ["Define square(size)", "Define house(size) that calls square(size)", "Call house(...) twice"],
+          "allowedCommands": ["def", "repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-two-defs",
+              "title": "Two helpers",
+              "description": "Define square(size) and house(size).",
+              "hint": "House can call square(size), then draw a triangle roof with move/turn.",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true }
+            },
+            {
+              "id": "step-compose",
+              "title": "Compose them",
+              "description": "Make house(size) call square(size) inside it.",
+              "hint": "Inside house(size): square(size)",
+              "check": { "type": "drawing", "requiredCommands": ["square"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Define square(size) and house(size). Make house(size) call square(size). Then draw two houses.",
+              "hint": "Call house(...) twice, hopping between them with go_to(...) if needed.",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minFunctionCalls": 4,
+                "minSegments": 10,
+                "minTurns": 10
+              }
+            }
+          ],
+          "reward": {
+            "title": "Composition Captain Badge",
+            "flavor": "You built a bigger idea out of smaller helpers."
+          },
+          "preview": {
+            "kind": "tiny-scene",
+            "palette": ["#de5b31", "#457bff", "#4e9f69"]
+          },
+          "hint": "Let house(size) call square(size), then draw the roof.",
+          "concept": "Composition is a powerful way to scale complexity without duplicating code.",
+          "starterCode": "def square(size):\n    repeat(4):\n        move(size)\n        turn(90)\n\n# Your house() can call square(size), then draw a roof.\n\ndef house(size):\n    square(size)\n    # Roof idea:\n    # turn(45)\n    # move(size * 0.7)\n    # turn(90)\n    # move(size * 0.7)\n    # turn(45)\n\nhouse(70)\npen_up()\ngo_to(360, 230)\npen_down()\nhouse(90)",
+          "check": {
+            "type": "drawing",
+            "requiresFunctionDefinition": true,
+            "minFunctionCalls": 4,
+            "minSegments": 10,
+            "minTurns": 10
+          },
+          "successMessage": "Nice composition. You combined helpers to create a bigger drawing routine."
         }
       ]
     }
