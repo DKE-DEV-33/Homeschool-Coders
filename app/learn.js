@@ -111,6 +111,7 @@ const runMetrics = {
   turns: 0,
   colorChanges: 0,
   writes: 0,
+  commandCalls: {},
   functionCalls: {},
 };
 
@@ -126,7 +127,13 @@ function resetMetrics() {
   runMetrics.turns = 0;
   runMetrics.colorChanges = 0;
   runMetrics.writes = 0;
+  runMetrics.commandCalls = {};
   runMetrics.functionCalls = {};
+}
+
+function recordCommandCall(commandName) {
+  const safeName = String(commandName);
+  runMetrics.commandCalls[safeName] = (runMetrics.commandCalls[safeName] || 0) + 1;
 }
 
 function setStatus(message) {
@@ -811,6 +818,7 @@ function setStrokeStyle(color) {
   drawingContext.strokeStyle = color;
   drawingContext.fillStyle = color;
   runMetrics.colorChanges += 1;
+  recordCommandCall("pen_color");
 }
 
 function setLineWidth(width) {
@@ -820,6 +828,7 @@ function setLineWidth(width) {
   }
   turtleState.lineWidth = parsedWidth;
   drawingContext.lineWidth = parsedWidth;
+  recordCommandCall("line_width");
 }
 
 function turnBy(degrees) {
@@ -829,6 +838,7 @@ function turnBy(degrees) {
   }
   turtleState.angle += parsedDegrees;
   runMetrics.turns += 1;
+  recordCommandCall("turn");
 }
 
 function moveBy(distance) {
@@ -851,6 +861,7 @@ function moveBy(distance) {
 
   turtleState.x = nextX;
   turtleState.y = nextY;
+  recordCommandCall("move");
 }
 
 function goTo(x, y) {
@@ -868,6 +879,7 @@ function goTo(x, y) {
   }
   turtleState.x = nextX;
   turtleState.y = nextY;
+  recordCommandCall("go_to");
 }
 
 function writeText(message, size = 20) {
@@ -882,6 +894,7 @@ function writeText(message, size = 20) {
   drawingContext.fillText(String(message), 0, 0);
   drawingContext.restore();
   runMetrics.writes += 1;
+  recordCommandCall("write");
 }
 
 function recordFunctionCall(functionName) {
@@ -928,7 +941,7 @@ function passesCheck(check, facts) {
   if (check.requiresRepeat && !facts.usesRepeat) {
     return false;
   }
-  if (check.requiredCommands?.some((commandName) => !facts.calledCommands.has(commandName))) {
+  if (check.requiredCommands?.some((commandName) => !(runMetrics.commandCalls[commandName] > 0))) {
     return false;
   }
   if (check.requiresFunctionDefinition && facts.functionDefinitions.length === 0) {
@@ -960,7 +973,7 @@ function describeFailures(check, facts) {
   }
   if (check.requiredCommands) {
     check.requiredCommands.forEach((commandName) => {
-      if (!facts.calledCommands.has(commandName)) {
+      if (!(runMetrics.commandCalls[commandName] > 0)) {
         failures.push(`include ${commandName}(...)`);
       }
     });
@@ -1187,9 +1200,11 @@ async function ensurePyodide() {
       turn_by: turnBy,
       pen_up: () => {
         turtleState.penDown = false;
+        recordCommandCall("pen_up");
       },
       pen_down: () => {
         turtleState.penDown = true;
+        recordCommandCall("pen_down");
       },
       pen_color: setStrokeStyle,
       line_width: setLineWidth,
