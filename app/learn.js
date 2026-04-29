@@ -896,10 +896,13 @@ function preprocessCode(source) {
 
 function buildCodeFacts(source) {
   const normalized = source.replace(/\r\n/g, "\n");
+  const lines = normalized.split("\n");
+  const nonDefSource = lines.filter((line) => !/^\s*def\s+/.test(line)).join("\n");
   return {
     usesRepeat: /(^|\n)\s*repeat\(/.test(normalized),
     functionDefinitions: [...normalized.matchAll(/^\s*def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/gm)].map((match) => match[1]),
     commands: new Set([...normalized.matchAll(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g)].map((match) => match[1])),
+    calledCommands: new Set([...nonDefSource.matchAll(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g)].map((match) => match[1])),
   };
 }
 
@@ -925,7 +928,7 @@ function passesCheck(check, facts) {
   if (check.requiresRepeat && !facts.usesRepeat) {
     return false;
   }
-  if (check.requiredCommands?.some((commandName) => !facts.commands.has(commandName))) {
+  if (check.requiredCommands?.some((commandName) => !facts.calledCommands.has(commandName))) {
     return false;
   }
   if (check.requiresFunctionDefinition && facts.functionDefinitions.length === 0) {
@@ -957,7 +960,7 @@ function describeFailures(check, facts) {
   }
   if (check.requiredCommands) {
     check.requiredCommands.forEach((commandName) => {
-      if (!facts.commands.has(commandName)) {
+      if (!facts.calledCommands.has(commandName)) {
         failures.push(`include ${commandName}(...)`);
       }
     });
