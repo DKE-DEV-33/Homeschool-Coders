@@ -1474,7 +1474,9 @@ function resetWorkspace() {
     return;
   }
   codeEditor.value = "";
-  saveDraft(activeProfile, activeTrackId, activeLessonId, "");
+  // Store starterCode as the "baseline" for this lesson while keeping the editor empty.
+  // This keeps our "no prefilled code" UX but still remembers what the lesson example was.
+  saveDraft(activeProfile, activeTrackId, activeLessonId, lesson.starterCode || "");
   setHintLevel(activeProfile, activeTrackId, activeLessonId, 0);
   setNoProgressRuns(activeProfile, activeTrackId, activeLessonId, 0);
   saveAppState(appState);
@@ -1483,7 +1485,7 @@ function resetWorkspace() {
   drawWelcomeScene();
   hideCelebration();
   checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
-  setLog("Canvas reset. Starter code restored for this lesson.");
+  setLog("Workspace reset. The editor is cleared and the canvas is ready.");
   setStatus("Workspace reset.");
 }
 
