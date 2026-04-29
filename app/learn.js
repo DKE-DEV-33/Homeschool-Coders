@@ -9,6 +9,7 @@ import {
   getLesson,
   getLessonIndex,
   getLessonNotes,
+  getExampleRevealed,
   getUnlockAllLessons,
   getNextLesson,
   getNoProgressRuns,
@@ -25,6 +26,7 @@ import {
   setCompletedCheckpointSteps,
   setActiveProfile,
   setHintLevel,
+  setExampleRevealed,
   setLessonNotes,
   setNoProgressRuns,
   setLessonRunResult,
@@ -68,6 +70,9 @@ const lessonStatus = document.querySelector("#lesson-status");
 const runtimeLog = document.querySelector("#runtime-log");
 const checkpointResult = document.querySelector("#checkpoint-result");
 const functionReference = document.querySelector("#function-reference");
+const exampleCode = document.querySelector("#example-code");
+const revealExampleButton = document.querySelector("#reveal-example");
+const copyExampleButton = document.querySelector("#copy-example");
 const learnerNotes = document.querySelector("#learner-notes");
 const parentNotes = document.querySelector("#parent-notes");
 const notesStatus = document.querySelector("#notes-status");
@@ -766,6 +771,39 @@ function renderLessonNotes() {
   notesStatus.textContent = notes?.updatedAt ? `Last saved: ${formatDateShort(new Date(notes.updatedAt))}` : "Notes save automatically on this device.";
 }
 
+function getExampleRevealAllowed(lesson) {
+  if (!lesson || !activeProfile) {
+    return false;
+  }
+  if (isLessonComplete(activeProfile, activeTrackId, lesson.id)) {
+    return true;
+  }
+  const noProgressRuns = getNoProgressRuns(activeProfile, activeTrackId, lesson.id);
+  return noProgressRuns >= 3;
+}
+
+function renderExamplePanel() {
+  const lesson = getActiveLesson();
+  if (!lesson || !activeProfile || !exampleCode || !revealExampleButton || !copyExampleButton) {
+    return;
+  }
+
+  const revealed = getExampleRevealed(activeProfile, activeTrackId, lesson.id);
+  const canReveal = getExampleRevealAllowed(lesson);
+
+  revealExampleButton.disabled = !canReveal && !revealed;
+
+  if (revealed) {
+    exampleCode.textContent = lesson.starterCode || "(No example available for this lesson.)";
+    copyExampleButton.disabled = !(lesson.starterCode || "").trim();
+  } else {
+    exampleCode.textContent = canReveal
+      ? "Click “Reveal example” to see a sample solution."
+      : "Example is hidden. Try running your code a few times first.";
+    copyExampleButton.disabled = true;
+  }
+}
+
 function renderAll() {
   renderProfileSelect();
   renderReportLink();
@@ -777,6 +815,7 @@ function renderAll() {
   renderFunctionReference();
   renderLessonHeader();
   renderEditor();
+  renderExamplePanel();
   renderLessonNotes();
 }
 
@@ -1134,12 +1173,12 @@ function evaluateCheckpoint(lesson, source) {
   const finalMilestone = milestones[milestones.length - 1];
   const finalPassed = passesCheck(finalMilestone.check, facts);
 
-  if (!finalPassed) {
-    hideCelebration();
-    if (!newlyCompleted.length) {
-      const currentNoProgressRuns = getNoProgressRuns(activeProfile, activeTrackId, lesson.id);
-      setNoProgressRuns(activeProfile, activeTrackId, lesson.id, currentNoProgressRuns + 1);
-    }
+    if (!finalPassed) {
+      hideCelebration();
+      if (!newlyCompleted.length) {
+        const currentNoProgressRuns = getNoProgressRuns(activeProfile, activeTrackId, lesson.id);
+        setNoProgressRuns(activeProfile, activeTrackId, lesson.id, currentNoProgressRuns + 1);
+      }
     const finalFailures = describeFailures(finalMilestone.check, facts);
     checkpointResult.textContent = newlyCompleted.length
       ? `Nice. You cleared ${newlyCompleted.join(", ")}. Next up: ${nextMilestone?.title || "keep going"}. ${nextMilestone?.hint || finalFailures.join(", ")}`
@@ -1159,6 +1198,7 @@ function evaluateCheckpoint(lesson, source) {
     saveAppState(appState);
     renderLessonList();
     renderLessonHeader();
+    renderExamplePanel();
 
     if (newlyCompleted.length) {
       const nextLabel = nextMilestone?.title ? `Next: ${nextMilestone.title}` : "Next step ready";
@@ -1176,6 +1216,7 @@ function evaluateCheckpoint(lesson, source) {
   renderLessonList();
   renderBadgeShelf();
   renderLessonHeader();
+  renderExamplePanel();
   showCelebration(lesson, getNextLesson(lessonCatalog, activeTrackId, lesson.id));
   return true;
 }
@@ -1479,6 +1520,7 @@ function resetWorkspace() {
   saveDraft(activeProfile, activeTrackId, activeLessonId, lesson.starterCode || "");
   setHintLevel(activeProfile, activeTrackId, activeLessonId, 0);
   setNoProgressRuns(activeProfile, activeTrackId, activeLessonId, 0);
+  setExampleRevealed(activeProfile, activeTrackId, activeLessonId, false);
   saveAppState(appState);
   resetCanvasState();
   resetMetrics();
@@ -1487,6 +1529,7 @@ function resetWorkspace() {
   checkpointResult.textContent = "Run your code to see whether the mission checkpoint passes.";
   setLog("Workspace reset. The editor is cleared and the canvas is ready.");
   setStatus("Workspace reset.");
+  renderExamplePanel();
 }
 
 lessonList.addEventListener("click", (event) => {
@@ -1514,6 +1557,48 @@ runPythonButton.addEventListener("click", runPythonCode);
 resetWorkspaceButton.addEventListener("click", resetWorkspace);
 nextLessonButton.addEventListener("click", openNextLesson);
 closeCelebrationButton.addEventListener("click", hideCelebration);
+if (revealExampleButton) {
+  revealExampleButton.addEventListener("click", () => {
+    const lesson = getActiveLesson();
+    if (!lesson || !activeProfile) {
+      return;
+    }
+    const revealed = getExampleRevealed(activeProfile, activeTrackId, lesson.id);
+    if (revealed) {
+      return;
+    }
+    if (!getExampleRevealAllowed(lesson)) {
+      showToast("Try a bit more", "Run your code a few times first. Then you can reveal an example.");
+      return;
+    }
+    setExampleRevealed(activeProfile, activeTrackId, lesson.id, true);
+    saveAppState(appState);
+    renderExamplePanel();
+    showToast("Example revealed", "Read it line-by-line and try changing one tiny thing.");
+  });
+}
+
+if (copyExampleButton) {
+  copyExampleButton.addEventListener("click", async () => {
+    const lesson = getActiveLesson();
+    if (!lesson || !activeProfile) {
+      return;
+    }
+    const revealed = getExampleRevealed(activeProfile, activeTrackId, lesson.id);
+    if (!revealed) {
+      showToast("Hidden", "Reveal the example first.");
+      return;
+    }
+    const code = (lesson.starterCode || "").trim();
+    if (!code) {
+      return;
+    }
+    codeEditor.value = code;
+    scheduleDraftSave();
+    showToast("Copied", "Example code copied into the editor. Now tweak it!");
+  });
+}
+
 if (showHintButton) {
   showHintButton.addEventListener("click", () => {
     const lesson = getActiveLesson();

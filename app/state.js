@@ -15,6 +15,7 @@ function createEmptyProgress(defaultTrackId = "kids") {
     earnedBadges: {},
     lastResultByLesson: {},
     lessonNotes: {},
+    exampleRevealedByLesson: {},
     teacherOverrides: {
       unlockAllLessons: false,
     },
@@ -62,6 +63,7 @@ function normalizeProfile(rawProfile = {}, index = 0) {
       earnedBadges: progress.earnedBadges || {},
       lastResultByLesson: progress.lastResultByLesson || {},
       lessonNotes: progress.lessonNotes || {},
+      exampleRevealedByLesson: progress.exampleRevealedByLesson || {},
       teacherOverrides: {
         unlockAllLessons: Boolean(progress.teacherOverrides?.unlockAllLessons),
       },
@@ -109,6 +111,7 @@ function migrateLegacyState() {
             earnedBadges: learner.earnedBadges || {},
             lastResultByLesson: learner.lastResultByLesson || {},
             lessonNotes: learner.lessonNotes || {},
+            exampleRevealedByLesson: learner.exampleRevealedByLesson || {},
             teacherOverrides: {
               unlockAllLessons: Boolean(learner.teacherOverrides?.unlockAllLessons),
             },
@@ -277,6 +280,7 @@ export function ensureTrackContainers(profile, trackId) {
   progress.earnedBadges[trackId] = progress.earnedBadges[trackId] || {};
   progress.lastResultByLesson[trackId] = progress.lastResultByLesson[trackId] || {};
   progress.lessonNotes[trackId] = progress.lessonNotes[trackId] || {};
+  progress.exampleRevealedByLesson[trackId] = progress.exampleRevealedByLesson[trackId] || {};
 }
 
 export function getTrack(catalog, trackId) {
@@ -419,6 +423,15 @@ export function setLessonNotes(profile, trackId, lessonId, notes) {
     parentText: typeof next.parentText === "string" ? next.parentText : "",
     updatedAt: new Date().toISOString(),
   };
+}
+
+export function getExampleRevealed(profile, trackId, lessonId) {
+  return Boolean(profile?.progress?.exampleRevealedByLesson?.[trackId]?.[lessonId]);
+}
+
+export function setExampleRevealed(profile, trackId, lessonId, revealed) {
+  ensureTrackContainers(profile, trackId);
+  profile.progress.exampleRevealedByLesson[trackId][lessonId] = Boolean(revealed);
 }
 
 export function getUnlockAllLessons(profile) {

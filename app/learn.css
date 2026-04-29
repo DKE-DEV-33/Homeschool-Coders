@@ -488,6 +488,75 @@ h3 {
   color: var(--muted);
 }
 
+.example-panel {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(25, 51, 61, 0.1);
+}
+
+.example-summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.example-summary::-webkit-details-marker {
+  display: none;
+}
+
+.example-summary span {
+  display: grid;
+  gap: 4px;
+}
+
+.example-panel[open] .example-summary {
+  margin-bottom: 12px;
+}
+
+.example-body {
+  display: grid;
+  gap: 12px;
+}
+
+.example-copy {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.example-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.secondary-button {
+  border: none;
+  border-radius: 16px;
+  padding: 12px 15px;
+  cursor: pointer;
+  font-weight: 700;
+  background: var(--teal);
+  color: white;
+}
+
+.example-code {
+  min-height: 120px;
+  margin: 0;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(25, 51, 61, 0.12);
+  color: #12232d;
+  overflow: auto;
+  white-space: pre;
+  font-family: "SFMono-Regular", Consolas, monospace;
+}
+
 .notes-panel {
   margin-top: 16px;
   padding-top: 16px;
