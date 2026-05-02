@@ -950,11 +950,15 @@ function buildCodeFacts(source) {
   const normalized = source.replace(/\r\n/g, "\n");
   const lines = normalized.split("\n");
   const nonDefSource = lines.filter((line) => !/^\s*def\s+/.test(line)).join("\n");
+  const assignedNames = new Set(
+    [...nonDefSource.matchAll(/^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*=/gm)].map((match) => match[1]),
+  );
   return {
     usesRepeat: /(^|\n)\s*repeat\(/.test(normalized),
     functionDefinitions: [...normalized.matchAll(/^\s*def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/gm)].map((match) => match[1]),
     commands: new Set([...normalized.matchAll(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g)].map((match) => match[1])),
     calledCommands: new Set([...nonDefSource.matchAll(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g)].map((match) => match[1])),
+    assignedNames,
   };
 }
 
@@ -981,6 +985,12 @@ function passesCheck(check, facts) {
     return false;
   }
   if (check.requiredCommands?.some((commandName) => !(runMetrics.commandCalls[commandName] > 0))) {
+    return false;
+  }
+  if (check.minAssignments && facts.assignedNames.size < check.minAssignments) {
+    return false;
+  }
+  if (check.requiredAssignments?.some((name) => !facts.assignedNames.has(name))) {
     return false;
   }
   if (check.requiresFunctionDefinition && facts.functionDefinitions.length === 0) {
@@ -1014,6 +1024,16 @@ function describeFailures(check, facts) {
     check.requiredCommands.forEach((commandName) => {
       if (!(runMetrics.commandCalls[commandName] > 0)) {
         failures.push(`include ${commandName}(...)`);
+      }
+    });
+  }
+  if (check.minAssignments && facts.assignedNames.size < check.minAssignments) {
+    failures.push(`create at least ${check.minAssignments} variable${check.minAssignments === 1 ? "" : "s"} with name = value`);
+  }
+  if (check.requiredAssignments) {
+    check.requiredAssignments.forEach((name) => {
+      if (!facts.assignedNames.has(name)) {
+        failures.push(`create a variable named ${name}`);
       }
     });
   }

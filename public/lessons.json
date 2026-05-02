@@ -923,6 +923,194 @@
             "minTurns": 10
           },
           "successMessage": "Petal power complete. You built a flower with a helper function."
+        },
+        {
+          "id": "name-a-number",
+          "title": "Name a Number",
+          "description": "Store a number in a variable so you can reuse it.",
+          "mission": "Create a variable named side, then use it to draw a square.",
+          "visualGoal": "A square made using move(side) instead of move(60).",
+          "targetSteps": ["Make side = 60", "Use move(side) inside repeat(...)"],
+          "microHints": [
+            "Start with: side = 60",
+            "Then: repeat(4):",
+            "Inside: move(side) and turn(90)"
+          ],
+          "allowedCommands": ["repeat", "move", "turn"],
+          "milestones": [
+            {
+              "id": "step-variable",
+              "title": "Create a variable",
+              "description": "Make a variable named side.",
+              "hint": "Try: side = 60",
+              "check": { "type": "drawing", "requiredAssignments": ["side"], "minAssignments": 1 }
+            },
+            {
+              "id": "step-use",
+              "title": "Use your variable",
+              "description": "Use side inside move(side).",
+              "hint": "Inside the loop: move(side)",
+              "check": { "type": "drawing", "requiredCommands": ["move"], "minSegments": 2 }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Create a variable named side, then use it to draw a square.",
+              "hint": "If you want a bigger square, change side = 60 to 100.",
+              "check": {
+                "type": "drawing",
+                "requiredAssignments": ["side"],
+                "requiresRepeat": true,
+                "minSegments": 4,
+                "minTurns": 4,
+                "requiredCommands": ["move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Variable Wizard Badge",
+            "flavor": "You gave a number a name, then reused it."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["#2f8f9d"]
+          },
+          "hint": "Use side = 60, then move(side) in your loop.",
+          "concept": "Variables store values so you can reuse them.",
+          "starterCode": "side = 60\nrepeat(4):\n    move(side)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["side"],
+            "requiresRepeat": true,
+            "minSegments": 4,
+            "minTurns": 4,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Variable success. Changing side now changes your whole square."
+        },
+        {
+          "id": "two-sizes",
+          "title": "Two Sizes",
+          "description": "Use two variables to make a pattern with different lengths.",
+          "mission": "Create small and big, then draw a zigzag that uses both.",
+          "visualGoal": "A zigzag with alternating short and long lines.",
+          "targetSteps": ["Make small and big variables", "Use them in move(...)"],
+          "microHints": [
+            "Try: small = 40",
+            "Try: big = 110",
+            "Alternate move(small) and move(big)"
+          ],
+          "allowedCommands": ["move", "turn"],
+          "milestones": [
+            {
+              "id": "step-two-vars",
+              "title": "Create two variables",
+              "description": "Make small and big variables.",
+              "hint": "Try: small = 40\\nbig = 110",
+              "check": { "type": "drawing", "requiredAssignments": ["small", "big"], "minAssignments": 2 }
+            },
+            {
+              "id": "step-alternate",
+              "title": "Use both sizes",
+              "description": "Draw some lines that use both small and big.",
+              "hint": "Try move(small), then move(big).",
+              "check": { "type": "drawing", "minSegments": 4, "requiredCommands": ["move"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Create small and big, then draw a zigzag that uses both.",
+              "hint": "If lines overlap, use more turns.",
+              "check": {
+                "type": "drawing",
+                "requiredAssignments": ["small", "big"],
+                "minSegments": 6,
+                "minTurns": 5,
+                "requiredCommands": ["move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Size Switcher Badge",
+            "flavor": "You used two named numbers to make a pattern."
+          },
+          "preview": {
+            "kind": "zigzag",
+            "palette": ["#457bff"]
+          },
+          "hint": "Make small and big, then alternate move(small) and move(big).",
+          "concept": "Multiple variables help you organize different values.",
+          "starterCode": "small = 40\nbig = 110\nmove(small)\nturn(60)\nmove(big)\nturn(-120)\nmove(small)\nturn(60)\nmove(big)\nturn(-120)\nmove(small)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["small", "big"],
+            "minSegments": 6,
+            "minTurns": 5,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Two sizes complete. You kept your numbers neat by naming them."
+        },
+        {
+          "id": "color-variables",
+          "title": "Color Variables",
+          "description": "Store color names in variables so your drawing is easy to restyle.",
+          "mission": "Create two color variables and switch between them while drawing.",
+          "visualGoal": "A drawing with at least two color changes driven by variables.",
+          "targetSteps": ["Make c1 and c2 variables", "Use pen_color(c1) and pen_color(c2)"],
+          "microHints": [
+            "Try: c1 = \"tomato\"",
+            "Try: c2 = \"teal\"",
+            "Then: pen_color(c1) ... pen_color(c2)"
+          ],
+          "allowedCommands": ["pen_color", "repeat", "move", "turn", "line_width"],
+          "milestones": [
+            {
+              "id": "step-color-vars",
+              "title": "Create color variables",
+              "description": "Make c1 and c2 string variables.",
+              "hint": "Try: c1 = \"tomato\"\\nc2 = \"teal\"",
+              "check": { "type": "drawing", "requiredAssignments": ["c1", "c2"], "minAssignments": 2 }
+            },
+            {
+              "id": "step-switch",
+              "title": "Switch colors",
+              "description": "Use pen_color(...) at least twice while drawing.",
+              "hint": "Call pen_color(c1) first, then later pen_color(c2).",
+              "check": { "type": "drawing", "minColorChanges": 2, "requiredCommands": ["pen_color"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Create two color variables and switch between them while drawing.",
+              "hint": "Changing c1/c2 should restyle your whole drawing.",
+              "check": {
+                "type": "drawing",
+                "requiredAssignments": ["c1", "c2"],
+                "minSegments": 6,
+                "minColorChanges": 2,
+                "requiredCommands": ["pen_color", "move"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Color Stylist Badge",
+            "flavor": "You restyled your drawing by changing just two variables."
+          },
+          "preview": {
+            "kind": "color-bands",
+            "palette": ["tomato", "teal"]
+          },
+          "hint": "Make c1/c2, then pen_color(c1) and pen_color(c2).",
+          "concept": "Variables can hold text too, like color names.",
+          "starterCode": "c1 = \"tomato\"\nc2 = \"teal\"\nline_width(8)\npen_color(c1)\nrepeat(3):\n    move(80)\n    turn(120)\npen_color(c2)\nrepeat(3):\n    move(80)\n    turn(120)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["c1", "c2"],
+            "minSegments": 6,
+            "minColorChanges": 2,
+            "requiredCommands": ["pen_color", "move"]
+          },
+          "successMessage": "Color variables complete. You used named colors instead of repeating strings."
         }
       ]
     },
@@ -1429,6 +1617,91 @@
             "minTurns": 10
           },
           "successMessage": "Nice composition. You combined helpers to create a bigger drawing routine."
+        },
+        {
+          "id": "variables-as-names",
+          "title": "Variables as Names",
+          "description": "Bind values to names so you can change behavior by changing one line.",
+          "mission": "Create side = 80, then draw a square using move(side).",
+          "visualGoal": "A square whose size is controlled by a variable.",
+          "targetSteps": ["Assign side", "Use side in a loop"],
+          "reward": {
+            "title": "Name Binder Badge",
+            "flavor": "You bound a value to a name and reused it."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["slateblue"]
+          },
+          "hint": "Define side, then use move(side) inside repeat(4).",
+          "concept": "Variables let you separate meaning (side length) from raw numbers.",
+          "starterCode": "side = 80\nrepeat(4):\n    move(side)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["side"],
+            "minAssignments": 1,
+            "requiresRepeat": true,
+            "minSegments": 4,
+            "minTurns": 4,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Variable bound. Changing side changes the whole shape."
+        },
+        {
+          "id": "variables-for-style",
+          "title": "Variables for Style",
+          "description": "Store styling choices like color and width so you can restyle quickly.",
+          "mission": "Create color_name and width, then draw with pen_color(color_name) and line_width(width).",
+          "visualGoal": "A drawing whose look is controlled by variables.",
+          "targetSteps": ["Assign color_name and width", "Use them in pen_color(...) and line_width(...)"],
+          "reward": {
+            "title": "Style System Badge",
+            "flavor": "You turned style into variables you can tweak."
+          },
+          "preview": {
+            "kind": "color-bands",
+            "palette": ["#de5b31", "#2f8f9d"]
+          },
+          "hint": "Try color_name = \"tomato\" and width = 6.",
+          "concept": "Variables can hold configuration, making experiments easier.",
+          "starterCode": "color_name = \"tomato\"\nwidth = 6\nline_width(width)\npen_color(color_name)\nrepeat(4):\n    move(60)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["color_name", "width"],
+            "minAssignments": 2,
+            "minColorChanges": 1,
+            "requiredCommands": ["pen_color", "line_width"]
+          },
+          "successMessage": "Style variables complete. You can now restyle by changing just a couple lines."
+        },
+        {
+          "id": "reassignment-and-change",
+          "title": "Reassignment and Change",
+          "description": "Change a variable to change what the program does later.",
+          "mission": "Use one size variable, draw, change it, then draw again.",
+          "visualGoal": "Two shapes with different sizes controlled by reassigning a variable.",
+          "targetSteps": ["Assign size", "Draw a shape", "Change size", "Draw again"],
+          "reward": {
+            "title": "Reassignment Ranger Badge",
+            "flavor": "You changed a variable to change later behavior."
+          },
+          "preview": {
+            "kind": "placed-shapes",
+            "palette": ["#5d87ff", "#de5b31"]
+          },
+          "hint": "Try size = 40, draw, then size = 90 and draw again.",
+          "concept": "Reassignment updates a name to point to a new value for future statements.",
+          "starterCode": "def square(size):\n    repeat(4):\n        move(size)\n        turn(90)\n\nsize = 40\nsquare(size)\npen_up()\ngo_to(360, 210)\npen_down()\nsize = 90\nsquare(size)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["size"],
+            "minAssignments": 1,
+            "requiresFunctionDefinition": true,
+            "requiresRepeat": true,
+            "minFunctionCalls": 2,
+            "requiredCommands": ["go_to", "pen_up", "pen_down"]
+          },
+          "successMessage": "Reassignment complete. You used the same name to drive two different results."
         }
       ]
     }
