@@ -1111,6 +1111,207 @@
             "requiredCommands": ["pen_color", "move"]
           },
           "successMessage": "Color variables complete. You used named colors instead of repeating strings."
+        },
+        {
+          "id": "if-color-choice",
+          "title": "If Color Choice",
+          "description": "Use if/else to pick a color based on a variable.",
+          "mission": "Make a variable named favorite, then use if/else to choose a pen_color.",
+          "visualGoal": "A simple drawing where the color is chosen by if/else.",
+          "targetSteps": ["Make favorite = \"teal\"", "Use if favorite == \"teal\":", "Add an else:"],
+          "microHints": [
+            "Try: favorite = \"teal\"",
+            "Then: if favorite == \"teal\":",
+            "Add else: for the other color"
+          ],
+          "allowedCommands": ["pen_color", "move", "turn"],
+          "milestones": [
+            {
+              "id": "step-variable",
+              "title": "Set favorite",
+              "description": "Create a variable named favorite.",
+              "hint": "Try: favorite = \"teal\"",
+              "check": { "type": "drawing", "requiredAssignments": ["favorite"], "minAssignments": 1 }
+            },
+            {
+              "id": "step-branch",
+              "title": "Use if/else",
+              "description": "Use an if statement and an else branch.",
+              "hint": "Try:\nif favorite == \"teal\":\n    pen_color(\"teal\")\nelse:\n    pen_color(\"tomato\")",
+              "check": { "type": "drawing", "minIfStatements": 1, "requiresElse": true }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a variable named favorite, then use if/else to choose a pen_color.",
+              "hint": "After choosing the color, draw a short zigzag with move/turn.",
+              "check": {
+                "type": "drawing",
+                "requiredAssignments": ["favorite"],
+                "minIfStatements": 1,
+                "requiresElse": true,
+                "minColorChanges": 1,
+                "minSegments": 3,
+                "minTurns": 2,
+                "requiredCommands": ["pen_color", "move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Decision Maker Badge",
+            "flavor": "You used if/else to choose what happens next."
+          },
+          "preview": {
+            "kind": "zigzag",
+            "palette": ["teal"]
+          },
+          "hint": "Pick a color in if/else, then draw.",
+          "concept": "if/else lets code make a choice.",
+          "starterCode": "favorite = \"teal\"\n\nif favorite == \"teal\":\n    pen_color(\"teal\")\nelse:\n    pen_color(\"tomato\")\n\nmove(60)\nturn(60)\nmove(60)\nturn(-120)\nmove(60)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["favorite"],
+            "minIfStatements": 1,
+            "requiresElse": true,
+            "minColorChanges": 1,
+            "minSegments": 3,
+            "minTurns": 2,
+            "requiredCommands": ["pen_color", "move", "turn"]
+          },
+          "successMessage": "If success. You made a choice with code and then drew with it."
+        },
+        {
+          "id": "if-two-paths",
+          "title": "Two Paths",
+          "description": "Change the path based on a variable.",
+          "mission": "Make direction = \"left\" or \"right\" and use if/else to turn that way.",
+          "visualGoal": "A path that turns left or right depending on your variable.",
+          "targetSteps": ["Make direction", "Use if/else to choose turn direction"],
+          "microHints": [
+            "Try: direction = \"left\"",
+            "If left: turn(60)",
+            "Else: turn(-60)"
+          ],
+          "allowedCommands": ["move", "turn"],
+          "milestones": [
+            {
+              "id": "step-variable",
+              "title": "Set direction",
+              "description": "Create a variable named direction.",
+              "hint": "Try: direction = \"left\"",
+              "check": { "type": "drawing", "requiredAssignments": ["direction"], "minAssignments": 1 }
+            },
+            {
+              "id": "step-branch",
+              "title": "Branch the turn",
+              "description": "Use if/else to choose a different turn.",
+              "hint": "Try:\nif direction == \"left\":\n    turn(60)\nelse:\n    turn(-60)",
+              "check": { "type": "drawing", "minIfStatements": 1, "requiresElse": true, "requiredCommands": ["turn"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make direction = \"left\" or \"right\" and use if/else to turn that way.",
+              "hint": "Draw a few moves and turns so the difference is visible.",
+              "check": {
+                "type": "drawing",
+                "requiredAssignments": ["direction"],
+                "minIfStatements": 1,
+                "requiresElse": true,
+                "minSegments": 4,
+                "minTurns": 3,
+                "requiredCommands": ["move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Path Picker Badge",
+            "flavor": "You used a variable to pick between two paths."
+          },
+          "preview": {
+            "kind": "zigzag",
+            "palette": ["#e76f3c"]
+          },
+          "hint": "If/else chooses the turn direction.",
+          "concept": "Branching lets one program behave in different ways.",
+          "starterCode": "direction = \"left\"\n\nmove(60)\nif direction == \"left\":\n    turn(60)\nelse:\n    turn(-60)\nmove(60)\nif direction == \"left\":\n    turn(60)\nelse:\n    turn(-60)\nmove(60)\nif direction == \"left\":\n    turn(60)\nelse:\n    turn(-60)\nmove(60)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["direction"],
+            "minIfStatements": 1,
+            "requiresElse": true,
+            "minSegments": 4,
+            "minTurns": 3,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Two paths complete. Your code can choose a direction."
+        },
+        {
+          "id": "elif-rainbow-choice",
+          "title": "Rainbow Choice",
+          "description": "Use elif to pick from more than two choices.",
+          "mission": "Set pick = 1, 2, or 3 and choose a different pen_color for each.",
+          "visualGoal": "A drawing where one of three colors is chosen.",
+          "targetSteps": ["Make pick variable", "Use if/elif/else", "Draw something"],
+          "microHints": [
+            "Try: pick = 2",
+            "Use: if ... elif ... else ...",
+            "Choose three colors"
+          ],
+          "allowedCommands": ["pen_color", "repeat", "move", "turn", "line_width"],
+          "milestones": [
+            {
+              "id": "step-variable",
+              "title": "Set pick",
+              "description": "Create a variable named pick.",
+              "hint": "Try: pick = 2",
+              "check": { "type": "drawing", "requiredAssignments": ["pick"], "minAssignments": 1 }
+            },
+            {
+              "id": "step-branches",
+              "title": "Add choices",
+              "description": "Use if plus at least one elif, and end with else.",
+              "hint": "Try:\nif pick == 1:\n    ...\nelif pick == 2:\n    ...\nelse:\n    ...",
+              "check": { "type": "drawing", "minIfStatements": 2, "requiresElse": true }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Set pick = 1, 2, or 3 and choose a different pen_color for each.",
+              "hint": "After choosing the color, draw a small repeating shape.",
+              "check": {
+                "type": "drawing",
+                "requiredAssignments": ["pick"],
+                "minIfStatements": 2,
+                "requiresElse": true,
+                "minColorChanges": 1,
+                "requiresRepeat": true,
+                "minSegments": 6,
+                "requiredCommands": ["pen_color", "move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Rainbow Brain Badge",
+            "flavor": "You made three choices with if/elif/else."
+          },
+          "preview": {
+            "kind": "polygons",
+            "palette": ["#f2b43f", "#457bff"]
+          },
+          "hint": "Use if, elif, and else to pick a color.",
+          "concept": "elif adds more choices than just if/else.",
+          "starterCode": "pick = 2\nline_width(5)\n\nif pick == 1:\n    pen_color(\"tomato\")\nelif pick == 2:\n    pen_color(\"goldenrod\")\nelse:\n    pen_color(\"royalblue\")\n\nrepeat(3):\n    move(80)\n    turn(120)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["pick"],
+            "minIfStatements": 2,
+            "requiresElse": true,
+            "requiresRepeat": true,
+            "minSegments": 6,
+            "requiredCommands": ["pen_color", "move", "turn"]
+          },
+          "successMessage": "Rainbow choice complete. You gave your code three possible paths."
         }
       ]
     },
@@ -1702,6 +1903,98 @@
             "requiredCommands": ["go_to", "pen_up", "pen_down"]
           },
           "successMessage": "Reassignment complete. You used the same name to drive two different results."
+        },
+        {
+          "id": "if-statements",
+          "title": "If Statements",
+          "description": "Use if to run code only when a condition is true.",
+          "mission": "Create steps = 6. If steps > 4, draw a hexagon using repeat(steps).",
+          "visualGoal": "A polygon whose side count is controlled by a variable and an if statement.",
+          "targetSteps": ["Assign steps", "Write an if condition", "Draw with repeat(steps)"],
+          "reward": {
+            "title": "Branch Builder Badge",
+            "flavor": "You used if to control whether code runs."
+          },
+          "preview": {
+            "kind": "polygons",
+            "palette": ["slateblue", "royalblue"]
+          },
+          "hint": "Try steps = 6 and if steps > 4: then repeat(steps): ...",
+          "concept": "An if statement is a guard: code runs only when the condition is true.",
+          "starterCode": "steps = 6\n\nif steps > 4:\n    repeat(steps):\n        move(55)\n        turn(360 / steps)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["steps"],
+            "minAssignments": 1,
+            "minIfStatements": 1,
+            "requiresRepeat": true,
+            "minSegments": 6,
+            "minTurns": 6,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "If statement complete. You guarded a drawing with a condition."
+        },
+        {
+          "id": "if-else-branches",
+          "title": "If/Else Branches",
+          "description": "Add else so your program always chooses one of two paths.",
+          "mission": "Create mode = \"fast\" or \"slow\". Use if/else to set step size, then draw a square.",
+          "visualGoal": "A square whose size changes based on a mode variable.",
+          "targetSteps": ["Assign mode", "Use if/else", "Draw with a size variable"],
+          "reward": {
+            "title": "Two-Way Switch Badge",
+            "flavor": "You built two code paths and selected one."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["#de5b31"]
+          },
+          "hint": "If mode == \"fast\" use a bigger size, else use a smaller one.",
+          "concept": "if/else makes a decision with a fallback path.",
+          "starterCode": "mode = \"fast\"\n\nif mode == \"fast\":\n    size = 90\nelse:\n    size = 50\n\nrepeat(4):\n    move(size)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["mode", "size"],
+            "minAssignments": 2,
+            "minIfStatements": 1,
+            "requiresElse": true,
+            "requiresRepeat": true,
+            "minSegments": 4,
+            "minTurns": 4,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "If/else complete. Your variable choice changed the whole output."
+        },
+        {
+          "id": "elif-ladders",
+          "title": "Elif Ladders",
+          "description": "Use elif to handle multiple cases cleanly.",
+          "mission": "Create level = 1, 2, or 3. Use if/elif/else to choose a color and line width, then draw a shape.",
+          "visualGoal": "A drawing whose style changes based on a level variable.",
+          "targetSteps": ["Assign level", "Use if/elif/else", "Draw something visible"],
+          "reward": {
+            "title": "Case Handler Badge",
+            "flavor": "You handled multiple cases with elif."
+          },
+          "preview": {
+            "kind": "color-bands",
+            "palette": ["#5d87ff", "#2f8f9d", "#de5b31"]
+          },
+          "hint": "Pick different pen_color and line_width values in each branch.",
+          "concept": "elif helps you avoid nested if statements by listing cases in order.",
+          "starterCode": "level = 2\n\nif level == 1:\n    pen_color(\"royalblue\")\n    line_width(3)\nelif level == 2:\n    pen_color(\"teal\")\n    line_width(6)\nelse:\n    pen_color(\"tomato\")\n    line_width(9)\n\nrepeat(3):\n    move(90)\n    turn(120)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["level"],
+            "minAssignments": 1,
+            "minIfStatements": 2,
+            "requiresElse": true,
+            "minColorChanges": 1,
+            "requiresRepeat": true,
+            "minSegments": 6,
+            "requiredCommands": ["pen_color", "line_width", "move", "turn"]
+          },
+          "successMessage": "Elif ladder complete. Your code handled multiple cases in a clean way."
         }
       ]
     }

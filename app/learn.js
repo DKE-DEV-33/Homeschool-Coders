@@ -953,12 +953,16 @@ function buildCodeFacts(source) {
   const assignedNames = new Set(
     [...nonDefSource.matchAll(/^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*=/gm)].map((match) => match[1]),
   );
+  const ifCount = [...nonDefSource.matchAll(/^\s*(if|elif)\b/gm)].length;
+  const elseCount = [...nonDefSource.matchAll(/^\s*else\s*:/gm)].length;
   return {
     usesRepeat: /(^|\n)\s*repeat\(/.test(normalized),
     functionDefinitions: [...normalized.matchAll(/^\s*def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/gm)].map((match) => match[1]),
     commands: new Set([...normalized.matchAll(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g)].map((match) => match[1])),
     calledCommands: new Set([...nonDefSource.matchAll(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g)].map((match) => match[1])),
     assignedNames,
+    ifCount,
+    elseCount,
   };
 }
 
@@ -991,6 +995,12 @@ function passesCheck(check, facts) {
     return false;
   }
   if (check.requiredAssignments?.some((name) => !facts.assignedNames.has(name))) {
+    return false;
+  }
+  if (check.minIfStatements && facts.ifCount < check.minIfStatements) {
+    return false;
+  }
+  if (check.requiresElse && facts.elseCount < 1) {
     return false;
   }
   if (check.requiresFunctionDefinition && facts.functionDefinitions.length === 0) {
@@ -1036,6 +1046,12 @@ function describeFailures(check, facts) {
         failures.push(`create a variable named ${name}`);
       }
     });
+  }
+  if (check.minIfStatements && facts.ifCount < check.minIfStatements) {
+    failures.push(`use at least ${check.minIfStatements} if statement${check.minIfStatements === 1 ? "" : "s"}`);
+  }
+  if (check.requiresElse && facts.elseCount < 1) {
+    failures.push("include an else: branch");
   }
   if (check.requiresFunctionDefinition && facts.functionDefinitions.length === 0) {
     failures.push("define your own helper function with def");
