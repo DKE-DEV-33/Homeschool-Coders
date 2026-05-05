@@ -180,6 +180,12 @@ h2 {
   margin-bottom: 14px;
 }
 
+.unit-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .unit-progress {
   color: var(--muted);
   font-weight: 800;
@@ -251,4 +257,3 @@ h2 {
     min-width: 200px;
   }
 }
-

@@ -87,6 +87,9 @@ function renderUnits() {
           <h2>${unit.title}</h2>
           <p class="unit-progress">${unitDone} / ${unitTotal} lessons complete</p>
         </div>
+        <div class="unit-actions">
+          <a class="ghost-link" href="./unit.html?profile=${encodeURIComponent(activeProfile.id)}&track=${encodeURIComponent(activeTrackId)}&unit=${encodeURIComponent(unit.id)}">Print unit</a>
+        </div>
       </div>
       <div class="lesson-grid"></div>
     `;
@@ -198,4 +201,3 @@ async function boot() {
 }
 
 boot();
-

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homeschool Coders Unit Sheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./unit.css" />
+    <script type="module" src="./unit.js"></script>
+  </head>
+  <body>
+    <div class="unit-shell">
+      <div id="teacher-lock" class="teacher-lock" aria-hidden="true">
+        <div class="teacher-lock-backdrop"></div>
+        <div class="teacher-lock-card">
+          <p class="eyebrow">Teacher Mode</p>
+          <h2>Locked</h2>
+          <p class="copy">This printable unit sheet is for parents/teachers. Unlock to view or print.</p>
+          <button id="unlock-teacher" class="secondary-button" type="button">Unlock</button>
+          <a class="ghost-link" href="./index.html">Back Home</a>
+        </div>
+      </div>
+
+      <header class="unit-topbar">
+        <div class="topbar-left">
+          <a id="back-curriculum" class="ghost-link" href="./curriculum.html">Back to Curriculum</a>
+          <a id="back-report" class="ghost-link" href="./report.html">Back to Report</a>
+          <a id="back-studio" class="ghost-link" href="./learn.html">Back to Studio</a>
+          <div>
+            <p class="eyebrow">Printable Unit</p>
+            <h1 id="unit-title">Unit sheet</h1>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="meta-stack">
+            <p id="unit-learner" class="meta"></p>
+            <p id="unit-progress" class="meta"></p>
+          </div>
+          <button id="print-unit" class="secondary-button" type="button">Print</button>
+        </div>
+      </header>
+
+      <main class="unit-grid">
+        <section class="unit-card">
+          <p class="eyebrow">Checklist</p>
+          <h2>Lessons</h2>
+          <ol id="unit-lessons" class="lesson-list"></ol>
+        </section>
+
+        <section class="unit-card">
+          <p class="eyebrow">Plan</p>
+          <h2>Weekly notes</h2>
+          <p class="copy">Schedule and teaching notes for this unit.</p>
+          <div class="note-lines" aria-hidden="true">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
+
