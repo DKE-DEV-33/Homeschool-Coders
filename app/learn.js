@@ -34,6 +34,7 @@ import {
 
 import { COMMAND_REFERENCE } from "./commands.js";
 import { ensureTeacherModeUnlocked } from "./teacherGate.js";
+import { getUnitForLesson } from "./curriculum.js";
 
 const PYODIDE_VERSION = "0.27.7";
 const pyodideModuleUrl = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
@@ -43,6 +44,7 @@ const trackKidsButton = document.querySelector("#track-kids");
 const trackExplorerButton = document.querySelector("#track-explorer");
 const workspaceTitle = document.querySelector("#workspace-title");
 const lessonTitle = document.querySelector("#lesson-title");
+const lessonUnit = document.querySelector("#lesson-unit");
 const lessonDescription = document.querySelector("#lesson-description");
 const lessonMission = document.querySelector("#lesson-mission");
 const lessonSteps = document.querySelector("#lesson-steps");
@@ -706,6 +708,9 @@ function renderLessonHeader() {
 
   workspaceTitle.textContent = `${activeProfile.name}'s Python Canvas Missions`;
   lessonTitle.textContent = `${track.title} · Lesson ${lessonNumber}: ${lesson.title}`;
+  if (lessonUnit) {
+    lessonUnit.textContent = getUnitForLesson(activeTrackId, lesson.id)?.title || "";
+  }
   lessonDescription.textContent = lesson.description;
   lessonMission.textContent = lesson.mission;
   checkpointCopy.textContent = buildCheckpointSummary(track, lesson);

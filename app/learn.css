@@ -210,6 +210,12 @@ h3 {
   max-width: 56ch;
 }
 
+.lesson-unit {
+  margin-top: 6px;
+  color: rgba(25, 51, 61, 0.65);
+  font-weight: 800;
+}
+
 .lesson-cards {
   align-items: stretch;
 }

@@ -17,6 +17,7 @@ import {
 } from "./state.js";
 
 import { ensureTeacherModeUnlocked } from "./teacherGate.js";
+import { getUnitForLesson } from "./curriculum.js";
 
 const profileSelect = document.querySelector("#report-profile-select");
 const summaryName = document.querySelector("#summary-name");
@@ -244,6 +245,8 @@ function renderTrackCards() {
       const safeSnippet = escapeHtml(noteSnippet);
       const safeTitle = escapeHtml(noteText);
       const lessonHref = `./learn.html?profile=${encodeURIComponent(activeProfile.id)}&track=${encodeURIComponent(trackId)}&lesson=${encodeURIComponent(lesson.id)}`;
+      const unitTitle = getUnitForLesson(trackId, lesson.id)?.title || "";
+      const unitLine = unitTitle ? `<div class="unit-tag">${escapeHtml(unitTitle)}</div>` : "";
 
       const row = document.createElement("tr");
       row.dataset.trackId = trackId;
@@ -253,6 +256,7 @@ function renderTrackCards() {
           <a class="lesson-link" href="${lessonHref}">
             <strong>${index + 1}. ${lesson.title}</strong>
           </a>
+          ${unitLine}
           <div class="muted">${lesson.description}</div>
         </td>
         <td><span class="pill ${done ? "done" : "todo"}">${done ? "Completed" : "In progress"}</span></td>

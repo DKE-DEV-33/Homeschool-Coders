@@ -119,6 +119,17 @@ select {
   text-decoration-color: rgba(231, 111, 60, 0.65);
 }
 
+.unit-tag {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 10px;
+  font-weight: 800;
+  background: rgba(47, 143, 157, 0.12);
+  color: var(--teal);
+}
+
 .notes-button {
   width: 100%;
   text-align: left;
