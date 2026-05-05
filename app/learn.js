@@ -34,7 +34,7 @@ import {
 
 import { COMMAND_REFERENCE } from "./commands.js";
 import { ensureTeacherModeUnlocked } from "./teacherGate.js";
-import { getUnitForLesson } from "./curriculum.js";
+import { CURRICULUM_UNITS, getUnitForLesson } from "./curriculum.js";
 
 const PYODIDE_VERSION = "0.27.7";
 const pyodideModuleUrl = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
@@ -672,7 +672,10 @@ function renderLessonList() {
     return;
   }
 
-  track.lessons.forEach((lesson, index) => {
+  const units = CURRICULUM_UNITS[track.id] || [];
+  const usedLessonIds = new Set();
+
+  const renderLessonButton = (lesson, index) => {
     const active = lesson.id === activeLessonId;
     const complete = isLessonComplete(activeProfile, track.id, lesson.id);
     const unlocked = isLessonUnlocked(lessonCatalog, activeProfile, track.id, lesson.id);
@@ -681,6 +684,7 @@ function renderLessonList() {
     const completedMilestones = complete
       ? totalMilestones
       : getCompletedCheckpointSteps(activeProfile, track.id, lesson.id).length;
+
     const button = document.createElement("button");
     button.type = "button";
     button.className = `lesson-card ${active ? "active" : ""} ${complete ? "completed" : ""} ${unlocked ? "" : "locked"}`.trim();
@@ -691,8 +695,65 @@ function renderLessonList() {
       <span>${unlocked ? lesson.description : "Finish the previous lesson to unlock this one."}</span>
       <span class="lesson-progress">${completedMilestones}/${totalMilestones} steps</span>
     `;
-    lessonList.append(button);
-  });
+    return button;
+  };
+
+  const orderedLessons = track.lessons.map((lesson, index) => ({ lesson, index }));
+
+  if (units.length) {
+    units.forEach((unit, unitIndex) => {
+      const details = document.createElement("details");
+      details.className = "unit-group";
+      details.open = unitIndex === 0;
+
+      const unitLessons = unit.lessonIds
+        .map((lessonId) => orderedLessons.find((item) => item.lesson.id === lessonId))
+        .filter(Boolean);
+
+      unitLessons.forEach(({ lesson }) => usedLessonIds.add(lesson.id));
+
+      const unitDone = unitLessons.filter(({ lesson }) => isLessonComplete(activeProfile, track.id, lesson.id)).length;
+      const unitTotal = unitLessons.length;
+
+      const summary = document.createElement("summary");
+      summary.className = "unit-summary";
+      summary.innerHTML = `
+        <div>
+          <strong>${unit.title}</strong>
+          <span>${unitDone}/${unitTotal} complete</span>
+        </div>
+      `;
+      details.append(summary);
+
+      const list = document.createElement("div");
+      list.className = "unit-lesson-list";
+      unitLessons.forEach(({ lesson, index }) => list.append(renderLessonButton(lesson, index)));
+      details.append(list);
+
+      lessonList.append(details);
+    });
+  }
+
+  const ungrouped = orderedLessons.filter(({ lesson }) => !usedLessonIds.has(lesson.id));
+  if (ungrouped.length) {
+    const details = document.createElement("details");
+    details.className = "unit-group";
+    details.open = !units.length;
+    const summary = document.createElement("summary");
+    summary.className = "unit-summary";
+    summary.innerHTML = `
+      <div>
+        <strong>Other Lessons</strong>
+        <span>${ungrouped.length}</span>
+      </div>
+    `;
+    details.append(summary);
+    const list = document.createElement("div");
+    list.className = "unit-lesson-list";
+    ungrouped.forEach(({ lesson, index }) => list.append(renderLessonButton(lesson, index)));
+    details.append(list);
+    lessonList.append(details);
+  }
 }
 
 function renderLessonHeader() {

@@ -325,6 +325,51 @@ h3 {
   gap: 12px;
 }
 
+.unit-group {
+  border: 1px solid rgba(25, 51, 61, 0.12);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.66);
+  overflow: hidden;
+}
+
+.unit-summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.unit-summary::-webkit-details-marker {
+  display: none;
+}
+
+.unit-summary div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.unit-summary strong {
+  font-family: "Baloo 2", sans-serif;
+  font-size: 1.15rem;
+}
+
+.unit-summary span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.unit-lesson-list {
+  display: grid;
+  gap: 12px;
+  padding: 0 14px 14px;
+}
+
 .sidebar-panel {
   display: none;
   align-content: start;
