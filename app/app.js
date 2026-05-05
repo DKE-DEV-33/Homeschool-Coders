@@ -161,6 +161,27 @@ if (openReportLink) {
   });
 }
 
+document.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) {
+    return;
+  }
+  const link = target.closest("a");
+  if (!(link instanceof HTMLAnchorElement)) {
+    return;
+  }
+  const href = link.getAttribute("href") || "";
+  if (!href.startsWith("./curriculum.html")) {
+    return;
+  }
+  event.preventDefault();
+  const ok = ensureTeacherModeUnlocked({ purpose: "the curriculum map" });
+  if (!ok) {
+    return;
+  }
+  window.location.href = href;
+});
+
 profileForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const name = profileNameInput.value.trim();

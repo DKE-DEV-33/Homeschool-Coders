@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homeschool Coders Curriculum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./curriculum.css" />
+    <script type="module" src="./curriculumPage.js"></script>
+  </head>
+  <body class="teacher-locked">
+    <div class="curriculum-shell">
+      <header class="curriculum-topbar">
+        <div class="topbar-left">
+          <a class="ghost-link" href="./index.html">Back Home</a>
+          <a class="ghost-link" href="./report.html">Back to Report</a>
+          <div>
+            <p class="eyebrow">Teacher View</p>
+            <h1>Curriculum Map</h1>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <label class="profile-picker">
+            <span>Learner</span>
+            <select id="curriculum-profile-select"></select>
+          </label>
+          <div class="track-switcher" role="tablist" aria-label="Track chooser">
+            <button id="track-kids" class="track-button" type="button">Kids Track</button>
+            <button id="track-explorer" class="track-button" type="button">Explorer Track</button>
+          </div>
+          <button id="unlock-teacher" class="secondary-button" type="button">Unlock</button>
+        </div>
+      </header>
+
+      <section class="summary-row">
+        <article class="summary-card">
+          <p class="eyebrow">Snapshot</p>
+          <h2 id="summary-learner">Learner</h2>
+          <p id="summary-track" class="meta"></p>
+          <p id="summary-progress" class="meta"></p>
+        </article>
+        <article class="summary-card">
+          <p class="eyebrow">How To Use</p>
+          <h2>Teach With Units</h2>
+          <p class="meta">
+            Units group lessons into a sequence you can follow week-to-week. Click a lesson to open it in the Studio.
+          </p>
+        </article>
+      </section>
+
+      <main id="unit-list" class="unit-list"></main>
+    </div>
+  </body>
+</html>
+
