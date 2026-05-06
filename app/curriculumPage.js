@@ -1,5 +1,5 @@
 import { CURRICULUM_UNITS } from "./curriculum.js";
-import { ensureTeacherModeUnlocked, isTeacherModeUnlocked } from "./teacherGate.js";
+import { ensureTeacherModeUnlocked, isTeacherModeUnlocked, lockTeacherModeSession } from "./teacherGate.js";
 import {
   getCompletedCount,
   getProfile,
@@ -16,6 +16,7 @@ const profileSelect = document.querySelector("#curriculum-profile-select");
 const trackKidsButton = document.querySelector("#track-kids");
 const trackExplorerButton = document.querySelector("#track-explorer");
 const unlockButton = document.querySelector("#unlock-teacher");
+const lockSessionButton = document.querySelector("#lock-session");
 const summaryLearner = document.querySelector("#summary-learner");
 const summaryTrack = document.querySelector("#summary-track");
 const summaryProgress = document.querySelector("#summary-progress");
@@ -31,6 +32,9 @@ function setTeacherLock(unlocked) {
   document.body.classList.toggle("teacher-unlocked", unlocked);
   if (unlockButton) {
     unlockButton.textContent = unlocked ? "Unlocked" : "Unlock";
+  }
+  if (lockSessionButton) {
+    lockSessionButton.hidden = !unlocked;
   }
 }
 
@@ -157,6 +161,14 @@ if (unlockButton) {
       setTeacherLock(true);
       renderAll();
     }
+  });
+}
+
+if (lockSessionButton) {
+  lockSessionButton.addEventListener("click", () => {
+    lockTeacherModeSession();
+    setTeacherLock(false);
+    renderAll();
   });
 }
 

@@ -16,7 +16,7 @@ import {
   setActiveProfile,
 } from "./state.js";
 
-import { ensureTeacherModeUnlocked } from "./teacherGate.js";
+import { ensureTeacherModeUnlocked, isTeacherModeUnlocked, lockTeacherModeSession } from "./teacherGate.js";
 import { getUnitForLesson } from "./curriculum.js";
 
 const profileSelect = document.querySelector("#report-profile-select");
@@ -33,6 +33,7 @@ const hideCompletedToggle = document.querySelector("#report-hide-completed");
 const activityList = document.querySelector("#activity-list");
 const clearActivityButton = document.querySelector("#clear-activity");
 const teacherModeButton = document.querySelector("#teacher-mode");
+const lockSessionButton = document.querySelector("#lock-session");
 const notesModal = document.querySelector("#notes-modal");
 const closeNotesButton = document.querySelector("#close-notes");
 const notesSubtitle = document.querySelector("#notes-subtitle");
@@ -62,6 +63,10 @@ function setTeacherMode(unlocked) {
   if (teacherModeButton) {
     teacherModeButton.textContent = teacherModeUnlocked ? "Teacher mode: Unlocked" : "Teacher mode: Locked";
     teacherModeButton.setAttribute("aria-pressed", teacherModeUnlocked ? "true" : "false");
+  }
+
+  if (lockSessionButton) {
+    lockSessionButton.hidden = !teacherModeUnlocked;
   }
 
   if (unlockAllLessonsToggle) {
@@ -459,6 +464,14 @@ if (teacherModeButton) {
   });
 }
 
+if (lockSessionButton) {
+  lockSessionButton.addEventListener("click", () => {
+    lockTeacherModeSession();
+    setTeacherMode(false);
+    window.alert("Teacher session locked. Next teacher action will ask for the parent code again.");
+  });
+}
+
 if (unlockTeacherButton) {
   unlockTeacherButton.addEventListener("click", () => {
     unlockTeacherMode();
@@ -488,7 +501,7 @@ async function boot() {
     hideCompletedToggle.checked = hideCompleted;
   }
 
-  setTeacherMode(false);
+  setTeacherMode(isTeacherModeUnlocked());
 
   activeProfile =
     appState.profiles.find((profile) => profile.id === profileFromQuery) ||
