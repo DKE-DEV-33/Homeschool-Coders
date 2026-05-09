@@ -17,7 +17,7 @@ import {
 } from "./state.js";
 
 import { ensureTeacherModeUnlocked, isTeacherModeUnlocked, lockTeacherModeSession } from "./teacherGate.js";
-import { getUnitForLesson } from "./curriculum.js";
+import { CURRICULUM_UNITS, getUnitForLesson } from "./curriculum.js";
 
 const profileSelect = document.querySelector("#report-profile-select");
 const summaryName = document.querySelector("#summary-name");
@@ -205,6 +205,7 @@ function renderTrackCards() {
     const completedCount = getCompletedCount(lessonCatalog, activeProfile, trackId);
     const totalCount = track.lessons.length;
     const remainingCount = Math.max(0, totalCount - completedCount);
+    const units = CURRICULUM_UNITS[trackId] || [];
 
     const card = document.createElement("section");
     card.className = "track-card";
@@ -221,6 +222,7 @@ function renderTrackCards() {
           <a class="ghost-link" href="./track.html?profile=${encodeURIComponent(activeProfile.id)}&track=${encodeURIComponent(trackId)}">Print track</a>
         </div>
       </div>
+      <div class="unit-strip" data-unit-strip="true"></div>
       <table class="lesson-table">
         <thead>
           <tr>
@@ -234,6 +236,26 @@ function renderTrackCards() {
         <tbody></tbody>
       </table>
     `;
+
+    const unitStrip = card.querySelector("[data-unit-strip]");
+    if (unitStrip) {
+      if (units.length) {
+        units.forEach((unit) => {
+          const unitLessons = unit.lessonIds
+            .map((lessonId) => track.lessons.find((item) => item.id === lessonId))
+            .filter(Boolean);
+          const unitDone = unitLessons.filter((lesson) => Boolean(activeProfile.progress.completedLessons?.[trackId]?.[lesson.id])).length;
+          const unitTotal = unitLessons.length;
+          const unitLink = document.createElement("a");
+          unitLink.className = "unit-pill";
+          unitLink.href = `./unit.html?profile=${encodeURIComponent(activeProfile.id)}&track=${encodeURIComponent(trackId)}&unit=${encodeURIComponent(unit.id)}`;
+          unitLink.innerHTML = `<strong>${escapeHtml(unit.title)}</strong><span>${unitDone}/${unitTotal}</span>`;
+          unitStrip.append(unitLink);
+        });
+      } else {
+        unitStrip.remove();
+      }
+    }
 
     const tbody = card.querySelector("tbody");
     track.lessons.forEach((lesson, index) => {

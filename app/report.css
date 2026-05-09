@@ -303,6 +303,39 @@ input:disabled {
   flex-wrap: wrap;
 }
 
+.unit-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0 16px;
+}
+
+.unit-pill {
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  border-radius: 999px;
+  padding: 10px 12px;
+  border: 1px solid rgba(25, 51, 61, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.unit-pill strong {
+  font-family: "Baloo 2", sans-serif;
+  font-size: 1.05rem;
+}
+
+.unit-pill span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.unit-pill:hover {
+  background: rgba(25, 51, 61, 0.06);
+}
+
 .track-meta {
   color: var(--muted);
 }
