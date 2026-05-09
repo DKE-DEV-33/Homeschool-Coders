@@ -32,6 +32,7 @@ import {
   setLessonRunResult,
 } from "./state.js";
 
+import "./swRegister.js";
 import { COMMAND_REFERENCE } from "./commands.js";
 import { ensureTeacherModeUnlocked } from "./teacherGate.js";
 import { CURRICULUM_UNITS, getUnitForLesson } from "./curriculum.js";

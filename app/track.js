@@ -1,3 +1,4 @@
+import "./swRegister.js";
 import { ensureTeacherModeUnlocked, isTeacherModeUnlocked } from "./teacherGate.js";
 import {
   getCompletedCount,

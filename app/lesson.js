@@ -1,4 +1,5 @@
 import { COMMAND_REFERENCE } from "./commands.js";
+import "./swRegister.js";
 import { ensureTeacherModeUnlocked, isTeacherModeUnlocked } from "./teacherGate.js";
 import {
   getCompletedCheckpointSteps,

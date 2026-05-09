@@ -16,6 +16,7 @@ import {
   updateProfile,
 } from "./state.js";
 
+import "./swRegister.js";
 import { ensureTeacherModeUnlocked } from "./teacherGate.js";
 
 const profileForm = document.querySelector("#profile-form");

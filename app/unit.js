@@ -1,4 +1,5 @@
 import { CURRICULUM_UNITS } from "./curriculum.js";
+import "./swRegister.js";
 import { ensureTeacherModeUnlocked, isTeacherModeUnlocked } from "./teacherGate.js";
 import {
   getLessonCompletedAt,
@@ -134,4 +135,3 @@ async function boot() {
 }
 
 boot();
-

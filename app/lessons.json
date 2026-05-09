@@ -1,0 +1,2002 @@
+{
+  "tracks": [
+    {
+      "id": "kids",
+      "title": "Little Learners",
+      "ageRange": "6-9",
+      "focus": "Python drawing missions",
+      "checkpointPrompt": "Finish the mission, then explain what your code is repeating or changing.",
+      "lessons": [
+        {
+          "id": "meet-the-turtle",
+          "title": "Meet the Turtle",
+          "description": "Tell the turtle where to go and watch your first line appear.",
+          "mission": "Make one bright path and add a short message.",
+          "visualGoal": "A single line with a happy word at the end.",
+          "targetSteps": ["Move the turtle forward", "Add a short message"],
+          "microHints": [
+            "Type one line: move(120)",
+            "Then add a message with write(\"Hi\", 22)"
+          ],
+          "allowedCommands": ["move", "write"],
+          "milestones": [
+            {
+              "id": "step-move",
+              "title": "Make a trail",
+              "description": "Draw at least one line using move(...).",
+              "hint": "Try `move(120)`.",
+              "check": { "type": "drawing", "minSegments": 1, "requiredCommands": ["move"] }
+            },
+            {
+              "id": "step-write",
+              "title": "Say hello",
+              "description": "Write a short message at the end of your trail.",
+              "hint": "Try `write(\"Hi!\", 22)` after your move.",
+              "check": { "type": "drawing", "requiresWrite": true, "requiredCommands": ["write"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make one bright path and add a short message.",
+              "hint": "Move first, then write.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 1,
+                "requiresWrite": true,
+                "requiredCommands": ["move", "write"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Trailblazer Badge",
+            "flavor": "You made your very first turtle trail."
+          },
+          "preview": {
+            "kind": "line-message",
+            "palette": ["skyblue", "slateblue"]
+          },
+          "hint": "Start with move(120), then try write(\"Hi!\", 22).",
+          "concept": "Commands run from top to bottom in order.",
+          "starterCode": "pen_color(\"skyblue\")\nmove(120)\nwrite(\"Hi!\", 22)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 1,
+            "requiresWrite": true,
+            "requiredCommands": ["move", "write"]
+          },
+          "successMessage": "Nice work. You made the turtle move and added your own message."
+        },
+        {
+          "id": "long-and-short-lines",
+          "title": "Long and Short Lines",
+          "description": "Change the number inside move(...) to make lines of different lengths.",
+          "mission": "Draw at least three lines, and make one of them longer than the others.",
+          "visualGoal": "A group of lines with clearly different lengths.",
+          "targetSteps": ["Draw more than one line", "Try a small number and a bigger number"],
+          "microHints": [
+            "Start with a small move: move(40)",
+            "Turn a little: turn(120)",
+            "Try a bigger move: move(140)"
+          ],
+          "allowedCommands": ["move", "turn"],
+          "milestones": [
+            {
+              "id": "step-many-lines",
+              "title": "Make 3 lines",
+              "description": "Draw at least three lines.",
+              "hint": "Try move, turn, move, turn, move.",
+              "check": { "type": "drawing", "minSegments": 3, "requiredCommands": ["move"] }
+            },
+            {
+              "id": "step-corners",
+              "title": "Add corners",
+              "description": "Use turn(...) so your lines are not all on top of each other.",
+              "hint": "Try `turn(120)` between moves.",
+              "check": { "type": "drawing", "minTurns": 2, "requiredCommands": ["turn"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw at least three lines, and make one of them longer than the others.",
+              "hint": "Try a small number (40) and a bigger number (140).",
+              "check": {
+                "type": "drawing",
+                "minSegments": 3,
+                "minTurns": 2,
+                "requiredCommands": ["move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Length Explorer Badge",
+            "flavor": "You discovered that numbers change how far the turtle moves."
+          },
+          "preview": {
+            "kind": "line-lengths",
+            "palette": ["#5d87ff"]
+          },
+          "hint": "Try move(40), move(90), and move(140) with little turns in between.",
+          "concept": "Numbers inside commands change what the turtle does.",
+          "starterCode": "pen_color(\"royalblue\")\nmove(40)\nturn(120)\nmove(90)\nturn(120)\nmove(140)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 3,
+            "minTurns": 2,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Great job. You used different numbers to make different line lengths."
+        },
+        {
+          "id": "turn-left-turn-right",
+          "title": "Turn Left, Turn Right",
+          "description": "Use turns to make corners, bends, and zigzags.",
+          "mission": "Make a zigzag path with lots of corners.",
+          "visualGoal": "A back-and-forth zigzag path.",
+          "targetSteps": ["Move a little", "Turn and move again", "Repeat the bend a few times"],
+          "microHints": [
+            "Try: move(60)",
+            "Then: turn(60) and move(60)",
+            "Then: turn(-120) and move(60)"
+          ],
+          "allowedCommands": ["move", "turn", "line_width", "pen_color"],
+          "milestones": [
+            {
+              "id": "step-bend",
+              "title": "Make the first bend",
+              "description": "Draw a short line, turn, and draw another line.",
+              "hint": "Try `move(60)`, then `turn(60)`, then `move(60)`.",
+              "check": { "type": "drawing", "minSegments": 2, "minTurns": 1, "requiredCommands": ["move", "turn"] }
+            },
+            {
+              "id": "step-zigzag",
+              "title": "Zigzag time",
+              "description": "Make a zigzag with lots of corners.",
+              "hint": "Alternate turns like `60` and `-120`.",
+              "check": { "type": "drawing", "minSegments": 4, "minTurns": 3, "requiredCommands": ["move", "turn"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a zigzag path with lots of corners.",
+              "hint": "Move, turn, move, turn, repeat.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 4,
+                "minTurns": 3,
+                "requiredCommands": ["move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Turn Tamer Badge",
+            "flavor": "You learned how direction changes the next line."
+          },
+          "preview": {
+            "kind": "zigzag",
+            "palette": ["#ff8a5b"]
+          },
+          "hint": "Try move(60), turn(60), move(60), turn(-120), then keep going.",
+          "concept": "Turning changes the direction of the next line.",
+          "starterCode": "pen_color(\"coral\")\nline_width(5)\nmove(60)\nturn(60)\nmove(60)\nturn(-120)\nmove(60)\nturn(60)\nmove(60)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 4,
+            "minTurns": 3,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Zigzag success. You used turns to guide the turtle in new directions."
+        },
+        {
+          "id": "draw-a-square",
+          "title": "Draw a Square",
+          "description": "Put move and turn together to make a box shape.",
+          "mission": "Draw a square with four equal sides.",
+          "visualGoal": "A neat square with four matching sides.",
+          "targetSteps": ["Move the same amount each time", "Turn a quarter-turn after every side"],
+          "microHints": [
+            "Try one side: move(90) then turn(90)",
+            "Do it four times",
+            "If you know repeat(...), use it"
+          ],
+          "allowedCommands": ["move", "turn", "repeat", "line_width", "pen_color"],
+          "milestones": [
+            {
+              "id": "step-corner",
+              "title": "Make a corner",
+              "description": "Draw one side and make one clean turn.",
+              "hint": "Try `move(90)` then `turn(90)`.",
+              "check": { "type": "drawing", "minSegments": 1, "minTurns": 1, "requiredCommands": ["move", "turn"] }
+            },
+            {
+              "id": "step-loop-or-four",
+              "title": "Do it 4 times",
+              "description": "Make 4 sides. Using repeat(4): is the easiest way.",
+              "hint": "Try:\nrepeat(4):\n    move(90)\n    turn(90)",
+              "check": { "type": "drawing", "minSegments": 4, "minTurns": 4, "requiresRepeat": true, "requiredCommands": ["move", "turn"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw a square with four equal sides.",
+              "hint": "Same move each time, same turn each time.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 4,
+                "minTurns": 4,
+                "requiresRepeat": true,
+                "requiredCommands": ["move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Corner Captain Badge",
+            "flavor": "You taught the turtle how to make clean corners."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["tomato"]
+          },
+          "hint": "A square can be made with repeat(4): move(90) turn(90).",
+          "concept": "A shape is made by combining distance and turning.",
+          "starterCode": "pen_color(\"tomato\")\nline_width(6)\nrepeat(4):\n    move(90)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 4,
+            "minTurns": 4,
+            "requiresRepeat": true,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Square complete. You used the same move and turn to close the shape."
+        },
+        {
+          "id": "repeat-magic",
+          "title": "Repeat Magic",
+          "description": "Use repeat(...) so the turtle does the same job again and again.",
+          "mission": "Draw a repeated shape without copying the same line of code over and over.",
+          "visualGoal": "A shape made with a loop instead of lots of repeated lines.",
+          "targetSteps": ["Use repeat(...)", "Put move and turn inside the loop"],
+          "microHints": [
+            "Start a loop: repeat(6):",
+            "Inside the loop, do: move(60)",
+            "Then turn(60) so it goes around"
+          ],
+          "allowedCommands": ["repeat", "move", "turn", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-loop",
+              "title": "Start a loop",
+              "description": "Use repeat(...) with an indented block.",
+              "hint": "Try:\nrepeat(6):\n    move(60)\n    turn(60)",
+              "check": { "type": "drawing", "requiresRepeat": true }
+            },
+            {
+              "id": "step-around",
+              "title": "Go all the way around",
+              "description": "Make a full loop shape with lots of sides.",
+              "hint": "Repeat 6 times and turn 60 each time.",
+              "check": { "type": "drawing", "minSegments": 6, "minTurns": 6, "requiresRepeat": true }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw a repeated shape without copying the same line of code over and over.",
+              "hint": "One loop can make a whole shape.",
+              "check": { "type": "drawing", "minSegments": 6, "minTurns": 6, "requiresRepeat": true }
+            }
+          ],
+          "reward": {
+            "title": "Loop Starter Badge",
+            "flavor": "You used a loop to make the turtle do magic repeats."
+          },
+          "preview": {
+            "kind": "repeat-pattern",
+            "palette": ["goldenrod"]
+          },
+          "hint": "Try repeat(6): move(60) turn(60).",
+          "concept": "Loops repeat instructions so you write less code.",
+          "starterCode": "pen_color(\"goldenrod\")\nline_width(4)\nrepeat(6):\n    move(60)\n    turn(60)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 6,
+            "minTurns": 6,
+            "requiresRepeat": true
+          },
+          "successMessage": "Loop magic unlocked. One loop made a whole shape."
+        },
+        {
+          "id": "triangles-and-hexagons",
+          "title": "Triangles and Hexagons",
+          "description": "Change the repeat count and turn amount to make different shapes.",
+          "mission": "Draw a triangle and then a hexagon.",
+          "visualGoal": "Two different loop-made shapes on the page.",
+          "targetSteps": ["Make a triangle with 3 sides", "Make a hexagon with 6 sides"],
+          "microHints": [
+            "Triangle: repeat(3): move(80) turn(120)",
+            "Hop away: pen_up(); go_to(...); pen_down()",
+            "Hexagon: repeat(6): move(55) turn(60)"
+          ],
+          "allowedCommands": ["repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-triangle",
+              "title": "Make a triangle",
+              "description": "Draw a 3-sided triangle with a loop.",
+              "hint": "Try:\nrepeat(3):\n    move(80)\n    turn(120)",
+              "check": { "type": "drawing", "requiresRepeat": true, "minSegments": 3, "minTurns": 3 }
+            },
+            {
+              "id": "step-hop",
+              "title": "Hop to a new spot",
+              "description": "Move without drawing a line between shapes.",
+              "hint": "Use `pen_up()`, `go_to(x, y)`, then `pen_down()`.",
+              "check": { "type": "drawing", "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw a triangle and then a hexagon.",
+              "hint": "Hexagon turn is 60 degrees (360 / 6).",
+              "check": {
+                "type": "drawing",
+                "minSegments": 9,
+                "minTurns": 9,
+                "requiresRepeat": true,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Shape Switcher Badge",
+            "flavor": "You discovered that loops can build different polygons."
+          },
+          "preview": {
+            "kind": "polygons",
+            "palette": ["#ff7b72", "#4b8bff"]
+          },
+          "hint": "Try a triangle first, then lift the pen, move, and try a hexagon.",
+          "concept": "Changing a loop changes the shape it creates.",
+          "starterCode": "pen_color(\"salmon\")\nrepeat(3):\n    move(80)\n    turn(120)\n\npen_up()\ngo_to(340, 220)\npen_down()\npen_color(\"cornflowerblue\")\nrepeat(6):\n    move(55)\n    turn(60)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 9,
+            "minTurns": 9,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You made two different polygons by changing the loop."
+        },
+        {
+          "id": "pattern-spinner",
+          "title": "Pattern Spinner",
+          "description": "Spin a shape a little each time to make a bigger pattern.",
+          "mission": "Make a pattern by drawing a shape, turning, and drawing it again.",
+          "visualGoal": "A spinning shape pattern that grows around the center.",
+          "targetSteps": ["Draw one shape with a loop", "Turn a little", "Repeat the whole shape again"],
+          "microHints": [
+            "Make a small shape loop first (like a square)",
+            "Wrap it in another repeat(...)",
+            "Turn a little between shapes"
+          ],
+          "allowedCommands": ["repeat", "move", "turn", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-shape",
+              "title": "Make one shape",
+              "description": "Use a loop to draw a shape (like a square).",
+              "hint": "Try:\nrepeat(4):\n    move(50)\n    turn(90)",
+              "check": { "type": "drawing", "requiresRepeat": true, "minSegments": 4, "minTurns": 4 }
+            },
+            {
+              "id": "step-spin",
+              "title": "Spin it",
+              "description": "Turn a little and draw the shape again to make a pattern.",
+              "hint": "Put your shape loop inside another repeat(...), then `turn(45)`.",
+              "check": { "type": "drawing", "requiresRepeat": true, "minSegments": 12, "minTurns": 8 }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a pattern by drawing a shape, turning, and drawing it again.",
+              "hint": "Keep the turn between shapes small (like 30–60).",
+              "check": { "type": "drawing", "minSegments": 16, "minTurns": 12, "requiresRepeat": true }
+            }
+          ],
+          "reward": {
+            "title": "Pattern Spinner Badge",
+            "flavor": "You turned one shape into a whole pattern."
+          },
+          "preview": {
+            "kind": "spinner",
+            "palette": ["#de5b31"]
+          },
+          "hint": "Try a loop inside another repeat, then turn between each shape.",
+          "concept": "Repeating a repeated shape creates bigger patterns.",
+          "starterCode": "pen_color(\"coral\")\nline_width(3)\nrepeat(8):\n    repeat(4):\n        move(50)\n        turn(90)\n    turn(45)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 16,
+            "minTurns": 12,
+            "requiresRepeat": true
+          },
+          "successMessage": "Pattern spinner complete. You repeated a whole shape to make art."
+        },
+        {
+          "id": "color-changes",
+          "title": "Color Changes",
+          "description": "Change the pen color to make your pattern brighter and more interesting.",
+          "mission": "Make a repeating drawing with at least three colors.",
+          "visualGoal": "A colorful pattern with obvious color changes.",
+          "targetSteps": ["Draw a repeating shape", "Change color", "Draw again in new colors"],
+          "microHints": [
+            "Pick a color: pen_color(\"tomato\")",
+            "Draw a little shape with repeat(...)",
+            "Change colors and draw again"
+          ],
+          "allowedCommands": ["pen_color", "repeat", "move", "turn", "pen_up", "pen_down", "go_to", "line_width"],
+          "milestones": [
+            {
+              "id": "step-first-color",
+              "title": "First color",
+              "description": "Set a pen color and draw something.",
+              "hint": "Try `pen_color(\"tomato\")` before you draw.",
+              "check": { "type": "drawing", "minSegments": 4, "minColorChanges": 1 }
+            },
+            {
+              "id": "step-three-colors",
+              "title": "Three colors",
+              "description": "Use at least three different pen colors.",
+              "hint": "Call pen_color(...) again before the next drawing.",
+              "check": { "type": "drawing", "minColorChanges": 3 }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a repeating drawing with at least three colors.",
+              "hint": "Repeat makes the shape. Color makes it pop.",
+              "check": { "type": "drawing", "minSegments": 12, "requiresRepeat": true, "minColorChanges": 3 }
+            }
+          ],
+          "reward": {
+            "title": "Color Spark Badge",
+            "flavor": "You added color changes like a coding artist."
+          },
+          "preview": {
+            "kind": "color-bands",
+            "palette": ["tomato", "goldenrod", "teal"]
+          },
+          "hint": "Try drawing the same little shape again in a new color.",
+          "concept": "Commands can change the turtle state, including color.",
+          "starterCode": "line_width(4)\npen_color(\"tomato\")\nrepeat(4):\n    move(60)\n    turn(90)\n\npen_up()\ngo_to(260, 180)\npen_down()\npen_color(\"goldenrod\")\nrepeat(4):\n    move(60)\n    turn(90)\n\npen_up()\ngo_to(360, 180)\npen_down()\npen_color(\"teal\")\nrepeat(4):\n    move(60)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 12,
+            "requiresRepeat": true,
+            "minColorChanges": 3
+          },
+          "successMessage": "Color success. You used multiple colors to make your drawing pop."
+        },
+        {
+          "id": "pen-up-pen-down",
+          "title": "Pen Up, Pen Down",
+          "description": "Learn how to move without drawing, then start drawing again.",
+          "mission": "Draw one shape, hop to a new place, and draw another shape.",
+          "visualGoal": "Two shapes with a gap between them and no line connecting the gap.",
+          "targetSteps": ["Draw one shape", "Lift the pen", "Move somewhere else", "Put the pen down and draw again"],
+          "microHints": [
+            "Draw one shape first (a square is great)",
+            "Hop: pen_up(); go_to(340, 210); pen_down()",
+            "Draw your second shape there"
+          ],
+          "allowedCommands": ["repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-first-shape",
+              "title": "Draw the first shape",
+              "description": "Draw one shape anywhere on the canvas.",
+              "hint": "A square works: repeat(4): move(50) turn(90)",
+              "check": { "type": "drawing", "minSegments": 4, "minTurns": 4, "requiresRepeat": true }
+            },
+            {
+              "id": "step-hop",
+              "title": "Hop without drawing",
+              "description": "Use pen_up + go_to + pen_down so you don't draw a travel line.",
+              "hint": "Try: pen_up(); go_to(340, 210); pen_down()",
+              "check": { "type": "drawing", "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw one shape, hop to a new place, and draw another shape.",
+              "hint": "If you see a line between shapes, your pen is still down while moving.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 7,
+                "minTurns": 7,
+                "requiresRepeat": true,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Hop Scout Badge",
+            "flavor": "You learned how to move the turtle without leaving a trail."
+          },
+          "preview": {
+            "kind": "pen-hop",
+            "palette": ["#4b8bff", "#ff8a5b"]
+          },
+          "hint": "Use pen_up(), go_to(...), and pen_down() between shapes.",
+          "concept": "The turtle can move without drawing when the pen is up.",
+          "starterCode": "pen_color(\"cornflowerblue\")\nrepeat(4):\n    move(50)\n    turn(90)\n\npen_up()\ngo_to(340, 210)\npen_down()\npen_color(\"coral\")\nrepeat(3):\n    move(60)\n    turn(120)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 7,
+            "minTurns": 7,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You used pen control to move without drawing between shapes."
+        },
+        {
+          "id": "move-to-a-new-spot",
+          "title": "Move to a New Spot",
+          "description": "Place your drawings in new places on the canvas.",
+          "mission": "Draw at least two shapes in different spots on the page.",
+          "visualGoal": "Shapes placed in clearly different parts of the canvas.",
+          "targetSteps": ["Draw one shape", "Move to a new spot", "Draw another shape there"],
+          "microHints": [
+            "Place shape 1 with: pen_up(); go_to(150, 120); pen_down()",
+            "Draw a small shape with repeat(...)",
+            "Place shape 2 with go_to(360, 220) and draw again"
+          ],
+          "allowedCommands": ["repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-place-one",
+              "title": "Place the first shape",
+              "description": "Use go_to(...) to choose where your first shape goes.",
+              "hint": "Try: pen_up(); go_to(150, 120); pen_down()",
+              "check": { "type": "drawing", "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "step-place-two",
+              "title": "Place another shape",
+              "description": "Draw a second shape after moving to a new spot.",
+              "hint": "Go to a different corner and draw again.",
+              "check": { "type": "drawing", "minSegments": 7, "minTurns": 7, "requiresRepeat": true }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw at least two shapes in different spots on the page.",
+              "hint": "You can reuse the same shape twice. Placement is the point.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 7,
+                "minTurns": 7,
+                "requiresRepeat": true,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Map Maker Badge",
+            "flavor": "You started placing art exactly where you wanted it."
+          },
+          "preview": {
+            "kind": "placed-shapes",
+            "palette": ["#ff7b72", "#4b8bff"]
+          },
+          "hint": "Try go_to(140, 120) for one shape and go_to(360, 220) for another.",
+          "concept": "Coordinates let you place drawing elements on purpose.",
+          "starterCode": "pen_up()\ngo_to(150, 120)\npen_down()\npen_color(\"salmon\")\nrepeat(3):\n    move(70)\n    turn(120)\n\npen_up()\ngo_to(360, 220)\npen_down()\npen_color(\"cornflowerblue\")\nrepeat(4):\n    move(55)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 7,
+            "minTurns": 7,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "Nice placement. You used the canvas like a map."
+        },
+        {
+          "id": "build-a-tiny-scene",
+          "title": "Build a Tiny Scene",
+          "description": "Put several shapes together to make one picture.",
+          "mission": "Make a tiny scene with at least three parts, like a house, sun, and ground.",
+          "visualGoal": "A simple scene with multiple shapes working together.",
+          "targetSteps": ["Draw one main shape", "Add two more details", "Place them so they feel like one picture"],
+          "microHints": [
+            "Start with one big shape (the house)",
+            "Add a roof or ground line",
+            "Add one more detail (sun, tree, or flower)"
+          ],
+          "allowedCommands": ["repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-main",
+              "title": "Make the main thing",
+              "description": "Draw one main shape for your scene (like a house body).",
+              "hint": "A square or rectangle is a great start.",
+              "check": { "type": "drawing", "minSegments": 4, "minTurns": 4, "requiresRepeat": true }
+            },
+            {
+              "id": "step-details",
+              "title": "Add two details",
+              "description": "Add two more parts (roof, sun, ground, door, etc.).",
+              "hint": "Use pen_up/go_to to place details without messy travel lines.",
+              "check": { "type": "drawing", "minSegments": 12, "minTurns": 10, "requiresRepeat": true, "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a tiny scene with at least three parts, like a house, sun, and ground.",
+              "hint": "One big shape + two small shapes = a scene.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 19,
+                "minTurns": 19,
+                "requiresRepeat": true,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Scene Starter Badge",
+            "flavor": "You turned separate shapes into one little world."
+          },
+          "preview": {
+            "kind": "tiny-scene",
+            "palette": ["#de5b31", "#f2b43f", "#3d8f54"]
+          },
+          "hint": "Think of one big shape and then two smaller helpers around it.",
+          "concept": "Several small shapes can combine into one scene.",
+          "starterCode": "pen_up()\ngo_to(190, 210)\npen_down()\npen_color(\"tomato\")\nrepeat(4):\n    move(80)\n    turn(90)\n\npen_up()\ngo_to(190, 210)\npen_down()\npen_color(\"goldenrod\")\nrepeat(3):\n    move(80)\n    turn(120)\n\npen_up()\ngo_to(380, 90)\npen_down()\npen_color(\"gold\")\nrepeat(12):\n    move(20)\n    turn(30)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 19,
+            "minTurns": 19,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "Scene complete. You combined several shapes into one picture."
+        },
+        {
+          "id": "layer-shapes",
+          "title": "Layer Shapes",
+          "description": "Draw shapes in an order that makes the picture feel deeper and fuller.",
+          "mission": "Make a scene with overlapping or layered shapes in at least two colors.",
+          "visualGoal": "A scene where one shape sits in front of or behind another.",
+          "targetSteps": ["Draw a big shape first", "Add another shape over or near it", "Use more than one color"],
+          "microHints": [
+            "Draw a big background shape first",
+            "Then draw a smaller shape on top of it",
+            "Change colors so the layers stand out"
+          ],
+          "allowedCommands": ["pen_color", "repeat", "move", "turn", "pen_up", "go_to", "pen_down", "line_width"],
+          "milestones": [
+            {
+              "id": "step-background",
+              "title": "Background first",
+              "description": "Draw one big shape first (the background).",
+              "hint": "A big square/rectangle works great.",
+              "check": { "type": "drawing", "minSegments": 4, "minTurns": 4, "requiresRepeat": true }
+            },
+            {
+              "id": "step-front",
+              "title": "Put something in front",
+              "description": "Draw another shape after the background so it looks on top.",
+              "hint": "Use go_to(...) to place a smaller square/triangle on the big one.",
+              "check": { "type": "drawing", "minSegments": 12, "minTurns": 12, "requiresRepeat": true, "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a scene with overlapping or layered shapes in at least two colors.",
+              "hint": "Change colors between layers so it feels like depth.",
+              "check": {
+                "type": "drawing",
+                "minSegments": 20,
+                "minTurns": 20,
+                "requiresRepeat": true,
+                "minColorChanges": 3,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Layer Artist Badge",
+            "flavor": "You learned that drawing order changes the whole picture."
+          },
+          "preview": {
+            "kind": "layered-scene",
+            "palette": ["#77c1d2", "#de5b31", "#f2b43f"]
+          },
+          "hint": "Try a big background shape first and smaller shapes after it.",
+          "concept": "Drawing order changes what appears in front and behind.",
+          "starterCode": "pen_up()\ngo_to(160, 170)\npen_down()\npen_color(\"skyblue\")\nrepeat(4):\n    move(140)\n    turn(90)\n\npen_up()\ngo_to(210, 220)\npen_down()\npen_color(\"tomato\")\nrepeat(4):\n    move(70)\n    turn(90)\n\npen_up()\ngo_to(330, 110)\npen_down()\npen_color(\"goldenrod\")\nrepeat(12):\n    move(18)\n    turn(30)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 20,
+            "minTurns": 20,
+            "requiresRepeat": true,
+            "minColorChanges": 3,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "Layering success. You used order and color to make the scene richer."
+        },
+        {
+          "id": "make-a-stamp",
+          "title": "Make a Stamp",
+          "description": "Create your own drawing command with def so you can reuse it.",
+          "mission": "Make a stamp() function that draws a square, then call it once.",
+          "visualGoal": "A square drawn by a helper function you created.",
+          "targetSteps": ["Define stamp()", "Call stamp()"],
+          "microHints": [
+            "Start with: def stamp():",
+            "Indent the square code under it (4 spaces)",
+            "Then call it: stamp()"
+          ],
+          "allowedCommands": ["def", "repeat", "move", "turn", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-define",
+              "title": "Define stamp()",
+              "description": "Create a function named stamp that draws a square.",
+              "hint": "Try:\ndef stamp():\n    repeat(4):\n        move(60)\n        turn(90)",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minSegments": 4,
+                "minTurns": 4
+              }
+            },
+            {
+              "id": "step-call",
+              "title": "Use your stamp",
+              "description": "Call stamp() at least once.",
+              "hint": "On a new line: stamp()",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true, "minFunctionCalls": 1 }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a stamp() function that draws a square, then call it once.",
+              "hint": "If Python complains about indentation, make sure the square lines are indented.",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minFunctionCalls": 1,
+                "minSegments": 4,
+                "minTurns": 4
+              }
+            }
+          ],
+          "reward": {
+            "title": "Stamp Maker Badge",
+            "flavor": "You made your first helper function."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["#5d87ff"]
+          },
+          "hint": "Define stamp() first. Then call stamp().",
+          "concept": "Functions let you name a chunk of code and reuse it.",
+          "starterCode": "def stamp():\n    repeat(4):\n        move(60)\n        turn(90)\n\nstamp()",
+          "check": {
+            "type": "drawing",
+            "requiresFunctionDefinition": true,
+            "requiresRepeat": true,
+            "minFunctionCalls": 1,
+            "minSegments": 4,
+            "minTurns": 4
+          },
+          "successMessage": "Stamp complete. You made your own command with def and used it."
+        },
+        {
+          "id": "stamp-parade",
+          "title": "Stamp Parade",
+          "description": "Reuse your stamp in new places without rewriting the square.",
+          "mission": "Call stamp() three times in different places.",
+          "visualGoal": "Three squares stamped around the canvas.",
+          "targetSteps": ["Make stamp()", "Hop to a new place", "Stamp again", "Do it three times"],
+          "microHints": [
+            "Use pen_up() before go_to(...)",
+            "Then pen_down() and stamp()",
+            "Repeat those hops two more times"
+          ],
+          "allowedCommands": ["def", "repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-define",
+              "title": "Keep stamp() around",
+              "description": "Define stamp() so you can reuse it.",
+              "hint": "Use your stamp() from last lesson.",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true }
+            },
+            {
+              "id": "step-hop",
+              "title": "Hop to a new spot",
+              "description": "Use pen_up + go_to + pen_down between stamps.",
+              "hint": "Try: pen_up(); go_to(320, 220); pen_down()",
+              "check": { "type": "drawing", "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Call stamp() three times in different places.",
+              "hint": "Call stamp(), hop, stamp(), hop, stamp().",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minFunctionCalls": 3,
+                "minSegments": 12,
+                "minTurns": 12,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Stamp Parade Badge",
+            "flavor": "You reused one function to make three shapes."
+          },
+          "preview": {
+            "kind": "placed-shapes",
+            "palette": ["#457bff", "#2f8f9d"]
+          },
+          "hint": "Define stamp() once, then call stamp() three times with hops in between.",
+          "concept": "Reusing a function keeps your code short and easy to change.",
+          "starterCode": "def stamp():\n    repeat(4):\n        move(60)\n        turn(90)\n\nstamp()\npen_up()\ngo_to(340, 220)\npen_down()\nstamp()\npen_up()\ngo_to(480, 160)\npen_down()\nstamp()",
+          "check": {
+            "type": "drawing",
+            "requiresFunctionDefinition": true,
+            "minFunctionCalls": 3,
+            "minSegments": 12,
+            "minTurns": 12,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "Stamp parade complete. One function, three shapes."
+        },
+        {
+          "id": "petal-power",
+          "title": "Petal Power",
+          "description": "Use a helper function inside repeat(...) to make a flower pattern.",
+          "mission": "Make a petal() helper, then repeat it to form a flower.",
+          "visualGoal": "A flower-like pattern made from repeated petals.",
+          "targetSteps": ["Define petal()", "Call it inside repeat(...)", "Turn between petals"],
+          "microHints": [
+            "Start with: def petal():",
+            "Inside: move, turn, move",
+            "Then: repeat(6): petal(); turn(60)"
+          ],
+          "allowedCommands": ["def", "repeat", "move", "turn", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-define",
+              "title": "Define petal()",
+              "description": "Create a helper that draws one petal shape.",
+              "hint": "Try:\ndef petal():\n    move(50)\n    turn(60)\n    move(50)\n    turn(120)",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true, "minSegments": 2, "minTurns": 2 }
+            },
+            {
+              "id": "step-repeat",
+              "title": "Repeat your petal",
+              "description": "Call petal() several times with a small turn between each one.",
+              "hint": "Try:\nrepeat(6):\n    petal()\n    turn(60)",
+              "check": { "type": "drawing", "requiresRepeat": true, "requiresFunctionDefinition": true, "minFunctionCalls": 4 }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a petal() helper, then repeat it to form a flower.",
+              "hint": "If it looks messy, lower your move distances and keep the turn between petals steady.",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minFunctionCalls": 6,
+                "minSegments": 10,
+                "minTurns": 10
+              }
+            }
+          ],
+          "reward": {
+            "title": "Petal Power Badge",
+            "flavor": "You used a helper inside a loop to build a pattern."
+          },
+          "preview": {
+            "kind": "spinner",
+            "palette": ["#e76f3c"]
+          },
+          "hint": "Define petal(), then call it inside repeat(...).",
+          "concept": "Loops + functions let you build big patterns from small pieces.",
+          "starterCode": "pen_color(\"coral\")\nline_width(4)\n\ndef petal():\n    move(50)\n    turn(60)\n    move(50)\n    turn(120)\n\nrepeat(6):\n    petal()\n    turn(60)",
+          "check": {
+            "type": "drawing",
+            "requiresFunctionDefinition": true,
+            "requiresRepeat": true,
+            "minFunctionCalls": 6,
+            "minSegments": 10,
+            "minTurns": 10
+          },
+          "successMessage": "Petal power complete. You built a flower with a helper function."
+        },
+        {
+          "id": "name-a-number",
+          "title": "Name a Number",
+          "description": "Store a number in a variable so you can reuse it.",
+          "mission": "Create a variable named side, then use it to draw a square.",
+          "visualGoal": "A square made using move(side) instead of move(60).",
+          "targetSteps": ["Make side = 60", "Use move(side) inside repeat(...)"],
+          "microHints": [
+            "Start with: side = 60",
+            "Then: repeat(4):",
+            "Inside: move(side) and turn(90)"
+          ],
+          "allowedCommands": ["repeat", "move", "turn"],
+          "milestones": [
+            {
+              "id": "step-variable",
+              "title": "Create a variable",
+              "description": "Make a variable named side.",
+              "hint": "Try: side = 60",
+              "check": { "type": "drawing", "requiredAssignments": ["side"], "minAssignments": 1 }
+            },
+            {
+              "id": "step-use",
+              "title": "Use your variable",
+              "description": "Use side inside move(side).",
+              "hint": "Inside the loop: move(side)",
+              "check": { "type": "drawing", "requiredCommands": ["move"], "minSegments": 2 }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Create a variable named side, then use it to draw a square.",
+              "hint": "If you want a bigger square, change side = 60 to 100.",
+              "check": {
+                "type": "drawing",
+                "requiredAssignments": ["side"],
+                "requiresRepeat": true,
+                "minSegments": 4,
+                "minTurns": 4,
+                "requiredCommands": ["move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Variable Wizard Badge",
+            "flavor": "You gave a number a name, then reused it."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["#2f8f9d"]
+          },
+          "hint": "Use side = 60, then move(side) in your loop.",
+          "concept": "Variables store values so you can reuse them.",
+          "starterCode": "side = 60\nrepeat(4):\n    move(side)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["side"],
+            "requiresRepeat": true,
+            "minSegments": 4,
+            "minTurns": 4,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Variable success. Changing side now changes your whole square."
+        },
+        {
+          "id": "two-sizes",
+          "title": "Two Sizes",
+          "description": "Use two variables to make a pattern with different lengths.",
+          "mission": "Create small and big, then draw a zigzag that uses both.",
+          "visualGoal": "A zigzag with alternating short and long lines.",
+          "targetSteps": ["Make small and big variables", "Use them in move(...)"],
+          "microHints": [
+            "Try: small = 40",
+            "Try: big = 110",
+            "Alternate move(small) and move(big)"
+          ],
+          "allowedCommands": ["move", "turn"],
+          "milestones": [
+            {
+              "id": "step-two-vars",
+              "title": "Create two variables",
+              "description": "Make small and big variables.",
+              "hint": "Try: small = 40\\nbig = 110",
+              "check": { "type": "drawing", "requiredAssignments": ["small", "big"], "minAssignments": 2 }
+            },
+            {
+              "id": "step-alternate",
+              "title": "Use both sizes",
+              "description": "Draw some lines that use both small and big.",
+              "hint": "Try move(small), then move(big).",
+              "check": { "type": "drawing", "minSegments": 4, "requiredCommands": ["move"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Create small and big, then draw a zigzag that uses both.",
+              "hint": "If lines overlap, use more turns.",
+              "check": {
+                "type": "drawing",
+                "requiredAssignments": ["small", "big"],
+                "minSegments": 6,
+                "minTurns": 5,
+                "requiredCommands": ["move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Size Switcher Badge",
+            "flavor": "You used two named numbers to make a pattern."
+          },
+          "preview": {
+            "kind": "zigzag",
+            "palette": ["#457bff"]
+          },
+          "hint": "Make small and big, then alternate move(small) and move(big).",
+          "concept": "Multiple variables help you organize different values.",
+          "starterCode": "small = 40\nbig = 110\nmove(small)\nturn(60)\nmove(big)\nturn(-120)\nmove(small)\nturn(60)\nmove(big)\nturn(-120)\nmove(small)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["small", "big"],
+            "minSegments": 6,
+            "minTurns": 5,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Two sizes complete. You kept your numbers neat by naming them."
+        },
+        {
+          "id": "color-variables",
+          "title": "Color Variables",
+          "description": "Store color names in variables so your drawing is easy to restyle.",
+          "mission": "Create two color variables and switch between them while drawing.",
+          "visualGoal": "A drawing with at least two color changes driven by variables.",
+          "targetSteps": ["Make c1 and c2 variables", "Use pen_color(c1) and pen_color(c2)"],
+          "microHints": [
+            "Try: c1 = \"tomato\"",
+            "Try: c2 = \"teal\"",
+            "Then: pen_color(c1) ... pen_color(c2)"
+          ],
+          "allowedCommands": ["pen_color", "repeat", "move", "turn", "line_width"],
+          "milestones": [
+            {
+              "id": "step-color-vars",
+              "title": "Create color variables",
+              "description": "Make c1 and c2 string variables.",
+              "hint": "Try: c1 = \"tomato\"\\nc2 = \"teal\"",
+              "check": { "type": "drawing", "requiredAssignments": ["c1", "c2"], "minAssignments": 2 }
+            },
+            {
+              "id": "step-switch",
+              "title": "Switch colors",
+              "description": "Use pen_color(...) at least twice while drawing.",
+              "hint": "Call pen_color(c1) first, then later pen_color(c2).",
+              "check": { "type": "drawing", "minColorChanges": 2, "requiredCommands": ["pen_color"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Create two color variables and switch between them while drawing.",
+              "hint": "Changing c1/c2 should restyle your whole drawing.",
+              "check": {
+                "type": "drawing",
+                "requiredAssignments": ["c1", "c2"],
+                "minSegments": 6,
+                "minColorChanges": 2,
+                "requiredCommands": ["pen_color", "move"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Color Stylist Badge",
+            "flavor": "You restyled your drawing by changing just two variables."
+          },
+          "preview": {
+            "kind": "color-bands",
+            "palette": ["tomato", "teal"]
+          },
+          "hint": "Make c1/c2, then pen_color(c1) and pen_color(c2).",
+          "concept": "Variables can hold text too, like color names.",
+          "starterCode": "c1 = \"tomato\"\nc2 = \"teal\"\nline_width(8)\npen_color(c1)\nrepeat(3):\n    move(80)\n    turn(120)\npen_color(c2)\nrepeat(3):\n    move(80)\n    turn(120)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["c1", "c2"],
+            "minSegments": 6,
+            "minColorChanges": 2,
+            "requiredCommands": ["pen_color", "move"]
+          },
+          "successMessage": "Color variables complete. You used named colors instead of repeating strings."
+        },
+        {
+          "id": "if-color-choice",
+          "title": "If Color Choice",
+          "description": "Use if/else to pick a color based on a variable.",
+          "mission": "Make a variable named favorite, then use if/else to choose a pen_color.",
+          "visualGoal": "A simple drawing where the color is chosen by if/else.",
+          "targetSteps": ["Make favorite = \"teal\"", "Use if favorite == \"teal\":", "Add an else:"],
+          "microHints": [
+            "Try: favorite = \"teal\"",
+            "Then: if favorite == \"teal\":",
+            "Add else: for the other color"
+          ],
+          "allowedCommands": ["pen_color", "move", "turn"],
+          "milestones": [
+            {
+              "id": "step-variable",
+              "title": "Set favorite",
+              "description": "Create a variable named favorite.",
+              "hint": "Try: favorite = \"teal\"",
+              "check": { "type": "drawing", "requiredAssignments": ["favorite"], "minAssignments": 1 }
+            },
+            {
+              "id": "step-branch",
+              "title": "Use if/else",
+              "description": "Use an if statement and an else branch.",
+              "hint": "Try:\nif favorite == \"teal\":\n    pen_color(\"teal\")\nelse:\n    pen_color(\"tomato\")",
+              "check": { "type": "drawing", "minIfStatements": 1, "requiresElse": true }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make a variable named favorite, then use if/else to choose a pen_color.",
+              "hint": "After choosing the color, draw a short zigzag with move/turn.",
+              "check": {
+                "type": "drawing",
+                "requiredAssignments": ["favorite"],
+                "minIfStatements": 1,
+                "requiresElse": true,
+                "minColorChanges": 1,
+                "minSegments": 3,
+                "minTurns": 2,
+                "requiredCommands": ["pen_color", "move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Decision Maker Badge",
+            "flavor": "You used if/else to choose what happens next."
+          },
+          "preview": {
+            "kind": "zigzag",
+            "palette": ["teal"]
+          },
+          "hint": "Pick a color in if/else, then draw.",
+          "concept": "if/else lets code make a choice.",
+          "starterCode": "favorite = \"teal\"\n\nif favorite == \"teal\":\n    pen_color(\"teal\")\nelse:\n    pen_color(\"tomato\")\n\nmove(60)\nturn(60)\nmove(60)\nturn(-120)\nmove(60)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["favorite"],
+            "minIfStatements": 1,
+            "requiresElse": true,
+            "minColorChanges": 1,
+            "minSegments": 3,
+            "minTurns": 2,
+            "requiredCommands": ["pen_color", "move", "turn"]
+          },
+          "successMessage": "If success. You made a choice with code and then drew with it."
+        },
+        {
+          "id": "if-two-paths",
+          "title": "Two Paths",
+          "description": "Change the path based on a variable.",
+          "mission": "Make direction = \"left\" or \"right\" and use if/else to turn that way.",
+          "visualGoal": "A path that turns left or right depending on your variable.",
+          "targetSteps": ["Make direction", "Use if/else to choose turn direction"],
+          "microHints": [
+            "Try: direction = \"left\"",
+            "If left: turn(60)",
+            "Else: turn(-60)"
+          ],
+          "allowedCommands": ["move", "turn"],
+          "milestones": [
+            {
+              "id": "step-variable",
+              "title": "Set direction",
+              "description": "Create a variable named direction.",
+              "hint": "Try: direction = \"left\"",
+              "check": { "type": "drawing", "requiredAssignments": ["direction"], "minAssignments": 1 }
+            },
+            {
+              "id": "step-branch",
+              "title": "Branch the turn",
+              "description": "Use if/else to choose a different turn.",
+              "hint": "Try:\nif direction == \"left\":\n    turn(60)\nelse:\n    turn(-60)",
+              "check": { "type": "drawing", "minIfStatements": 1, "requiresElse": true, "requiredCommands": ["turn"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Make direction = \"left\" or \"right\" and use if/else to turn that way.",
+              "hint": "Draw a few moves and turns so the difference is visible.",
+              "check": {
+                "type": "drawing",
+                "requiredAssignments": ["direction"],
+                "minIfStatements": 1,
+                "requiresElse": true,
+                "minSegments": 4,
+                "minTurns": 3,
+                "requiredCommands": ["move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Path Picker Badge",
+            "flavor": "You used a variable to pick between two paths."
+          },
+          "preview": {
+            "kind": "zigzag",
+            "palette": ["#e76f3c"]
+          },
+          "hint": "If/else chooses the turn direction.",
+          "concept": "Branching lets one program behave in different ways.",
+          "starterCode": "direction = \"left\"\n\nmove(60)\nif direction == \"left\":\n    turn(60)\nelse:\n    turn(-60)\nmove(60)\nif direction == \"left\":\n    turn(60)\nelse:\n    turn(-60)\nmove(60)\nif direction == \"left\":\n    turn(60)\nelse:\n    turn(-60)\nmove(60)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["direction"],
+            "minIfStatements": 1,
+            "requiresElse": true,
+            "minSegments": 4,
+            "minTurns": 3,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Two paths complete. Your code can choose a direction."
+        },
+        {
+          "id": "elif-rainbow-choice",
+          "title": "Rainbow Choice",
+          "description": "Use elif to pick from more than two choices.",
+          "mission": "Set pick = 1, 2, or 3 and choose a different pen_color for each.",
+          "visualGoal": "A drawing where one of three colors is chosen.",
+          "targetSteps": ["Make pick variable", "Use if/elif/else", "Draw something"],
+          "microHints": [
+            "Try: pick = 2",
+            "Use: if ... elif ... else ...",
+            "Choose three colors"
+          ],
+          "allowedCommands": ["pen_color", "repeat", "move", "turn", "line_width"],
+          "milestones": [
+            {
+              "id": "step-variable",
+              "title": "Set pick",
+              "description": "Create a variable named pick.",
+              "hint": "Try: pick = 2",
+              "check": { "type": "drawing", "requiredAssignments": ["pick"], "minAssignments": 1 }
+            },
+            {
+              "id": "step-branches",
+              "title": "Add choices",
+              "description": "Use if plus at least one elif, and end with else.",
+              "hint": "Try:\nif pick == 1:\n    ...\nelif pick == 2:\n    ...\nelse:\n    ...",
+              "check": { "type": "drawing", "minIfStatements": 2, "requiresElse": true }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Set pick = 1, 2, or 3 and choose a different pen_color for each.",
+              "hint": "After choosing the color, draw a small repeating shape.",
+              "check": {
+                "type": "drawing",
+                "requiredAssignments": ["pick"],
+                "minIfStatements": 2,
+                "requiresElse": true,
+                "minColorChanges": 1,
+                "requiresRepeat": true,
+                "minSegments": 6,
+                "requiredCommands": ["pen_color", "move", "turn"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Rainbow Brain Badge",
+            "flavor": "You made three choices with if/elif/else."
+          },
+          "preview": {
+            "kind": "polygons",
+            "palette": ["#f2b43f", "#457bff"]
+          },
+          "hint": "Use if, elif, and else to pick a color.",
+          "concept": "elif adds more choices than just if/else.",
+          "starterCode": "pick = 2\nline_width(5)\n\nif pick == 1:\n    pen_color(\"tomato\")\nelif pick == 2:\n    pen_color(\"goldenrod\")\nelse:\n    pen_color(\"royalblue\")\n\nrepeat(3):\n    move(80)\n    turn(120)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["pick"],
+            "minIfStatements": 2,
+            "requiresElse": true,
+            "requiresRepeat": true,
+            "minSegments": 6,
+            "requiredCommands": ["pen_color", "move", "turn"]
+          },
+          "successMessage": "Rainbow choice complete. You gave your code three possible paths."
+        }
+      ]
+    },
+    {
+      "id": "explorer",
+      "title": "Explorer",
+      "ageRange": "Adult",
+      "focus": "Python concepts through visual output",
+      "checkpointPrompt": "Build the drawing, then explain how the code structure made it easier to change.",
+      "lessons": [
+        {
+          "id": "sequence-and-side-effects",
+          "title": "Sequence and Side Effects",
+          "description": "See how ordered commands produce visible output on the canvas.",
+          "mission": "Draw a line and label it with text.",
+          "visualGoal": "A simple drawn path with a text label attached to it.",
+          "targetSteps": ["Run one movement command", "Add one text annotation"],
+          "reward": {
+            "title": "Sequence Scout Badge",
+            "flavor": "You connected ordered code to visible output."
+          },
+          "preview": {
+            "kind": "line-message",
+            "palette": ["slateblue", "royalblue"]
+          },
+          "hint": "A single move plus write(...) is enough to prove the idea.",
+          "concept": "Statements run in order and can create side effects on the canvas.",
+          "starterCode": "pen_color(\"slateblue\")\nmove(120)\nwrite(\"Sequence\", 18)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 1,
+            "requiresWrite": true,
+            "requiredCommands": ["move", "write"]
+          },
+          "successMessage": "You demonstrated ordered execution with visible side effects."
+        },
+        {
+          "id": "parameters-as-inputs",
+          "title": "Parameters as Inputs",
+          "description": "Use different numbers to change movement results.",
+          "mission": "Draw multiple lines with clearly different lengths.",
+          "visualGoal": "Several lines whose lengths are visually distinct.",
+          "targetSteps": ["Use more than one move value", "Separate lines with turns"],
+          "reward": {
+            "title": "Input Reader Badge",
+            "flavor": "You used numeric inputs to change output."
+          },
+          "preview": {
+            "kind": "line-lengths",
+            "palette": ["#536dfe"]
+          },
+          "hint": "Use different move distances so the output changes in a visible way.",
+          "concept": "Arguments are inputs that shape runtime behavior.",
+          "starterCode": "pen_color(\"royalblue\")\nmove(50)\nturn(120)\nmove(90)\nturn(120)\nmove(140)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 3,
+            "minTurns": 2,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "You used parameters to control how far the turtle moved."
+        },
+        {
+          "id": "heading-and-direction",
+          "title": "Heading and Direction",
+          "description": "Explore how turning changes the next path segment.",
+          "mission": "Make a bent or zigzag path with several directional changes.",
+          "visualGoal": "A multi-corner path instead of a straight line.",
+          "targetSteps": ["Move", "Turn", "Move again in a new direction"],
+          "reward": {
+            "title": "Heading Guide Badge",
+            "flavor": "You controlled orientation, not just distance."
+          },
+          "preview": {
+            "kind": "zigzag",
+            "palette": ["#ff7f50"]
+          },
+          "hint": "A sequence of move and turn commands will make the direction changes obvious.",
+          "concept": "Heading determines the direction of the next movement.",
+          "starterCode": "pen_color(\"coral\")\nline_width(5)\nmove(60)\nturn(60)\nmove(60)\nturn(-120)\nmove(60)\nturn(60)\nmove(60)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 4,
+            "minTurns": 3,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "You created a directional path by changing heading between segments."
+        },
+        {
+          "id": "square-from-sequence",
+          "title": "Square from Sequence",
+          "description": "Combine movement and turning into a predictable closed figure.",
+          "mission": "Draw a square using repeated geometry.",
+          "visualGoal": "A closed four-sided figure with matching sides.",
+          "targetSteps": ["Use the same move value each time", "Turn 90 degrees between sides"],
+          "reward": {
+            "title": "Geometry Builder Badge",
+            "flavor": "You linked simple instructions to a complete shape."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["#de5b31"]
+          },
+          "hint": "Try a loop rather than writing the same pair of commands four times.",
+          "concept": "Simple sequences can create predictable geometric outcomes.",
+          "starterCode": "pen_color(\"tomato\")\nline_width(5)\nrepeat(4):\n    move(90)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 4,
+            "minTurns": 4,
+            "requiresRepeat": true,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "You created a square through controlled repetition and turning."
+        },
+        {
+          "id": "loops-for-structure",
+          "title": "Loops for Structure",
+          "description": "Use a loop to organize repeated work into a smaller block of code.",
+          "mission": "Build a repeated shape with repeat(...) instead of duplicated lines.",
+          "visualGoal": "A loop-based shape with clean repeated sides.",
+          "targetSteps": ["Use repeat(...)", "Place the repeated instructions inside the loop"],
+          "reward": {
+            "title": "Loop Logic Badge",
+            "flavor": "You used repetition as structure, not just convenience."
+          },
+          "preview": {
+            "kind": "repeat-pattern",
+            "palette": ["#d09a10"]
+          },
+          "hint": "A regular polygon is a simple way to test a loop.",
+          "concept": "Loops reduce duplication while preserving consistent behavior.",
+          "starterCode": "pen_color(\"goldenrod\")\nrepeat(6):\n    move(60)\n    turn(60)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 6,
+            "minTurns": 6,
+            "requiresRepeat": true
+          },
+          "successMessage": "You used a loop to organize repeated instructions clearly."
+        },
+        {
+          "id": "polygon-comparisons",
+          "title": "Polygon Comparisons",
+          "description": "Change loop counts and turn angles to compare different regular shapes.",
+          "mission": "Draw two different polygons in different positions.",
+          "visualGoal": "Distinct loop-made shapes placed apart from one another.",
+          "targetSteps": ["Draw one polygon", "Move to a new location", "Draw a second polygon"],
+          "reward": {
+            "title": "Polygon Analyst Badge",
+            "flavor": "You compared how loop settings affect shape geometry."
+          },
+          "preview": {
+            "kind": "polygons",
+            "palette": ["#ff7b72", "#4b8bff"]
+          },
+          "hint": "A triangle and a hexagon make a strong contrast.",
+          "concept": "Loop count and turning angle control polygon structure.",
+          "starterCode": "pen_color(\"salmon\")\nrepeat(3):\n    move(80)\n    turn(120)\n\npen_up()\ngo_to(340, 220)\npen_down()\npen_color(\"cornflowerblue\")\nrepeat(6):\n    move(55)\n    turn(60)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 9,
+            "minTurns": 9,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You compared two different polygons by changing loop structure."
+        },
+        {
+          "id": "pattern-composition",
+          "title": "Pattern Composition",
+          "description": "Repeat a whole repeated shape to make a larger radial pattern.",
+          "mission": "Create a spun pattern by drawing a shape, turning, and drawing it again.",
+          "visualGoal": "A repeated motif arranged around the center.",
+          "targetSteps": ["Use one loop for the inner shape", "Use another repeat for the overall pattern"],
+          "reward": {
+            "title": "Pattern Architect Badge",
+            "flavor": "You built structure at more than one level."
+          },
+          "preview": {
+            "kind": "spinner",
+            "palette": ["#de5b31"]
+          },
+          "hint": "A square repeated around a center point is a clear first pattern.",
+          "concept": "Layered repetition creates larger visual structures.",
+          "starterCode": "pen_color(\"coral\")\nline_width(3)\nrepeat(8):\n    repeat(4):\n        move(50)\n        turn(90)\n    turn(45)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 16,
+            "minTurns": 12,
+            "requiresRepeat": true
+          },
+          "successMessage": "You composed a larger pattern by repeating an already repeated shape."
+        },
+        {
+          "id": "color-as-state",
+          "title": "Color as State",
+          "description": "Treat pen color as state that changes how later drawing commands behave.",
+          "mission": "Draw a repeated pattern using at least three color changes.",
+          "visualGoal": "A structured drawing with clear shifts in color state.",
+          "targetSteps": ["Draw one shape", "Change pen color", "Draw again with new state"],
+          "reward": {
+            "title": "State Painter Badge",
+            "flavor": "You changed drawing state to change the whole result."
+          },
+          "preview": {
+            "kind": "color-bands",
+            "palette": ["tomato", "goldenrod", "teal"]
+          },
+          "hint": "Reuse the same structure with different pen colors to make the changes obvious.",
+          "concept": "State-changing commands affect what later instructions produce.",
+          "starterCode": "line_width(4)\npen_color(\"tomato\")\nrepeat(4):\n    move(60)\n    turn(90)\n\npen_up()\ngo_to(260, 180)\npen_down()\npen_color(\"goldenrod\")\nrepeat(4):\n    move(60)\n    turn(90)\n\npen_up()\ngo_to(360, 180)\npen_down()\npen_color(\"teal\")\nrepeat(4):\n    move(60)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 12,
+            "requiresRepeat": true,
+            "minColorChanges": 3
+          },
+          "successMessage": "You changed color state intentionally and reused structure across the drawing."
+        },
+        {
+          "id": "path-vs-positioning",
+          "title": "Path vs Positioning",
+          "description": "Separate movement that draws from movement that only repositions the cursor.",
+          "mission": "Draw one shape, reposition without drawing, then draw a second shape.",
+          "visualGoal": "Two shapes separated by space with no accidental connector line.",
+          "targetSteps": ["Draw a first shape", "Lift the pen and reposition", "Draw a second shape elsewhere"],
+          "reward": {
+            "title": "Path Control Badge",
+            "flavor": "You separated drawing behavior from positioning behavior."
+          },
+          "preview": {
+            "kind": "pen-hop",
+            "palette": ["#4b8bff", "#ff8a5b"]
+          },
+          "hint": "Use pen_up(), go_to(...), and pen_down() to avoid connector lines.",
+          "concept": "Drawing state and position state are related but distinct.",
+          "starterCode": "pen_color(\"cornflowerblue\")\nrepeat(4):\n    move(50)\n    turn(90)\n\npen_up()\ngo_to(340, 210)\npen_down()\npen_color(\"coral\")\nrepeat(3):\n    move(60)\n    turn(120)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 7,
+            "minTurns": 7,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You managed path creation and positioning separately."
+        },
+        {
+          "id": "coordinates-and-placement",
+          "title": "Coordinates and Placement",
+          "description": "Use coordinates to place different forms intentionally around the canvas.",
+          "mission": "Draw multiple shapes in clearly different positions.",
+          "visualGoal": "Two or more shapes that are purposefully placed instead of clustered together.",
+          "targetSteps": ["Pick one placement", "Pick a second placement", "Draw a different shape in each"],
+          "reward": {
+            "title": "Placement Planner Badge",
+            "flavor": "You started composing with coordinates, not guesswork."
+          },
+          "preview": {
+            "kind": "placed-shapes",
+            "palette": ["#ff7b72", "#4b8bff"]
+          },
+          "hint": "Use absolute positions far enough apart that the layout becomes obvious.",
+          "concept": "Coordinates support deliberate spatial composition.",
+          "starterCode": "pen_up()\ngo_to(150, 120)\npen_down()\npen_color(\"salmon\")\nrepeat(3):\n    move(70)\n    turn(120)\n\npen_up()\ngo_to(360, 220)\npen_down()\npen_color(\"cornflowerblue\")\nrepeat(4):\n    move(55)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 7,
+            "minTurns": 7,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You used coordinates to control where each shape belonged."
+        },
+        {
+          "id": "scene-composition",
+          "title": "Scene Composition",
+          "description": "Combine placed shapes into a single readable scene.",
+          "mission": "Build a simple scene with several distinct visual parts.",
+          "visualGoal": "A composition that reads as one scene rather than separate test shapes.",
+          "targetSteps": ["Draw a main object", "Add supporting details", "Place them to read as one image"],
+          "reward": {
+            "title": "Composition Badge",
+            "flavor": "You turned separate shapes into a coherent scene."
+          },
+          "preview": {
+            "kind": "tiny-scene",
+            "palette": ["#de5b31", "#f2b43f", "#3d8f54"]
+          },
+          "hint": "A house-and-sun or tree-and-ground scene is a strong first composition.",
+          "concept": "Composition emerges from placement, scale, and grouping.",
+          "starterCode": "pen_up()\ngo_to(190, 210)\npen_down()\npen_color(\"tomato\")\nrepeat(4):\n    move(80)\n    turn(90)\n\npen_up()\ngo_to(190, 210)\npen_down()\npen_color(\"goldenrod\")\nrepeat(3):\n    move(80)\n    turn(120)\n\npen_up()\ngo_to(380, 90)\npen_down()\npen_color(\"gold\")\nrepeat(12):\n    move(20)\n    turn(30)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 19,
+            "minTurns": 19,
+            "requiresRepeat": true,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You composed multiple parts into a single scene."
+        },
+        {
+          "id": "drawing-order-and-layering",
+          "title": "Drawing Order and Layering",
+          "description": "Use ordering and color to make layered images feel more intentional.",
+          "mission": "Create a scene where one shape acts like a background and later shapes sit over it.",
+          "visualGoal": "A layered composition with visible foreground and background elements.",
+          "targetSteps": ["Draw a larger base shape first", "Add smaller details later", "Use color changes to strengthen the layering"],
+          "reward": {
+            "title": "Layer Logic Badge",
+            "flavor": "You used drawing order to control visual hierarchy."
+          },
+          "preview": {
+            "kind": "layered-scene",
+            "palette": ["#77c1d2", "#de5b31", "#f2b43f"]
+          },
+          "hint": "Draw the broadest background form first and place smaller details later.",
+          "concept": "Drawing order shapes what the viewer sees as foreground and background.",
+          "starterCode": "pen_up()\ngo_to(160, 170)\npen_down()\npen_color(\"skyblue\")\nrepeat(4):\n    move(140)\n    turn(90)\n\npen_up()\ngo_to(210, 220)\npen_down()\npen_color(\"tomato\")\nrepeat(4):\n    move(70)\n    turn(90)\n\npen_up()\ngo_to(330, 110)\npen_down()\npen_color(\"goldenrod\")\nrepeat(12):\n    move(18)\n    turn(30)",
+          "check": {
+            "type": "drawing",
+            "minSegments": 20,
+            "minTurns": 20,
+            "requiresRepeat": true,
+            "minColorChanges": 3,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You used order and layering to make the composition clearer."
+        },
+        {
+          "id": "defining-reusable-shapes",
+          "title": "Defining Reusable Shapes",
+          "description": "Use def to package a drawing routine into a reusable tool.",
+          "mission": "Define square(size) and call it once.",
+          "visualGoal": "A square drawn by calling a function you defined.",
+          "targetSteps": ["Define square(size)", "Call square(...) once"],
+          "allowedCommands": ["def", "repeat", "move", "turn", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "toolbox",
+              "title": "Define a helper",
+              "description": "Create a function with def so you can reuse it.",
+              "hint": "Try:\ndef square(size):\n    repeat(4):\n        move(size)\n        turn(90)",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true }
+            },
+            {
+              "id": "progress",
+              "title": "Call your helper",
+              "description": "Call square(...) to draw at least one square.",
+              "hint": "Try: square(80)",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true, "minFunctionCalls": 1 }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Define square(size) and call it once.",
+              "hint": "If your loop won't run, check the ':' after repeat(4): and your indentation.",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minFunctionCalls": 1,
+                "minSegments": 4,
+                "minTurns": 4
+              }
+            }
+          ],
+          "reward": {
+            "title": "Helper Architect Badge",
+            "flavor": "You wrote your first reusable drawing function."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["slateblue"]
+          },
+          "hint": "Define square(size) once, then call it like square(80).",
+          "concept": "Functions turn repeated structure into a named abstraction.",
+          "starterCode": "def square(size):\n    repeat(4):\n        move(size)\n        turn(90)\n\nsquare(80)",
+          "check": {
+            "type": "drawing",
+            "requiresFunctionDefinition": true,
+            "requiresRepeat": true,
+            "minFunctionCalls": 1,
+            "minSegments": 4,
+            "minTurns": 4
+          },
+          "successMessage": "You defined a helper function and reused it to draw a square."
+        },
+        {
+          "id": "parameters-for-reuse",
+          "title": "Parameters for Reuse",
+          "description": "Call the same function with different inputs to get different results.",
+          "mission": "Draw two squares of different sizes in different places using square(size).",
+          "visualGoal": "Two squares with clearly different sizes, separated on the canvas.",
+          "targetSteps": ["Call square(40)", "Hop to a new spot", "Call square(90)"],
+          "allowedCommands": ["def", "repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-define",
+              "title": "Keep square(size)",
+              "description": "Define square(size) so it can be reused.",
+              "hint": "Reuse your square(size) function from the previous lesson.",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true }
+            },
+            {
+              "id": "step-hop",
+              "title": "Place the second square",
+              "description": "Use pen_up + go_to + pen_down so the squares are separated.",
+              "hint": "Try: pen_up(); go_to(360, 210); pen_down()",
+              "check": { "type": "drawing", "requiredCommands": ["pen_up", "go_to", "pen_down"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Draw two squares of different sizes in different places using square(size).",
+              "hint": "Call square(...) twice with different numbers.",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minFunctionCalls": 2,
+                "minSegments": 8,
+                "minTurns": 8,
+                "requiredCommands": ["pen_up", "go_to", "pen_down"]
+              }
+            }
+          ],
+          "reward": {
+            "title": "Parameter Pilot Badge",
+            "flavor": "You changed the output by changing the input."
+          },
+          "preview": {
+            "kind": "placed-shapes",
+            "palette": ["#5d87ff", "#2f8f9d"]
+          },
+          "hint": "Call square(40), then hop and call square(90).",
+          "concept": "Parameters let one function create many related results.",
+          "starterCode": "def square(size):\n    repeat(4):\n        move(size)\n        turn(90)\n\nsquare(40)\npen_up()\ngo_to(360, 210)\npen_down()\nsquare(90)",
+          "check": {
+            "type": "drawing",
+            "requiresFunctionDefinition": true,
+            "requiresRepeat": true,
+            "minFunctionCalls": 2,
+            "minSegments": 8,
+            "minTurns": 8,
+            "requiredCommands": ["pen_up", "go_to", "pen_down"]
+          },
+          "successMessage": "You reused one function with two different inputs to draw two different squares."
+        },
+        {
+          "id": "composing-helpers",
+          "title": "Composing Helpers",
+          "description": "Build bigger ideas by combining smaller helper functions.",
+          "mission": "Define square(size) and house(size). Make house(size) call square(size). Then draw two houses.",
+          "visualGoal": "Two house-like drawings built from helper functions.",
+          "targetSteps": ["Define square(size)", "Define house(size) that calls square(size)", "Call house(...) twice"],
+          "allowedCommands": ["def", "repeat", "move", "turn", "pen_up", "go_to", "pen_down", "pen_color", "line_width"],
+          "milestones": [
+            {
+              "id": "step-two-defs",
+              "title": "Two helpers",
+              "description": "Define square(size) and house(size).",
+              "hint": "House can call square(size), then draw a triangle roof with move/turn.",
+              "check": { "type": "drawing", "requiresFunctionDefinition": true }
+            },
+            {
+              "id": "step-compose",
+              "title": "Compose them",
+              "description": "Make house(size) call square(size) inside it.",
+              "hint": "Inside house(size): square(size)",
+              "check": { "type": "drawing", "requiredCommands": ["square"] }
+            },
+            {
+              "id": "finish",
+              "title": "Mission complete",
+              "description": "Define square(size) and house(size). Make house(size) call square(size). Then draw two houses.",
+              "hint": "Call house(...) twice, hopping between them with go_to(...) if needed.",
+              "check": {
+                "type": "drawing",
+                "requiresFunctionDefinition": true,
+                "requiresRepeat": true,
+                "minFunctionCalls": 4,
+                "minSegments": 10,
+                "minTurns": 10
+              }
+            }
+          ],
+          "reward": {
+            "title": "Composition Captain Badge",
+            "flavor": "You built a bigger idea out of smaller helpers."
+          },
+          "preview": {
+            "kind": "tiny-scene",
+            "palette": ["#de5b31", "#457bff", "#4e9f69"]
+          },
+          "hint": "Let house(size) call square(size), then draw the roof.",
+          "concept": "Composition is a powerful way to scale complexity without duplicating code.",
+          "starterCode": "def square(size):\n    repeat(4):\n        move(size)\n        turn(90)\n\n# Your house() can call square(size), then draw a roof.\n\ndef house(size):\n    square(size)\n    # Roof idea:\n    # turn(45)\n    # move(size * 0.7)\n    # turn(90)\n    # move(size * 0.7)\n    # turn(45)\n\nhouse(70)\npen_up()\ngo_to(360, 230)\npen_down()\nhouse(90)",
+          "check": {
+            "type": "drawing",
+            "requiresFunctionDefinition": true,
+            "minFunctionCalls": 4,
+            "minSegments": 10,
+            "minTurns": 10
+          },
+          "successMessage": "Nice composition. You combined helpers to create a bigger drawing routine."
+        },
+        {
+          "id": "variables-as-names",
+          "title": "Variables as Names",
+          "description": "Bind values to names so you can change behavior by changing one line.",
+          "mission": "Create side = 80, then draw a square using move(side).",
+          "visualGoal": "A square whose size is controlled by a variable.",
+          "targetSteps": ["Assign side", "Use side in a loop"],
+          "reward": {
+            "title": "Name Binder Badge",
+            "flavor": "You bound a value to a name and reused it."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["slateblue"]
+          },
+          "hint": "Define side, then use move(side) inside repeat(4).",
+          "concept": "Variables let you separate meaning (side length) from raw numbers.",
+          "starterCode": "side = 80\nrepeat(4):\n    move(side)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["side"],
+            "minAssignments": 1,
+            "requiresRepeat": true,
+            "minSegments": 4,
+            "minTurns": 4,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "Variable bound. Changing side changes the whole shape."
+        },
+        {
+          "id": "variables-for-style",
+          "title": "Variables for Style",
+          "description": "Store styling choices like color and width so you can restyle quickly.",
+          "mission": "Create color_name and width, then draw with pen_color(color_name) and line_width(width).",
+          "visualGoal": "A drawing whose look is controlled by variables.",
+          "targetSteps": ["Assign color_name and width", "Use them in pen_color(...) and line_width(...)"],
+          "reward": {
+            "title": "Style System Badge",
+            "flavor": "You turned style into variables you can tweak."
+          },
+          "preview": {
+            "kind": "color-bands",
+            "palette": ["#de5b31", "#2f8f9d"]
+          },
+          "hint": "Try color_name = \"tomato\" and width = 6.",
+          "concept": "Variables can hold configuration, making experiments easier.",
+          "starterCode": "color_name = \"tomato\"\nwidth = 6\nline_width(width)\npen_color(color_name)\nrepeat(4):\n    move(60)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["color_name", "width"],
+            "minAssignments": 2,
+            "minColorChanges": 1,
+            "requiredCommands": ["pen_color", "line_width"]
+          },
+          "successMessage": "Style variables complete. You can now restyle by changing just a couple lines."
+        },
+        {
+          "id": "reassignment-and-change",
+          "title": "Reassignment and Change",
+          "description": "Change a variable to change what the program does later.",
+          "mission": "Use one size variable, draw, change it, then draw again.",
+          "visualGoal": "Two shapes with different sizes controlled by reassigning a variable.",
+          "targetSteps": ["Assign size", "Draw a shape", "Change size", "Draw again"],
+          "reward": {
+            "title": "Reassignment Ranger Badge",
+            "flavor": "You changed a variable to change later behavior."
+          },
+          "preview": {
+            "kind": "placed-shapes",
+            "palette": ["#5d87ff", "#de5b31"]
+          },
+          "hint": "Try size = 40, draw, then size = 90 and draw again.",
+          "concept": "Reassignment updates a name to point to a new value for future statements.",
+          "starterCode": "def square(size):\n    repeat(4):\n        move(size)\n        turn(90)\n\nsize = 40\nsquare(size)\npen_up()\ngo_to(360, 210)\npen_down()\nsize = 90\nsquare(size)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["size"],
+            "minAssignments": 1,
+            "requiresFunctionDefinition": true,
+            "requiresRepeat": true,
+            "minFunctionCalls": 2,
+            "requiredCommands": ["go_to", "pen_up", "pen_down"]
+          },
+          "successMessage": "Reassignment complete. You used the same name to drive two different results."
+        },
+        {
+          "id": "if-statements",
+          "title": "If Statements",
+          "description": "Use if to run code only when a condition is true.",
+          "mission": "Create steps = 6. If steps > 4, draw a hexagon using repeat(steps).",
+          "visualGoal": "A polygon whose side count is controlled by a variable and an if statement.",
+          "targetSteps": ["Assign steps", "Write an if condition", "Draw with repeat(steps)"],
+          "reward": {
+            "title": "Branch Builder Badge",
+            "flavor": "You used if to control whether code runs."
+          },
+          "preview": {
+            "kind": "polygons",
+            "palette": ["slateblue", "royalblue"]
+          },
+          "hint": "Try steps = 6 and if steps > 4: then repeat(steps): ...",
+          "concept": "An if statement is a guard: code runs only when the condition is true.",
+          "starterCode": "steps = 6\n\nif steps > 4:\n    repeat(steps):\n        move(55)\n        turn(360 / steps)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["steps"],
+            "minAssignments": 1,
+            "minIfStatements": 1,
+            "requiresRepeat": true,
+            "minSegments": 6,
+            "minTurns": 6,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "If statement complete. You guarded a drawing with a condition."
+        },
+        {
+          "id": "if-else-branches",
+          "title": "If/Else Branches",
+          "description": "Add else so your program always chooses one of two paths.",
+          "mission": "Create mode = \"fast\" or \"slow\". Use if/else to set step size, then draw a square.",
+          "visualGoal": "A square whose size changes based on a mode variable.",
+          "targetSteps": ["Assign mode", "Use if/else", "Draw with a size variable"],
+          "reward": {
+            "title": "Two-Way Switch Badge",
+            "flavor": "You built two code paths and selected one."
+          },
+          "preview": {
+            "kind": "square",
+            "palette": ["#de5b31"]
+          },
+          "hint": "If mode == \"fast\" use a bigger size, else use a smaller one.",
+          "concept": "if/else makes a decision with a fallback path.",
+          "starterCode": "mode = \"fast\"\n\nif mode == \"fast\":\n    size = 90\nelse:\n    size = 50\n\nrepeat(4):\n    move(size)\n    turn(90)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["mode", "size"],
+            "minAssignments": 2,
+            "minIfStatements": 1,
+            "requiresElse": true,
+            "requiresRepeat": true,
+            "minSegments": 4,
+            "minTurns": 4,
+            "requiredCommands": ["move", "turn"]
+          },
+          "successMessage": "If/else complete. Your variable choice changed the whole output."
+        },
+        {
+          "id": "elif-ladders",
+          "title": "Elif Ladders",
+          "description": "Use elif to handle multiple cases cleanly.",
+          "mission": "Create level = 1, 2, or 3. Use if/elif/else to choose a color and line width, then draw a shape.",
+          "visualGoal": "A drawing whose style changes based on a level variable.",
+          "targetSteps": ["Assign level", "Use if/elif/else", "Draw something visible"],
+          "reward": {
+            "title": "Case Handler Badge",
+            "flavor": "You handled multiple cases with elif."
+          },
+          "preview": {
+            "kind": "color-bands",
+            "palette": ["#5d87ff", "#2f8f9d", "#de5b31"]
+          },
+          "hint": "Pick different pen_color and line_width values in each branch.",
+          "concept": "elif helps you avoid nested if statements by listing cases in order.",
+          "starterCode": "level = 2\n\nif level == 1:\n    pen_color(\"royalblue\")\n    line_width(3)\nelif level == 2:\n    pen_color(\"teal\")\n    line_width(6)\nelse:\n    pen_color(\"tomato\")\n    line_width(9)\n\nrepeat(3):\n    move(90)\n    turn(120)",
+          "check": {
+            "type": "drawing",
+            "requiredAssignments": ["level"],
+            "minAssignments": 1,
+            "minIfStatements": 2,
+            "requiresElse": true,
+            "minColorChanges": 1,
+            "requiresRepeat": true,
+            "minSegments": 6,
+            "requiredCommands": ["pen_color", "line_width", "move", "turn"]
+          },
+          "successMessage": "Elif ladder complete. Your code handled multiple cases in a clean way."
+        }
+      ]
+    }
+  ]
+}

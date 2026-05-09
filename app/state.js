@@ -447,7 +447,7 @@ export function setUnlockAllLessons(profile, enabled) {
 }
 
 export async function loadLessonCatalog() {
-  const response = await fetch("../public/lessons.json");
+  const response = await fetch("./lessons.json");
   if (!response.ok) {
     throw new Error(`Lesson catalog request failed with ${response.status}.`);
   }
