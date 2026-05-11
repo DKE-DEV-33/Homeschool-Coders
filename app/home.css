@@ -184,6 +184,42 @@ input {
   background: rgba(25, 51, 61, 0.05);
 }
 
+.offline-status {
+  display: grid;
+  gap: 10px;
+}
+
+.offline-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(47, 143, 157, 0.12);
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.offline-pill strong {
+  font-family: "Baloo 2", sans-serif;
+  font-size: 1.15rem;
+}
+
+.offline-pill button {
+  border: none;
+  border-radius: 14px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 800;
+  background: rgba(25, 51, 61, 0.08);
+  color: var(--ink);
+}
+
+.offline-pill button:hover {
+  background: rgba(25, 51, 61, 0.12);
+}
+
 .backup-actions {
   display: flex;
   flex-wrap: wrap;

@@ -30,9 +30,45 @@ const exportBackupButton = document.querySelector("#export-backup");
 const importBackupInput = document.querySelector("#import-backup");
 const backupFeedback = document.querySelector("#backup-feedback");
 const openReportLink = document.querySelector("#open-report");
+const offlineStatus = document.querySelector("#offline-status");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
+
+function renderOfflineStatus(mode) {
+  if (!offlineStatus) {
+    return;
+  }
+
+  if (mode === "update_ready") {
+    offlineStatus.innerHTML = `
+      <div class="offline-pill">
+        <div>
+          <strong>Update ready</strong>
+          <div>Reload to use the latest version.</div>
+        </div>
+        <button id="reload-app" type="button">Reload</button>
+      </div>
+    `;
+    const button = offlineStatus.querySelector("#reload-app");
+    button?.addEventListener("click", () => window.location.reload());
+    return;
+  }
+
+  if (mode === "offline_ready") {
+    offlineStatus.innerHTML = `
+      <div class="offline-pill">
+        <div>
+          <strong>Offline ready</strong>
+          <div>This app shell is cached for this browser.</div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  offlineStatus.innerHTML = "";
+}
 
 function formatDateShort(date) {
   if (!(date instanceof Date) || Number.isNaN(date.valueOf())) {
@@ -299,6 +335,21 @@ async function boot() {
     lessonCatalog = await loadLessonCatalog();
   } catch (error) {
     createFeedback.textContent = `Lesson data could not be loaded: ${error.message}`;
+  }
+
+  window.addEventListener("hc-sw-status", (event) => {
+    const type = event?.detail?.type;
+    if (type === "offline_ready") {
+      renderOfflineStatus("offline_ready");
+    }
+    if (type === "update_ready") {
+      renderOfflineStatus("update_ready");
+    }
+  });
+
+  // Best-effort: if a service worker is already controlling this page, we can assume offline caching is active.
+  if (navigator.serviceWorker?.controller) {
+    renderOfflineStatus("offline_ready");
   }
 
   render();
