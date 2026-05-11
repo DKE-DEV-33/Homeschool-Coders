@@ -1,5 +1,6 @@
 import { CURRICULUM_UNITS } from "./curriculum.js";
 import "./swRegister.js";
+import "./offlineStatus.js";
 import { ensureTeacherModeUnlocked, isTeacherModeUnlocked, lockTeacherModeSession } from "./teacherGate.js";
 import {
   getCompletedCount,

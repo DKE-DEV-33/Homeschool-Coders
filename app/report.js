@@ -17,6 +17,7 @@ import {
 } from "./state.js";
 
 import "./swRegister.js";
+import "./offlineStatus.js";
 import { ensureTeacherModeUnlocked, isTeacherModeUnlocked, lockTeacherModeSession } from "./teacherGate.js";
 import { CURRICULUM_UNITS, getUnitForLesson } from "./curriculum.js";
 
