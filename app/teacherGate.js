@@ -9,6 +9,15 @@ export function lockTeacherModeSession() {
   window.sessionStorage.removeItem(TEACHER_SESSION_KEY);
 }
 
+export function hasTeacherPin() {
+  return Boolean(window.localStorage.getItem(TEACHER_PIN_KEY));
+}
+
+export function clearTeacherPin() {
+  window.localStorage.removeItem(TEACHER_PIN_KEY);
+  lockTeacherModeSession();
+}
+
 function setTeacherModeSessionUnlocked() {
   window.sessionStorage.setItem(TEACHER_SESSION_KEY, "1");
 }
@@ -55,3 +64,40 @@ export function ensureTeacherModeUnlocked({ purpose = "Teacher tools" } = {}) {
   return true;
 }
 
+export function changeTeacherPin() {
+  const existing = window.localStorage.getItem(TEACHER_PIN_KEY);
+
+  if (existing) {
+    const attempt = window.prompt("Enter current parent code:");
+    if (attempt === null) {
+      return false;
+    }
+    if (String(attempt).trim() !== existing) {
+      window.alert("Incorrect parent code. No changes made.");
+      return false;
+    }
+  }
+
+  const nextPin = window.prompt("Set a new parent code (letters/numbers). Keep it simple to type:");
+  if (nextPin === null) {
+    return false;
+  }
+  const trimmed = String(nextPin).trim();
+  if (!trimmed) {
+    window.alert("Parent code can’t be empty.");
+    return false;
+  }
+  const confirmPin = window.prompt("Confirm new parent code:");
+  if (confirmPin === null) {
+    return false;
+  }
+  if (String(confirmPin).trim() !== trimmed) {
+    window.alert("Codes didn’t match. No changes made.");
+    return false;
+  }
+
+  window.localStorage.setItem(TEACHER_PIN_KEY, trimmed);
+  setTeacherModeSessionUnlocked();
+  window.alert("Parent code updated.");
+  return true;
+}

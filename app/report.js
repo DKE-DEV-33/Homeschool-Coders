@@ -18,7 +18,14 @@ import {
 
 import "./swRegister.js";
 import "./offlineStatus.js";
-import { ensureTeacherModeUnlocked, isTeacherModeUnlocked, lockTeacherModeSession } from "./teacherGate.js";
+import {
+  changeTeacherPin,
+  clearTeacherPin,
+  ensureTeacherModeUnlocked,
+  hasTeacherPin,
+  isTeacherModeUnlocked,
+  lockTeacherModeSession,
+} from "./teacherGate.js";
 import { CURRICULUM_UNITS, getUnitForLesson } from "./curriculum.js";
 
 const profileSelect = document.querySelector("#report-profile-select");
@@ -46,6 +53,8 @@ const notesSaveButton = document.querySelector("#save-notes");
 const notesStatus = document.querySelector("#notes-status");
 const notesOpenSheet = document.querySelector("#notes-open-sheet");
 const unlockAllLessonsToggle = document.querySelector("#unlock-all-lessons");
+const changeParentCodeButton = document.querySelector("#change-parent-code");
+const clearParentCodeButton = document.querySelector("#clear-parent-code");
 
 let appState = loadAppState();
 let lessonCatalog = { tracks: [] };
@@ -73,6 +82,13 @@ function setTeacherMode(unlocked) {
 
   if (unlockAllLessonsToggle) {
     unlockAllLessonsToggle.disabled = !teacherModeUnlocked;
+  }
+
+  if (changeParentCodeButton) {
+    changeParentCodeButton.disabled = !teacherModeUnlocked;
+  }
+  if (clearParentCodeButton) {
+    clearParentCodeButton.disabled = !teacherModeUnlocked || !hasTeacherPin();
   }
 
   if (clearActivityButton) {
@@ -493,6 +509,34 @@ if (lockSessionButton) {
     lockTeacherModeSession();
     setTeacherMode(false);
     window.alert("Teacher session locked. Next teacher action will ask for the parent code again.");
+  });
+}
+
+if (changeParentCodeButton) {
+  changeParentCodeButton.addEventListener("click", () => {
+    if (!teacherModeUnlocked) {
+      unlockTeacherMode();
+      return;
+    }
+    changeTeacherPin();
+    setTeacherMode(isTeacherModeUnlocked());
+    renderAll();
+  });
+}
+
+if (clearParentCodeButton) {
+  clearParentCodeButton.addEventListener("click", () => {
+    if (!teacherModeUnlocked) {
+      unlockTeacherMode();
+      return;
+    }
+    const ok = window.confirm("Clear the parent code on this device? You will need to set a new one next time.");
+    if (!ok) {
+      return;
+    }
+    clearTeacherPin();
+    setTeacherMode(false);
+    renderAll();
   });
 }
 
