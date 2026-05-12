@@ -90,6 +90,27 @@ function showCard(html, { timeoutMs } = {}) {
 function onStatus(detail) {
   const type = detail?.type;
   if (type === "update_ready") {
+    const requestUpdate = async () => {
+      try {
+        const reg = await navigator.serviceWorker?.getRegistration("./");
+        const waiting = reg?.waiting;
+        if (!waiting) {
+          window.location.reload();
+          return;
+        }
+
+        const reloadOnControl = () => {
+          navigator.serviceWorker.removeEventListener("controllerchange", reloadOnControl);
+          window.location.reload();
+        };
+
+        navigator.serviceWorker.addEventListener("controllerchange", reloadOnControl);
+        waiting.postMessage({ type: "SKIP_WAITING" });
+      } catch (_error) {
+        window.location.reload();
+      }
+    };
+
     showCard(
       `
         <div class="row">
@@ -97,13 +118,13 @@ function onStatus(detail) {
             <strong>Update ready</strong>
             <div class="meta">Reload to use the latest version.</div>
           </div>
-          <button type="button" data-reload="true">Reload</button>
+          <button type="button" data-update="true">Update now</button>
         </div>
       `,
       { timeoutMs: null },
     );
-    const button = toastRoot?.querySelector("[data-reload]");
-    button?.addEventListener("click", () => window.location.reload());
+    const button = toastRoot?.querySelector("[data-update]");
+    button?.addEventListener("click", requestUpdate);
     return;
   }
 
@@ -127,4 +148,3 @@ export function initOfflineStatusToasts() {
 }
 
 initOfflineStatusToasts();
-

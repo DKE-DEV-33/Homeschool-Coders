@@ -51,6 +51,13 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+self.addEventListener("message", (event) => {
+  const data = event.data;
+  if (data && data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET") {
@@ -86,4 +93,3 @@ self.addEventListener("fetch", (event) => {
     })(),
   );
 });
-
