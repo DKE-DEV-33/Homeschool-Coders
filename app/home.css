@@ -277,6 +277,30 @@ input {
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
+.archived-details {
+  margin-top: 18px;
+  border-top: 1px solid rgba(25, 51, 61, 0.12);
+  padding-top: 14px;
+}
+
+.archived-details summary {
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: "Baloo 2", sans-serif;
+  font-size: 1.2rem;
+}
+
+.archived-grid {
+  margin-top: 14px;
+}
+
+.archived-card {
+  background: rgba(25, 51, 61, 0.04);
+}
+
 .profile-card,
 .overview-card {
   padding: 18px;

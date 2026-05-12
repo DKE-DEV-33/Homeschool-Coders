@@ -1,4 +1,5 @@
 import {
+  archiveProfile,
   createProfile,
   deleteProfile,
   exportBackup,
@@ -11,6 +12,7 @@ import {
   importBackup,
   loadAppState,
   loadLessonCatalog,
+  restoreProfile,
   saveAppState,
   setActiveProfile,
   updateProfile,
@@ -24,6 +26,9 @@ const profileNameInput = document.querySelector("#profile-name");
 const profileAgeInput = document.querySelector("#profile-age");
 const createFeedback = document.querySelector("#create-feedback");
 const profilesGrid = document.querySelector("#profiles-grid");
+const archivedDetails = document.querySelector("#archived-details");
+const archivedGrid = document.querySelector("#archived-grid");
+const archivedCount = document.querySelector("#archived-count");
 const overviewGrid = document.querySelector("#overview-grid");
 const profileCount = document.querySelector("#profile-count");
 const exportBackupButton = document.querySelector("#export-backup");
@@ -92,19 +97,20 @@ function getCurrentLessonForProfile(profile) {
 }
 
 function renderProfiles() {
-  profileCount.textContent = `${appState.profiles.length} profile${appState.profiles.length === 1 ? "" : "s"}`;
+  const activeProfiles = appState.profiles.filter((profile) => !profile.archivedAt);
+  const archivedProfiles = appState.profiles.filter((profile) => Boolean(profile.archivedAt));
+  profileCount.textContent = `${activeProfiles.length} active · ${archivedProfiles.length} archived`;
   profilesGrid.innerHTML = "";
 
-  if (!appState.profiles.length) {
+  if (!activeProfiles.length) {
     profilesGrid.innerHTML = `
       <div class="empty-state">
         No learner profiles yet. Add one above and we will give them a full-screen lesson studio of their own.
       </div>
     `;
-    return;
   }
 
-  appState.profiles.forEach((profile) => {
+  activeProfiles.forEach((profile) => {
     const { track, lesson } = getCurrentLessonForProfile(profile);
     const trackId = track?.id || (profile.age <= 9 ? "kids" : "explorer");
     const completed = getCompletedCount(lessonCatalog, profile, trackId);
@@ -135,17 +141,48 @@ function renderProfiles() {
         <button class="primary-button" type="button" data-open-profile="${profile.id}">Open Workspace</button>
         <button class="ghost-button" type="button" data-set-active="${profile.id}">Make Active</button>
         <button class="ghost-button" type="button" data-edit-profile="${profile.id}">Edit</button>
-        <button class="ghost-button danger-button" type="button" data-delete-profile="${profile.id}">Delete</button>
+        <button class="ghost-button danger-button" type="button" data-archive-profile="${profile.id}">Archive</button>
       </div>
     `;
     profilesGrid.append(card);
   });
+
+  if (archivedDetails && archivedGrid && archivedCount) {
+    archivedCount.textContent = archivedProfiles.length ? `${archivedProfiles.length}` : "";
+    archivedGrid.innerHTML = "";
+    archivedDetails.style.display = archivedProfiles.length ? "block" : "none";
+
+    archivedProfiles.forEach((profile) => {
+      const card = document.createElement("article");
+      card.className = "profile-card archived-card";
+      card.innerHTML = `
+        <div class="profile-top">
+          <div>
+            <div class="avatar-dot" style="background:${profile.color}">${getProfileInitials(profile.name)}</div>
+          </div>
+          <div class="track-chip">Archived</div>
+        </div>
+        <div>
+          <h3 class="profile-name">${profile.name}</h3>
+          <p class="profile-age">Age ${profile.age}</p>
+          <p class="profile-age">Archived: ${profile.archivedAt ? formatDateShort(new Date(profile.archivedAt)) : "Unknown"}</p>
+        </div>
+        <div class="profile-actions">
+          <button class="ghost-button" type="button" data-restore-profile="${profile.id}">Restore</button>
+          <button class="ghost-button danger-button" type="button" data-delete-profile="${profile.id}">Delete forever</button>
+        </div>
+      `;
+      archivedGrid.append(card);
+    });
+  }
 }
 
 function renderOverview() {
   overviewGrid.innerHTML = "";
 
-  if (!appState.profiles.length) {
+  const activeProfiles = appState.profiles.filter((profile) => !profile.archivedAt);
+
+  if (!activeProfiles.length) {
     overviewGrid.innerHTML = `
       <div class="empty-state">
         Parent overview will appear here once at least one learner profile exists.
@@ -154,7 +191,7 @@ function renderOverview() {
     return;
   }
 
-  appState.profiles.forEach((profile) => {
+  activeProfiles.forEach((profile) => {
     const { track, lesson } = getCurrentLessonForProfile(profile);
     const trackId = track?.id || (profile.age <= 9 ? "kids" : "explorer");
     const lastActiveAt = getLastActiveAt(profile);
@@ -287,6 +324,42 @@ profilesGrid.addEventListener("click", (event) => {
     return;
   }
 
+  const archiveId = target.dataset.archiveProfile;
+  if (archiveId) {
+    const profile = appState.profiles.find((item) => item.id === archiveId);
+    if (!profile) {
+      return;
+    }
+
+    const ok = window.confirm(`Archive "${profile.name}"? You can restore later from the Archived list. (Progress stays on this device.)`);
+    if (!ok) {
+      return;
+    }
+
+    archiveProfile(appState, archiveId);
+    createFeedback.textContent = "Profile archived.";
+    render();
+  }
+});
+
+archivedGrid?.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) {
+    return;
+  }
+
+  const restoreId = target.dataset.restoreProfile;
+  if (restoreId) {
+    const profile = appState.profiles.find((item) => item.id === restoreId);
+    if (!profile) {
+      return;
+    }
+    restoreProfile(appState, restoreId);
+    createFeedback.textContent = "Profile restored.";
+    render();
+    return;
+  }
+
   const deleteId = target.dataset.deleteProfile;
   if (deleteId) {
     const profile = appState.profiles.find((item) => item.id === deleteId);
@@ -294,7 +367,7 @@ profilesGrid.addEventListener("click", (event) => {
       return;
     }
 
-    const ok = window.confirm(`Delete profile "${profile.name}"? This removes local progress for this learner on this device.`);
+    const ok = window.confirm(`Delete "${profile.name}" forever? This removes local progress for this learner on this device.`);
     if (!ok) {
       return;
     }

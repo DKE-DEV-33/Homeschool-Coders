@@ -548,7 +548,7 @@ function drawTargetPreview(lesson) {
 
 function renderProfileSelect() {
   profileSelect.innerHTML = "";
-  appState.profiles.forEach((profile) => {
+  appState.profiles.filter((profile) => !profile.archivedAt).forEach((profile) => {
     const option = document.createElement("option");
     option.value = profile.id;
     option.textContent = `${profile.name} · age ${profile.age}`;
@@ -1782,7 +1782,10 @@ async function boot() {
   const requestedProfile = params.get("profile");
   const requestedTrack = params.get("track");
   const requestedLesson = params.get("lesson");
-  activeProfile = getProfile(appState, requestedProfile) || getProfile(appState, appState.activeProfileId) || appState.profiles[0];
+  activeProfile =
+    getProfile(appState, requestedProfile) ||
+    getProfile(appState, appState.activeProfileId) ||
+    appState.profiles.find((profile) => !profile.archivedAt);
 
   if (!activeProfile) {
     window.location.href = "./index.html";

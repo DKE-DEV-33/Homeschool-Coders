@@ -51,6 +51,7 @@ function normalizeProfile(rawProfile = {}, index = 0) {
     role: rawProfile.role || inferRoleFromAge(age),
     color: rawProfile.color || pickColor(index),
     createdAt: rawProfile.createdAt || new Date().toISOString(),
+    archivedAt: typeof rawProfile.archivedAt === "string" ? rawProfile.archivedAt : "",
     progress: {
       activeTrackId: progress.activeTrackId || defaultTrackId,
       activeLessonIdByTrack: progress.activeLessonIdByTrack || {},
@@ -201,6 +202,7 @@ export function createProfile(state, profileData) {
       age: Number(profileData.age),
       role: inferRoleFromAge(profileData.age),
       color: pickColor(state.profiles.length),
+      archivedAt: "",
       progress: createEmptyProgress(inferTrackIdFromAge(profileData.age)),
     },
     state.profiles.length,
@@ -263,6 +265,39 @@ export function deleteProfile(state, profileId) {
 
   saveAppState(state);
   return true;
+}
+
+export function archiveProfile(state, profileId) {
+  const profile = getProfile(state, profileId);
+  if (!profile) {
+    return null;
+  }
+
+  profile.archivedAt = new Date().toISOString();
+
+  if (state.activeProfileId === profileId) {
+    const nextActive = state.profiles.find((item) => !item.archivedAt && item.id !== profileId) || null;
+    state.activeProfileId = nextActive?.id || "";
+  }
+
+  saveAppState(state);
+  return profile;
+}
+
+export function restoreProfile(state, profileId) {
+  const profile = getProfile(state, profileId);
+  if (!profile) {
+    return null;
+  }
+
+  profile.archivedAt = "";
+
+  if (!state.activeProfileId) {
+    state.activeProfileId = profile.id;
+  }
+
+  saveAppState(state);
+  return profile;
 }
 
 export function ensureTrackContainers(profile, trackId) {
