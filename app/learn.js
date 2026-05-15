@@ -64,6 +64,7 @@ const tabBadges = document.querySelector("#tab-badges");
 const panelMissions = document.querySelector("#panel-missions");
 const panelBadges = document.querySelector("#panel-badges");
 const runPythonButton = document.querySelector("#run-python");
+const cachePythonButton = document.querySelector("#cache-python");
 const resetWorkspaceButton = document.querySelector("#reset-workspace");
 const editorMicroHint = document.querySelector("#editor-micro-hint");
 const showHintButton = document.querySelector("#show-hint");
@@ -1477,6 +1478,38 @@ def run_user_code(source):
   return pyodideReadyPromise;
 }
 
+async function cachePythonOffline() {
+  if (!cachePythonButton) {
+    return;
+  }
+
+  cachePythonButton.disabled = true;
+  appendLogLine("Caching Python runtime for offline use...");
+
+  try {
+    await ensurePyodide();
+
+    if (!navigator.serviceWorker?.controller) {
+      showToast(
+        "Python cached",
+        "Python is ready. Reload once so the service worker can cache updates for offline use.",
+        "success",
+      );
+      appendLogLine("Python runtime ready. Reload once to enable offline caching if needed.");
+      return;
+    }
+
+    showToast("Python cached", "This device can now run lessons offline (after the first load).", "success");
+    appendLogLine("Python runtime cached for offline use.");
+  } catch (error) {
+    const message = error?.message || String(error);
+    showToast("Cache failed", message, "danger");
+    appendLogLine(`Cache failed: ${message}`);
+  } finally {
+    cachePythonButton.disabled = false;
+  }
+}
+
 async function runPythonCode() {
   const lesson = getActiveLesson();
   if (!lesson) {
@@ -1658,6 +1691,7 @@ toggleSidebarButton.addEventListener("click", toggleSidebar);
 tabMissions.addEventListener("click", () => setSidebarTab("missions"));
 tabBadges.addEventListener("click", () => setSidebarTab("badges"));
 runPythonButton.addEventListener("click", runPythonCode);
+cachePythonButton?.addEventListener("click", cachePythonOffline);
 resetWorkspaceButton.addEventListener("click", resetWorkspace);
 nextLessonButton.addEventListener("click", openNextLesson);
 closeCelebrationButton.addEventListener("click", hideCelebration);
