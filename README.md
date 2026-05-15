@@ -44,6 +44,8 @@ Then open `http://localhost:4173/app/`.
 
 Note: the current Python runtime uses Pyodide loaded from the official CDN on first run. The app itself is local, and we can vendor that runtime into the repo later if you want a more fully self-contained offline setup.
 
+Tip: once Pyodide loads successfully at least once, the service worker will cache the runtime so you can keep running lessons offline on that same device/browser.
+
 ## What is included now
 
 - A two-page browser experience with a calmer home screen and a dedicated lesson studio.
