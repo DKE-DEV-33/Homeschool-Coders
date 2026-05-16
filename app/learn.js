@@ -1015,6 +1015,61 @@ function preprocessCode(source) {
   return normalized.replace(/^(\s*)repeat\((.+)\):/gm, "$1for _ in range($2):");
 }
 
+function validateLessonCode(lesson, originalSource) {
+  const source = String(originalSource || "");
+  const trimmed = source.trim();
+  if (!trimmed) {
+    return { ok: false, title: "Nothing to run", message: "Type a few lines first, then press Run Python." };
+  }
+
+  // Guardrails: keep the environment focused on drawing missions, especially for younger learners.
+  const forbiddenPatterns = [
+    { pattern: /(^|\n)\s*import\s+/m, title: "Imports disabled", message: "For now, imports are turned off. Use the drawing commands below the log." },
+    { pattern: /(^|\n)\s*from\s+\S+\s+import\s+/m, title: "Imports disabled", message: "For now, imports are turned off. Use the drawing commands below the log." },
+    { pattern: /__\w+__/g, title: "Not allowed yet", message: "Double-underscore names are disabled in this studio." },
+    { pattern: /(^|\n)\s*while\s+/m, title: "Not allowed yet", message: "While-loops are disabled for now. Use repeat(...) instead." },
+    { pattern: /(^|\n)\s*class\s+/m, title: "Not allowed yet", message: "Classes are disabled for now. We'll learn them later." },
+    { pattern: /(^|\n)\s*with\s+/m, title: "Not allowed yet", message: "The 'with' keyword is disabled for now. We'll learn it later." },
+    { pattern: /(^|\n)\s*try\s*:/m, title: "Not allowed yet", message: "Try/except is disabled for now. We'll learn it later." },
+  ];
+
+  for (const item of forbiddenPatterns) {
+    if (item.pattern.test(source)) {
+      return { ok: false, title: item.title, message: item.message };
+    }
+  }
+
+  const facts = buildCodeFacts(source);
+
+  // If the lesson sets an allow-list, enforce it to prevent "instant pass" copy/paste solutions.
+  const allowList = new Set(collectLessonCommandKeys(lesson));
+  const builtinAllowed = new Set(["range", "print"]);
+
+  // Disallow manual "for" until repeat is introduced.
+  const forAllowed = allowList.has("repeat");
+  if (!forAllowed && /(^|\n)\s*for\s+/m.test(source)) {
+    return { ok: false, title: "Not allowed yet", message: "For-loops are locked for now. Use repeat(...) once the lesson unlocks it." };
+  }
+
+  const unknownCalls = [...facts.calledCommands].filter((name) => {
+    if (allowList.has(name)) return false;
+    if (builtinAllowed.has(name)) return false;
+    if (facts.functionDefinitions.includes(name)) return false;
+    return true;
+  });
+
+  if (unknownCalls.length) {
+    const first = unknownCalls[0];
+    return {
+      ok: false,
+      title: "Unknown command",
+      message: `I don't recognize ${first}(...). Use the “Usable commands” list below the log (or define your own helper with def in later lessons).`,
+    };
+  }
+
+  return { ok: true };
+}
+
 function buildCodeFacts(source) {
   const normalized = source.replace(/\r\n/g, "\n");
   const lines = normalized.split("\n");
@@ -1449,6 +1504,18 @@ def run_user_code(source):
     function_names = [node.name for node in module.body if isinstance(node, ast.FunctionDef)]
     tracked_module = FunctionCallTracker(function_names).visit(module)
     ast.fix_missing_locations(tracked_module)
+    SAFE_BUILTINS = {
+        "range": range,
+        "print": print,
+        "min": min,
+        "max": max,
+        "abs": abs,
+        "round": round,
+        "int": int,
+        "float": float,
+        "str": str,
+        "len": len,
+    }
     namespace = {
         "move": move,
         "turn": turn,
@@ -1459,7 +1526,7 @@ def run_user_code(source):
         "go_to": go_to,
         "write": write,
         "reset_drawing": reset_drawing,
-        "range": range,
+        "__builtins__": SAFE_BUILTINS,
         "__record_function_call__": __record_function_call__,
     }
     tracer = _make_step_tracer(MAX_TRACE_STEPS)
@@ -1520,8 +1587,18 @@ async function runPythonCode() {
   setStatus("Preparing Python runtime...");
 
   try {
-    const runtime = await ensurePyodide();
     const originalSource = codeEditor.value;
+    const validation = validateLessonCode(lesson, originalSource);
+    if (!validation.ok) {
+      const title = validation.title || "Fix that first";
+      const message = validation.message || "Update your code and try again.";
+      showToast(title, message, "danger");
+      setLog(message);
+      setStatus("Code needs a small fix before running.");
+      return;
+    }
+
+    const runtime = await ensurePyodide();
     const preparedCode = preprocessCode(originalSource).trim();
 
     if (!preparedCode) {
