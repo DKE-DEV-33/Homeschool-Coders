@@ -1316,12 +1316,18 @@ function evaluateCheckpoint(lesson, source) {
   const completedStepIds = new Set(getCompletedCheckpointSteps(activeProfile, activeTrackId, lesson.id));
   const newlyCompleted = [];
 
-  milestones.forEach((step) => {
-    if (!completedStepIds.has(step.id) && passesCheck(step.check, facts)) {
+  // Enforce milestone order: learners clear steps from top to bottom.
+  for (const step of milestones) {
+    if (completedStepIds.has(step.id)) {
+      continue;
+    }
+    if (passesCheck(step.check, facts)) {
       completedStepIds.add(step.id);
       newlyCompleted.push(step.title);
+      continue;
     }
-  });
+    break;
+  }
 
   setCompletedCheckpointSteps(activeProfile, activeTrackId, lesson.id, [...completedStepIds]);
   if (newlyCompleted.length) {
@@ -1330,8 +1336,7 @@ function evaluateCheckpoint(lesson, source) {
   }
 
   const nextMilestone = milestones.find((step) => !completedStepIds.has(step.id)) || null;
-  const finalMilestone = milestones[milestones.length - 1];
-  const finalPassed = passesCheck(finalMilestone.check, facts);
+  const finalPassed = milestones.length ? milestones.every((step) => completedStepIds.has(step.id)) : true;
 
     if (!finalPassed) {
       hideCelebration();
@@ -1339,7 +1344,7 @@ function evaluateCheckpoint(lesson, source) {
         const currentNoProgressRuns = getNoProgressRuns(activeProfile, activeTrackId, lesson.id);
         setNoProgressRuns(activeProfile, activeTrackId, lesson.id, currentNoProgressRuns + 1);
       }
-    const finalFailures = describeFailures(finalMilestone.check, facts);
+    const finalFailures = nextMilestone ? describeFailures(nextMilestone.check, facts) : [];
     checkpointResult.textContent = newlyCompleted.length
       ? `Nice. You cleared ${newlyCompleted.join(", ")}. Next up: ${nextMilestone?.title || "keep going"}. ${nextMilestone?.hint || finalFailures.join(", ")}`
       : `Next milestone: ${nextMilestone?.title || "keep going"}. ${nextMilestone?.hint || finalFailures.join(", ")}`;
